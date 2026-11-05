@@ -53,7 +53,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   useEffect(() => () => stopSpeaking(), [])
 
   // Le dernier rendu expose ses actions aux effets ci-dessous (clavier, passage automatique)
-  const api = useRef<{ next?: () => void; check?: () => void; retry?: () => void; pick?: (a: any) => void; delay?: number }>({})
+  const api = useRef<{ next?: () => void; check?: () => void; retry?: () => void; pick?: (a: any) => void; typed?: (buf: string, now?: boolean) => boolean | undefined; delay?: number }>({})
 
   // Bonne réponse : passage automatique à la suite, le temps de lire l'explication
   useEffect(() => {
@@ -70,10 +70,20 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
       if (e.metaKey || e.ctrlKey || e.altKey) return
       const a = api.current
       if (e.key === 'Enter') { e.preventDefault(); a.check?.(); a.next?.() ; return }
-      if (/^[1-9]$/.test(e.key)) a.pick?.(Number(e.key) - 1)
+      if (/^[0-9,.\-]$/.test(e.key)) {
+        // QCM de nombres : on tape le nombre lui-même ; sinon 1 à 9 choisissent par position
+        buf.current += e.key
+        clearTimeout(bufT.current)
+        const r = a.typed?.(buf.current)
+        if (r === undefined && /^[1-9]$/.test(e.key) && buf.current.length === 1) a.pick?.(Number(e.key) - 1)
+        const snap = buf.current
+        bufT.current = window.setTimeout(() => { if (r === false) apiRef.current.typed?.(snap, true); buf.current = '' }, 700)
+      }
     }
+    const buf = { current: '' }, bufT = { current: 0 }
+    const apiRef = api
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => { window.removeEventListener('keydown', onKey); clearTimeout(bufT.current) }
   }, [])
 
   if (!child || (!diagnostic && !lesson) || total === 0) {
@@ -243,6 +253,19 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
       if (phase !== 'play' || checked || !cur || cur.type !== 'qcm') return
       const c = cur.choices?.[n]
       if (c && !eliminated.includes(c.id)) pick(c.id)
+    },
+    typed: (buf: string, now?: boolean) => {
+      if (phase !== 'play' || checked || !cur || cur.type !== 'qcm' || !cur.choices) return undefined
+      const norm = (x: string) => x.replace(/[\s\u00a0\u202f]/g, '').replace(',', '.')
+      const nums = cur.choices.map(c => norm(c.label))
+      if (!nums.every(x => /^-?\d+(\.\d+)?$/.test(x))) return undefined
+      const b = norm(buf)
+      const idx = nums.findIndex((x, i) => x === b && !eliminated.includes(cur.choices![i].id))
+      if (idx < 0) return true
+      const longer = nums.some(x => x !== b && x.startsWith(b))
+      if (longer && !now) return false
+      pick(cur.choices[idx].id)
+      return true
     },
     delay: Math.min(3800, 1200 + (cur?.explanation?.length ?? 0) * 28),
   }

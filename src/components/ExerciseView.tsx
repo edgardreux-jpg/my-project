@@ -57,7 +57,7 @@ function Body({ ex, answer, setAnswer, locked, status, reveal, onEnter, eliminat
     case 'drag_drop':
       return <Matching ex={ex} answer={answer ?? {}} setAnswer={setAnswer} locked={locked} status={status} />
     case 'fill_blank':
-      return <FillBlank ex={ex} answer={answer ?? {}} setAnswer={setAnswer} locked={locked} />
+      return <FillBlank ex={ex} answer={answer ?? {}} setAnswer={setAnswer} locked={locked} onEnter={onEnter} />
     case 'visual_fraction':
       return <Fraction ex={ex} answer={answer ?? []} setAnswer={setAnswer} locked={locked} />
     default:
@@ -162,7 +162,7 @@ function Matching({ ex, answer, setAnswer, locked, status }: { ex: Exercise; ans
   )
 }
 
-function FillBlank({ ex, answer, setAnswer, locked }: { ex: Exercise; answer: Record<string, string>; setAnswer: (a: any) => void; locked: boolean }) {
+function FillBlank({ ex, answer, setAnswer, locked, onEnter }: { onEnter: () => void; ex: Exercise; answer: Record<string, string>; setAnswer: (a: any) => void; locked: boolean }) {
   const parts = (ex.template ?? '').split(/(\{\{\w+\}\})/g)
   return (
     <div style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 2.4 }}>
@@ -171,7 +171,8 @@ function FillBlank({ ex, answer, setAnswer, locked }: { ex: Exercise; answer: Re
         if (!m) return <span key={i}>{p}</span>
         const k = m[1]
         return (
-          <input key={i} className="input blank" aria-label={`Case ${k}`} disabled={locked}
+          <input key={i} className="input blank" aria-label={`Case ${k}`} disabled={locked} autoFocus={i === parts.findIndex(q => /^\{\{\w+\}\}$/.test(q))}
+            onKeyDown={e => { if (e.key === 'Enter') onEnter() }}
             inputMode={ex.normalization === 'decimal' ? 'decimal' : 'text'} autoComplete="off"
             value={answer[k] ?? ''} onChange={e => setAnswer({ ...answer, [k]: e.target.value })} />
         )
