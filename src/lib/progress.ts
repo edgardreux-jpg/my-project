@@ -30,12 +30,12 @@ export const FRAMES = ['none', 'gold', 'mint', 'violet', 'sunset', 'rainbow']
 
 export interface Chest { id: string; xp: number; title: string; kind: 'avatar' | 'frame'; value: string; label: string }
 export const CHESTS: Chest[] = [
-  { id: 'c1', xp: 60, title: 'Coffre de la forêt', kind: 'avatar', value: '🦊', label: 'Avatar renard' },
+  { id: 'c1', xp: 60, title: 'Coffre de la forêt', kind: 'avatar', value: '🦊', label: 'Avatar écureuil' },
   { id: 'c2', xp: 150, title: 'Coffre doré', kind: 'frame', value: 'gold', label: 'Cadre doré' },
   { id: 'c3', xp: 300, title: 'Coffre des neiges', kind: 'avatar', value: '🐼', label: 'Avatar panda' },
-  { id: 'c4', xp: 500, title: 'Coffre de la savane', kind: 'avatar', value: '🦁', label: 'Avatar lion' },
+  { id: 'c4', xp: 500, title: 'Coffre de la savane', kind: 'avatar', value: '🦁', label: 'Avatar tortue' },
   { id: 'c5', xp: 800, title: 'Coffre violet', kind: 'frame', value: 'violet', label: 'Cadre violet' },
-  { id: 'c6', xp: 1200, title: 'Coffre magique', kind: 'avatar', value: '🦄', label: 'Avatar licorne' },
+  { id: 'c6', xp: 1200, title: 'Coffre magique', kind: 'avatar', value: '🦄', label: 'Avatar oiseau de papier' },
 ]
 
 export const readyChests = (c: Child) => CHESTS.filter(x => c.xp >= x.xp && !c.chestsOpened.includes(x.id))

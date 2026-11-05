@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Play, Flame } from 'lucide-react'
+import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown } from 'lucide-react'
 import { useStore } from '../../state/store'
-import { Avatar, BarChart, Delta, Empty, LineChart, Modal, Spark } from '../../components/common'
+import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
 import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay } from '../../lib/dates'
 import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotals } from '../../lib/progress'
 import { BASE_AVATARS } from '../../lib/progress'
@@ -10,6 +10,40 @@ import { meta } from '../../lib/curriculum'
 import type { Child, LevelId } from '../../types'
 
 const COLORS = ['#17766E', '#F28D62', '#7751A8', '#3A76CE']
+
+/** Écart de réussite avec la semaine précédente, en points, avec flèche et texte (jamais la couleur seule). */
+function Trend({ now, before }: { now: number | null; before: number | null }) {
+  if (now == null) return <span>pas encore de séance</span>
+  if (before == null) return <span>première semaine</span>
+  const d = Math.round((now - before) * 100)
+  if (d === 0) return <span>stable vs sem. passée</span>
+  return <span className={d > 0 ? 'up' : 'down'}>{d > 0 ? <ArrowUp size={13} /> : <ArrowDown size={13} />} {Math.abs(d)} pt{Math.abs(d) > 1 ? 's' : ''} vs sem. passée</span>
+}
+
+/** Mini-histogramme : semaines passées en gris, semaine en cours en accent. */
+function MiniBars({ values, label }: { values: number[]; label: string }) {
+  const max = Math.max(...values, 1), n = values.length, W = 100, H = 28, gap = 2, bw = (W - gap * (n - 1)) / n
+  return (
+    <svg className="mini" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label={label}>
+      {values.map((v, i) => { const h = Math.max(v > 0 ? 3 : 1.5, (v / max) * H); return <rect key={i} x={i * (bw + gap)} y={H - h} width={bw} height={h} rx={1.5} className={i === n - 1 ? 'cur' : ''} /> })}
+    </svg>
+  )
+}
+
+/** Mini-courbe de réussite (0 à 100 %), point final en accent. */
+function MiniLine({ values, label }: { values: (number | null)[]; label: string }) {
+  const W = 100, H = 28, n = values.length
+  const pts = values.map((v, i) => v == null ? null : [(i / (n - 1)) * W, H - 2 - v * (H - 4)] as const)
+  const segs: string[] = []; let curSeg: string[] = []
+  pts.forEach(p => { if (p) curSeg.push(`${p[0].toFixed(1)},${p[1].toFixed(1)}`); else if (curSeg.length) { segs.push(curSeg.join(' ')); curSeg = [] } })
+  if (curSeg.length) segs.push(curSeg.join(' '))
+  return (
+    <svg className="mini line" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label={label}>
+      <line x1="0" x2={W} y1={H - 2 - 0.5 * (H - 4)} y2={H - 2 - 0.5 * (H - 4)} className="mid" />
+      {segs.map((sg, i) => sg.includes(' ') ? <polyline key={i} points={sg} /> : null)}
+    </svg>
+  )
+}
 
 export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
   const { addChild } = useStore()
@@ -70,7 +104,7 @@ export default function Dashboard() {
   return (
     <div className="col gap20">
       <div className="row wrap">
-        <div className="grow">
+        <div className="grow" style={{ minWidth: 260 }}>
           <h1>Bonjour {account.name}</h1>
           <p className="muted">Voici où en sont vos enfants. Les chiffres se calculent sur les séances terminées.</p>
         </div>
@@ -89,22 +123,43 @@ export default function Dashboard() {
               const ins = insight(k, today)
               const t = mastersTotals(k)
               return (
-                <div key={k.id} className="card kid" onClick={() => nav(`/parent/enfant/${k.id}`)} role="link" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') nav(`/parent/enfant/${k.id}`) }}>
-                  <div className="row">
-                    <Avatar emoji={k.avatar} frame={k.frame} size={58} />
-                    <div className="grow"><h3 style={{ margin: 0, fontSize: '1.2rem' }}>{k.nickname}</h3><div className="small muted">{k.grade.toUpperCase()} · {levelOf(k.xp).name}</div></div>
-                    <span className="chip"><Flame size={16} color="#F28D62" />{liveStreak(k)}</span>
+                <div key={k.id} className="card kid" onClick={() => nav(`/parent/enfant/${k.id}`)} role="link" tabIndex={0} aria-label={`Voir le suivi de ${k.nickname}`} onKeyDown={e => { if (e.key === 'Enter') nav(`/parent/enfant/${k.id}`) }}>
+                  <div className="kid-head">
+                    <Avatar emoji={k.avatar} frame={k.frame} size={52} />
+                    <div className="grow">
+                      <h3 className="kid-name">{k.nickname}</h3>
+                      <div className="small muted">{k.grade.toUpperCase()} · {levelOf(k.xp).name}</div>
+                    </div>
+                    <span className="kid-streak" title="Jours d’affilée avec au moins une leçon"><Flame size={16} /> {liveStreak(k)} j</span>
                   </div>
-                  <div className="row" style={{ justifyContent: 'space-between' }}>
-                    <div><div className="tiny muted">Cette semaine</div><b style={{ fontSize: '1.3rem' }}>{fmtMin(cur.ms)}</b><div className="tiny muted">{cur.lessons} leçon{cur.lessons > 1 ? 's' : ''}</div></div>
-                    <div><div className="tiny muted">Réussite 1er essai</div><b style={{ fontSize: '1.3rem' }}>{cur.acc == null ? '–' : `${Math.round(cur.acc * 100)} %`}</b><div><Delta now={cur.acc} before={prev.acc} unit="%" /></div></div>
-                    <Spark values={w.map(x => x.ms / 60000)} color={COLORS[i % 4]} />
+
+                  <div className="kid-tiles">
+                    <div className="tile-stat">
+                      <div className="ts-label"><Clock size={14} /> Temps</div>
+                      <div className="ts-value">{fmtMin(cur.ms)}</div>
+                      <div className="ts-sub">{cur.lessons} leçon{cur.lessons > 1 ? 's' : ''} cette semaine</div>
+                      <MiniBars values={w.map(x => x.ms / 60000)} label={`Minutes par semaine, 8 dernières semaines, pour ${k.nickname}`} />
+                    </div>
+                    <div className="tile-stat">
+                      <div className="ts-label"><Target size={14} /> Réussite</div>
+                      <div className="ts-value">{cur.acc == null ? '–' : `${Math.round(cur.acc * 100)} %`}</div>
+                      <div className="ts-sub"><Trend now={cur.acc} before={prev.acc} /></div>
+                      <MiniLine values={w.map(x => x.acc)} label={`Réussite au premier essai, 8 dernières semaines, pour ${k.nickname}`} />
+                    </div>
+                    <div className="tile-stat">
+                      <div className="ts-label"><BookOpenCheck size={14} /> Acquises</div>
+                      <div className="ts-value">{t.acquired}<span className="ts-of"> / {t.started}</span></div>
+                      <div className="ts-sub">leçons commencées</div>
+                      <div className="meter" role="img" aria-label={`${t.acquired} leçons acquises sur ${t.started} commencées`}><i style={{ width: `${t.started ? (t.acquired / t.started) * 100 : 0}%` }} /></div>
+                    </div>
                   </div>
-                  <div className={`pill ${ins.tone}`} style={{ whiteSpace: 'normal', borderRadius: 12 }}>{ins.text}</div>
-                  <div className="row small muted"><span>{t.started} leçons commencées, {t.mastered} maîtrisées</span><span className="grow" /><span>{k.streak.last ? `Dernière séance ${relDay(k.streak.last, today)}` : ''}</span></div>
-                  <div className="row gap8" onClick={e => e.stopPropagation()}>
-                    <button className="btn sm grow" onClick={() => openChild(k.id)}><Play size={16} /> Son espace</button>
-                    <Link className="btn ghost sm grow" to={`/parent/enfant/${k.id}`}>Détails</Link>
+
+                  <div className={`kid-insight ${ins.tone}`}>{ins.tone === 'green' ? <TrendingUp size={18} /> : ins.tone === 'gold' ? <AlertCircle size={18} /> : <Info size={18} />}<span>{ins.text}</span></div>
+
+                  <div className="kid-foot" onClick={e => e.stopPropagation()}>
+                    <span className="tiny muted grow">{k.streak.last ? `Dernière séance ${relDay(k.streak.last, today)}` : 'Aucune séance'}</span>
+                    <Link className="btn ghost sm" to={`/parent/enfant/${k.id}`}>Détails</Link>
+                    <button className="btn sm" onClick={() => openChild(k.id)}><Play size={16} /> Son espace</button>
                   </div>
                 </div>
               )

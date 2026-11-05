@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { ShieldCheck, BookOpenCheck, EyeOff, HardDrive, LineChart as LC } from 'lucide-react'
 import { Logo, Spark } from '../components/common'
+import { Ico, Stars } from '../components/Icon'
 import { LEVELS, SOURCES, levelStats } from '../lib/curriculum'
 import { useStore } from '../state/store'
 
@@ -9,6 +10,7 @@ export default function Landing() {
   const nav = useNavigate()
   const cta = account ? (mode === 'parent' ? '/parent' : '/profils') : '/inscription'
   const ce1 = levelStats('ce1')
+  const ce2 = levelStats('ce2')
   return (
     <div>
       <header className="top"><div className="in">
@@ -31,7 +33,7 @@ export default function Landing() {
         </div>
         <div className="hero-art" aria-hidden="true">
           <div className="a" style={{ left: 0, top: 10, width: 300, transform: 'rotate(-3deg)' }}>
-            <div className="row"><span className="pill teal">Mathématiques</span><span className="grow" /><span>⭐⭐⭐</span></div>
+            <div className="row"><span className="pill teal">Mathématiques</span><span className="grow" /><Stars n={3} size={18} /></div>
             <h3 style={{ margin: '12px 0 8px' }}>Combien font 240 + 130 ?</h3>
             <div className="opts">
               <div className="opt">380</div><div className="opt ok">370</div>
@@ -42,7 +44,7 @@ export default function Landing() {
             <div className="row"><b>Mila · CE1</b><span className="grow" /><span className="pill green">▲ 12 pts</span></div>
             <div className="small muted mt8">Réussite au premier essai</div>
             <Spark values={[52, 58, 55, 66, 70, 74, 81, 88]} w={250} h={60} />
-            <div className="row mt8"><span className="pill gold">🔥 6 jours</span><span className="pill">1 h 20 cette semaine</span></div>
+            <div className="row mt8"><span className="pill gold"><Ico e="🔥" /> 6 jours</span><span className="pill">1 h 20 cette semaine</span></div>
           </div>
           <div className="a" style={{ left: 40, bottom: 0, width: 240 }}>
             <div className="small muted">Maîtrise</div>
@@ -73,12 +75,12 @@ export default function Landing() {
         <span className="eyebrow">Pour les enfants</span>
         <h2 className="h-lg mb16">Motivant, sans pression</h2>
         <div className="grid3">
-          <div className="feat"><div className="ic">⭐</div><h3>Des étoiles pour progresser</h3><p className="muted">Jusqu’à trois étoiles par leçon, selon les réussites au premier essai.</p></div>
-          <div className="feat"><div className="ic">🔥</div><h3>Des séries qui pardonnent</h3><p className="muted">Les gels de série protègent d’un jour manqué. Pas de culpabilité.</p></div>
-          <div className="feat"><div className="ic">🎁</div><h3>Des coffres et des badges</h3><p className="muted">Avatars et cadres à débloquer au fil des efforts.</p></div>
-          <div className="feat"><div className="ic">💡</div><h3>Un indice avant la solution</h3><p className="muted">Après une erreur, un indice et une deuxième chance. Puis une explication claire.</p></div>
-          <div className="feat"><div className="ic">🔁</div><h3>Des rappels espacés</h3><p className="muted">Les notions déjà vues reviennent après quelques jours pour s’ancrer.</p></div>
-          <div className="feat"><div className="ic">🔤</div><h3>Accessible</h3><p className="muted">Police adaptée à la dyslexie, taille du texte réglable, lecture à voix haute.</p></div>
+          <div className="feat"><div className="ic"><Ico e="⭐" color="currentColor" /></div><h3>Des étoiles pour progresser</h3><p className="muted">Jusqu’à trois étoiles par leçon, selon les réussites au premier essai.</p></div>
+          <div className="feat"><div className="ic"><Ico e="🔥" color="currentColor" /></div><h3>Des séries qui pardonnent</h3><p className="muted">Les jokers de série protègent d’un jour manqué. Pas de culpabilité.</p></div>
+          <div className="feat"><div className="ic"><Ico e="🎁" color="currentColor" /></div><h3>Des coffres et des badges</h3><p className="muted">Avatars et cadres à débloquer au fil des efforts.</p></div>
+          <div className="feat"><div className="ic"><Ico e="💡" color="currentColor" /></div><h3>Un indice avant la solution</h3><p className="muted">Après une erreur, un indice et une deuxième chance. Puis une explication claire.</p></div>
+          <div className="feat"><div className="ic"><Ico e="🔁" color="currentColor" /></div><h3>Des rappels espacés</h3><p className="muted">Les notions déjà vues reviennent après quelques jours pour s’ancrer.</p></div>
+          <div className="feat"><div className="ic"><Ico e="🔤" color="currentColor" /></div><h3>Accessible</h3><p className="muted">Police adaptée à la dyslexie, taille du texte réglable, lecture à voix haute.</p></div>
         </div>
       </div></section>
 
@@ -88,8 +90,8 @@ export default function Landing() {
         <div className="grid2">
           <div className="col">
             <div className="feat"><div className="ic"><LC size={24} /></div><h3>L’évolution, semaine après semaine</h3><p className="muted">Temps passé, réussite au premier essai, jours actifs, comparés à la période précédente.</p></div>
-            <div className="feat"><div className="ic">🎯</div><h3>Les notions à consolider</h3><p className="muted">EduFun repère les thèmes où l’enfant bute, pour l’aider au bon moment.</p></div>
-            <div className="feat"><div className="ic">🛡️</div><h3>Vous gardez la main</h3><p className="muted">Matières visibles, objectif du jour, pauses, leçons proposées, export et suppression des données.</p></div>
+            <div className="feat"><div className="ic"><Ico e="🎯" color="currentColor" /></div><h3>Les notions à consolider</h3><p className="muted">EduFun repère les thèmes où l’enfant bute, pour l’aider au bon moment.</p></div>
+            <div className="feat"><div className="ic"><Ico e="🛡️" color="currentColor" /></div><h3>Vous gardez la main</h3><p className="muted">Matières visibles, objectif du jour, pauses, leçons proposées, export et suppression des données.</p></div>
           </div>
           <div className="card"><h3>Ce que vous verrez</h3>
             <div className="kpis" style={{ gridTemplateColumns: '1fr 1fr' }}>
@@ -103,13 +105,13 @@ export default function Landing() {
       <section className="section alt" id="niveaux"><div className="in">
         <span className="eyebrow">Programme</span>
         <h2 className="h-lg mb8">Du CE1 au CM2</h2>
-        <p className="lead mb16">Le CE1 est disponible avec {ce1.lessons} leçons et {ce1.exercises.toLocaleString('fr-FR')} exercices. Le CE2, le CM1 et le CM2 s’enrichissent : leur programme est cadré et les premières leçons de découverte sont jouables.</p>
+        <p className="lead mb16">Le CE1 ({ce1.lessons} leçons) et le CE2 ({ce2.lessons} leçons) sont complets. Le CM1 et le CM2 s’enrichissent : leur programme est cadré et les premières leçons de découverte sont jouables.</p>
         <div className="grid4">
           {LEVELS.map(l => { const s = levelStats(l.id); return (
             <div key={l.id} className="card lvl-card"><div className="big">{l.title}</div><div className="muted small">{l.ages}</div>
               <div className="mt8"><b>{s.themes}</b> <span className="small muted">thèmes au programme</span></div>
               <div><b>{s.lessons}</b> <span className="small muted">leçons jouables</span></div>
-              <span className={`pill mt8 ${l.id === 'ce1' ? 'green' : 'gold'}`}>{l.id === 'ce1' ? 'Programme complet' : 'En construction'}</span></div>
+              <span className={`pill mt8 ${l.id === 'ce1' || l.id === 'ce2' ? 'green' : 'gold'}`}>{l.id === 'ce1' || l.id === 'ce2' ? 'Programme complet' : 'En construction'}</span></div>
           ) })}
         </div>
       </div></section>
@@ -127,9 +129,13 @@ export default function Landing() {
       <footer className="footer"><div className="in">
         <div className="row wrap" style={{ alignItems: 'flex-start' }}>
           <div className="grow"><b style={{ color: '#fff', fontSize: '1.2rem' }}>EduFun</b><p className="small mt8">Une plateforme éducative pour les enfants du CE1 au CM2.</p></div>
-          <div style={{ maxWidth: 420 }}><b style={{ color: '#fff' }}>Sources officielles</b>
-            <ul className="small" style={{ paddingLeft: 18 }}>{Object.values(SOURCES).slice(0, 5).map(s => <li key={s.url}><a href={s.url} target="_blank" rel="noreferrer">{s.title}</a></li>)}</ul>
-            <Link to="/confidentialite" style={{ color: '#fff' }}>Confidentialité et toutes les sources</Link></div>
+          <div style={{ maxWidth: 420 }}>
+            <details className="srcs">
+              <summary>Sources officielles</summary>
+              <ul className="small" style={{ paddingLeft: 18 }}>{Object.values(SOURCES).slice(0, 5).map(s => <li key={s.url}><a href={s.url} target="_blank" rel="noreferrer">{s.title}</a></li>)}</ul>
+              <Link to="/confidentialite" className="small" style={{ color: '#fff' }}>Toutes les sources</Link>
+            </details>
+            <Link to="/confidentialite" className="small" style={{ color: '#fff', display: 'inline-block', marginTop: 8 }}>Confidentialité</Link></div>
         </div>
       </div></footer>
     </div>

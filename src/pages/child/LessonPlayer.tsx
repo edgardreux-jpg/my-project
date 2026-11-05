@@ -9,6 +9,7 @@ import { applySession, BADGES, CHESTS, levelOf } from '../../lib/progress'
 import type { Exercise, Reward } from '../../types'
 import ExerciseView, { sayText } from '../../components/ExerciseView'
 import { Confetti, Modal } from '../../components/common'
+import { Ico, Stars, avatarColor } from '../../components/Icon'
 
 type Phase = 'intro' | 'play' | 'done'
 
@@ -201,7 +202,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
       <div className="player">
         <div className="ptoolbar"><button className="iconbtn" aria-label="Quitter" onClick={() => nav(-1)}><X /></button></div>
         <div className="pbody center" style={{ paddingTop: 30 }}>
-          <div style={{ fontSize: '3.4rem' }}>{diagnostic ? '🧭' : m.emoji}</div>
+          <div style={{ fontSize: '3.4rem', color: diagnostic ? 'var(--teal)' : m.color }}><Ico e={diagnostic ? '🧭' : m.emoji} color="currentColor" /></div>
           <h1 className="h-lg" style={{ margin: '12px 0' }}>{diagnostic ? 'Faisons le point' : lesson!.title}</h1>
           <p className="lead" style={{ margin: '0 auto 8px' }}>{intro}</p>
           {canSpeak() && <button className="btn quiet sm mt8" onClick={() => speak(intro)}><Volume2 size={18} /> Écouter</button>}
@@ -226,21 +227,21 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
         {stars === 3 && <Confetti />}
         <div className="reward">
           <h1 className="h-lg">{diagnostic ? 'Parcours terminé' : stars === 3 ? 'Excellent !' : stars === 2 ? 'Très bien !' : 'Bien joué, tu as terminé !'}</h1>
-          {!diagnostic && <div className="stars mt16" aria-label={`${stars} étoiles sur 3`}>{[1, 2, 3].map(n => <span key={n} className={n <= stars ? 'on' : ''}>⭐</span>)}</div>}
+          {!diagnostic && <div className="stars mt16"><Stars n={stars} size={56} /></div>}
           <p className="lead mt16" style={{ margin: '16px auto' }}>{reward.firstOk} réussites du premier coup sur {reward.total}.</p>
           <div className="wrap" style={{ justifyContent: 'center' }}>
-            <span className="chip">✨ +{reward.xp} XP</span>
-            <span className="chip">🔥 {reward.streak} jour{reward.streak > 1 ? 's' : ''}</span>
+            <span className="chip"><Ico e="✨" /> +{reward.xp} points</span>
+            <span className="chip"><Ico e="🔥" /> {reward.streak} jour{reward.streak > 1 ? 's' : ''}</span>
             <span className="chip">{lv.name}</span>
           </div>
-          {reward.capped && <p className="small muted mt16">Tu as déjà gagné beaucoup d’XP aujourd’hui. C’est le bon moment pour une pause : tu peux continuer sans compter.</p>}
-          {reward.freezeUsed && <p className="small muted mt8">Un gel de série t’a protégé pendant ton absence.</p>}
+          {reward.capped && <p className="small muted mt16">Tu as déjà gagné beaucoup de points aujourd’hui. C’est le bon moment pour une pause : tu peux continuer sans compter.</p>}
+          {reward.freezeUsed && <p className="small muted mt8">Un joker de série t’a protégé pendant ton absence.</p>}
           {reward.levelUp && <div className="note mt16"><b>Nouveau niveau : {lv.name} !</b></div>}
-          {reward.newBadges.map(b => { const d = BADGES.find(x => x.id === b)!; return <div key={b} className="note mt16">{d.emoji} Badge débloqué : <b>{d.title}</b></div> })}
-          {reward.newChests.length > 0 && <div className="note mt16">🎁 Un coffre t’attend dans l’onglet Récompenses ({CHESTS.find(c => c.id === reward.newChests[0])?.title}).</div>}
+          {reward.newBadges.map(b => { const d = BADGES.find(x => x.id === b)!; return <div key={b} className="note mt16 row gap8"><Ico e={d.emoji} size={22} /> Badge débloqué : <b>{d.title}</b></div> })}
+          {reward.newChests.length > 0 && <div className="note mt16 row gap8"><Ico e="🎁" size={22} /> Un coffre t’attend dans l’onglet Récompenses ({CHESTS.find(c => c.id === reward.newChests[0])?.title}).</div>}
           {lesson?.adult && (
             <div className="card mt16" style={{ textAlign: 'left' }}>
-              <h3>👨‍👩‍👧 À faire avec un adulte</h3>
+              <h3 className="row gap8"><Ico e="👨‍👩‍👧" /> À faire avec un adulte</h3>
               <p className="small">{lesson.adult}</p>
             </div>
           )}

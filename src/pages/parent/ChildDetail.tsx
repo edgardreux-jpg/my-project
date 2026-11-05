@@ -11,6 +11,7 @@ import {
 import { LESSONS, SUBJECT_META, lessonById, meta, subjectsOf, themeInfo } from '../../lib/curriculum'
 import { validPin } from '../../lib/auth'
 import type { Child } from '../../types'
+import { Ico, Stars, avatarColor } from '../../components/Icon'
 
 const TABS = [['apercu', 'Aperçu'], ['progression', 'Progression'], ['activite', 'Activité'], ['reglages', 'Réglages']] as const
 
@@ -114,7 +115,7 @@ function Progression({ child }: { child: Child }) {
           const m = SUBJECT_META[s.id]
           return (
             <div key={s.id} className="mastery-row">
-              <b>{m.emoji} {m.name}</b>
+              <b className="row gap8"><span style={{ color: m.color }}><Ico e={m.emoji} color="currentColor" /></span> {m.name}</b>
               <div className="stack-bar" role="img" aria-label={`${s.mastered} maîtrisées, ${s.acquired} acquises, ${s.learning} en cours sur ${s.total}`}>
                 {(['mastered', 'acquired', 'learning', 'none'] as const).map(k => <i key={k} style={{ width: `${(s[k] / s.total) * 100}%`, background: col[k] }} />)}
               </div>
@@ -127,19 +128,19 @@ function Progression({ child }: { child: Child }) {
       <div className="grid2">
         <section className="card"><h3>Notions à consolider</h3>
           {ws.length === 0 ? <Empty emoji="👍" title="Rien d’inquiétant">Aucune notion n’est repérée en difficulté.</Empty> : ws.map(w => (
-            <div key={w.themeId} className="weak"><span style={{ fontSize: '1.5rem' }}>{meta(w.subject).emoji}</span>
+            <div key={w.themeId} className="weak"><span style={{ fontSize: '1.5rem', color: meta(w.subject).color }}><Ico e={meta(w.subject).emoji} color="currentColor" /></span>
               <div className="grow"><b>{w.title}</b><div className="small muted">{meta(w.subject).name} · {Math.round(w.acc * 100)} % de réussite récente</div></div></div>
           ))}
           {missed.length > 0 && <><h3 className="mt16">Questions souvent ratées</h3>{missed.map((m, i) => <div key={i} className="weak"><div className="grow small"><b>{m.prompt}</b><div className="tiny muted">{m.lesson} · {m.count} fois</div></div></div>)}</>}
         </section>
         <section className="card"><h3>Réussites récentes</h3>
           {wins.length === 0 ? <Empty title="Bientôt">Les leçons réussies avec 3 étoiles s’afficheront ici.</Empty> : wins.map(w => (
-            <div key={w.lesson.id} className="weak"><span style={{ fontSize: '1.5rem' }}>{meta(w.lesson.subject).emoji}</span>
+            <div key={w.lesson.id} className="weak"><span style={{ fontSize: '1.5rem', color: meta(w.lesson.subject).color }}><Ico e={meta(w.lesson.subject).emoji} color="currentColor" /></span>
               <div className="grow"><b>{w.lesson.title}</b><div className="small muted">{relDay(w.p.last)}</div></div>
               <span className={`pill ${w.p.mastered ? 'green' : 'gold'}`}>{w.p.mastered ? 'Maîtrisée' : '3 étoiles'}</span></div>
           ))}
           <h3 className="mt16">Badges ({child.badges.length}/{BADGES.length})</h3>
-          <div className="wrap gap8">{child.badges.length ? child.badges.map(b => { const d = BADGES.find(x => x.id === b)!; return <span key={b} className="pill gold" title={d.desc}>{d.emoji} {d.title}</span> }) : <span className="small muted">Aucun pour l’instant.</span>}</div>
+          <div className="wrap gap8">{child.badges.length ? child.badges.map(b => { const d = BADGES.find(x => x.id === b)!; return <span key={b} className="pill gold" title={d.desc}><Ico e={d.emoji} /> {d.title}</span> }) : <span className="small muted">Aucun pour l’instant.</span>}</div>
         </section>
       </div>
     </div>
@@ -213,7 +214,7 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
       </section>
       <section className="card"><h3>Matières visibles</h3>
         <p className="small muted mb8">Masquez une matière pour la retirer de l’espace de {child.nickname}.</p>
-        {subs.map(s => <div key={s} className="toggle"><span>{SUBJECT_META[s].emoji} {SUBJECT_META[s].name}</span>
+        {subs.map(s => <div key={s} className="toggle"><span className="row gap8"><span style={{ color: SUBJECT_META[s].color }}><Ico e={SUBJECT_META[s].emoji} color="currentColor" /></span>{SUBJECT_META[s].name}</span>
           <Switch label={SUBJECT_META[s].name} on={!child.hiddenSubjects.includes(s)} onChange={v => set(c => { c.hiddenSubjects = v ? c.hiddenSubjects.filter(x => x !== s) : [...c.hiddenSubjects, s] })} /></div>)}
         <h3 className="mt24">Données</h3>
         <p className="small muted mb8">Les données restent sur cet appareil. Vous pouvez les exporter ou les supprimer à tout moment.</p>

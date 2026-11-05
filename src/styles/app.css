@@ -283,3 +283,49 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sw::before{content:'';position:absolute;inset:-7px -4px}
 .sizebtn{height:48px!important}
 .ptoolbar .iconbtn{width:48px;height:48px}
+
+/* Icônes vectorielles à la place des emojis */
+.ico{vertical-align:-0.14em;flex:none}
+.chip .ico,.pill .ico{margin-right:2px}
+.starrow{display:inline-flex;gap:2px;align-items:center}
+.feat .ic{color:var(--teal)}
+.badge .e{display:grid;place-items:center;color:var(--teal)}
+.badge.off .e{color:#9AA3AE}
+.srcs summary{cursor:pointer;font-weight:900;color:#fff;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}
+.srcs summary::-webkit-details-marker{display:none}
+.srcs summary::after{content:'';width:8px;height:8px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg);margin-top:-4px;transition:transform .15s}
+.srcs[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+
+/* Cartes de suivi parent : même grille pour chaque enfant */
+.kid{gap:16px;padding:20px}
+.kid-head{display:flex;align-items:center;gap:12px}
+.kid-name{margin:0;font-size:1.2rem}
+.kid-streak{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:99px;background:#FFF1E8;color:#9E3D1C;font-weight:800;font-size:.9rem}
+.kid-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile-stat{background:var(--bg2,#F6F2EA);border-radius:14px;padding:10px 10px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ts-label{display:flex;align-items:center;gap:4px;font-size:.75rem;font-weight:800;color:var(--muted,#5B6472);text-transform:uppercase;letter-spacing:.03em}
+.ts-value{font-size:1.35rem;font-weight:900;line-height:1.15;color:var(--ink,#1F2A3A);white-space:nowrap}
+.ts-of{font-size:.9rem;font-weight:700;color:var(--muted,#5B6472)}
+.ts-sub{font-size:.75rem;color:var(--muted,#5B6472);min-height:2.1em;line-height:1.3}
+.ts-sub .up{color:#2E7D4F;font-weight:800}.ts-sub .down{color:#B3412C;font-weight:800}
+.ts-sub svg{vertical-align:-2px}
+.mini{width:100%;height:28px;margin-top:auto;display:block}
+.mini rect{fill:#CFC8B6}.mini rect.cur{fill:var(--teal)}
+.mini.line polyline{fill:none;stroke:var(--teal);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
+.mini.line .mid{stroke:#E2DCCD;stroke-width:1;stroke-dasharray:3 3;vector-effect:non-scaling-stroke}
+.meter{height:8px;border-radius:99px;background:var(--teal-s);overflow:hidden;margin-top:auto;margin-bottom:10px}
+.meter i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.kid-insight{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;font-size:.88rem;font-weight:700;line-height:1.35}
+.kid-insight svg{flex:none;margin-top:1px}
+.kid-insight.green{background:#E3F2E8;color:#1F5E3A}.kid-insight.gold{background:#FFF4D6;color:#7A5300}.kid-insight.teal,.kid-insight.red{background:var(--teal-s);color:var(--teal-d)}
+.kid-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:400px){.kid-tiles{gap:6px}.tile-stat{padding:8px 7px}.ts-value{font-size:1.15rem}}
+.badge{display:flex;flex-direction:column;align-items:center;gap:4px}
+.badge b{line-height:1.25}
+/* Contrastes (audit UX/UI) */
+@media (max-width:900px){.tabbar a{color:var(--ink2);font-size:.78rem}}
+.badge.off{opacity:1;filter:none;background:#FAF8F3;border-style:dashed}
+.badge.off .e{color:#A7AEB8}
+.badge.off b,.badge.off .muted{color:var(--ink2)}
+.ts-sub .up{color:#236140}
+.badge.off .e svg{stroke:#A7AEB8}

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../state/store'
+import { Ico, avatarColor } from './Icon'
 
 export function Logo({ to }: { to?: string }) {
   const { mode } = useStore()
@@ -19,8 +20,8 @@ export function Logo({ to }: { to?: string }) {
 
 export function Avatar({ emoji, frame = 'none', size = 56 }: { emoji: string; frame?: string; size?: number }) {
   return (
-    <span className={`avatar f-${frame}`} style={{ width: size, height: size, fontSize: size * 0.55 }} aria-hidden="true">
-      {emoji}
+    <span className={`avatar f-${frame}`} style={{ width: size, height: size, fontSize: size * 0.5, color: avatarColor(emoji), background: `color-mix(in srgb, ${avatarColor(emoji)} 14%, #fff)` }} aria-hidden="true">
+      <Ico e={emoji} />
     </span>
   )
 }
@@ -169,7 +170,7 @@ export function LineChart({ labels, series, h = 180 }: { labels: string[]; serie
 export function Empty({ emoji = '🌱', title, children }: { emoji?: string; title: string; children?: ReactNode }) {
   return (
     <div className="center" style={{ padding: '28px 12px' }}>
-      <div style={{ fontSize: '2.4rem' }}>{emoji}</div>
+      <div style={{ fontSize: '2.4rem', color: 'var(--teal)' }}><Ico e={emoji} color="currentColor" /></div>
       <h3 style={{ margin: '8px 0 4px' }}>{title}</h3>
       <div className="muted small">{children}</div>
     </div>

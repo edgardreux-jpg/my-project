@@ -5,6 +5,7 @@ import { SUBJECT_META, lessonsOf, meta, subjectsOf } from '../../lib/curriculum'
 import { dayKey, WEEKDAY_INITIALS, addDays, weekStart, parseDay } from '../../lib/dates'
 import { dueForReview, levelOf, liveStreak, readyChests, recommend, todayCount, visibleSubjects, masteryOf } from '../../lib/progress'
 import { Avatar } from '../../components/common'
+import { Ico, Stars, avatarColor } from '../../components/Icon'
 
 export default function ChildHome() {
   const { child } = useStore()
@@ -30,7 +31,7 @@ export default function ChildHome() {
           <h1 className="h-lg">Salut {child.nickname} !</h1>
           <div className="stats mt8">
             <span className="chip"><Flame size={18} color="#F28D62" /> {liveStreak(child)} jour{liveStreak(child) > 1 ? 's' : ''}</span>
-            <span className="chip">✨ {child.xp} XP</span>
+            <span className="chip"><Ico e="✨" /> {child.xp} points</span>
             <span className="chip">{lv.name}</span>
           </div>
         </div>
@@ -38,7 +39,7 @@ export default function ChildHome() {
 
       {!child.diagnosticDone && (
         <Link to="/enfant/diagnostic" className="card" style={{ display: 'flex', gap: 14, alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-          <span style={{ fontSize: '2rem' }}>🧭</span>
+          <span style={{ fontSize: '2rem', color: 'var(--teal)' }}><Ico e="🧭" /></span>
           <div className="grow"><b>Faisons le point ensemble</b><div className="small muted">Un court parcours pour voir où tu en es. Sans note.</div></div>
           <span className="pill teal">Commencer</span>
         </Link>
@@ -66,17 +67,17 @@ export default function ChildHome() {
             const on = learned.has(d)
             return (
               <div key={d} className="center">
-                <div style={{ width: 38, height: 38, borderRadius: '50%', display: 'grid', placeItems: 'center', background: on ? 'var(--gold)' : parseDay(d) > new Date() ? '#fff' : 'var(--bg2)', border: d === today ? '3px solid var(--teal)' : '3px solid transparent' }}>{on ? '🔥' : ''}</div>
+                <div style={{ width: 38, height: 38, borderRadius: '50%', display: 'grid', placeItems: 'center', background: on ? 'var(--gold)' : parseDay(d) > new Date() ? '#fff' : 'var(--bg2)', border: d === today ? '3px solid var(--teal)' : '3px solid transparent' }}>{on ? <Ico e="🔥" color="#fff" size={20} /> : ''}</div>
                 <div className="tiny muted mt8">{WEEKDAY_INITIALS[i]}</div>
               </div>
             )
           })}
         </div>
-        <p className="tiny muted mt8">Gels de série disponibles : {child.streak.freezes}. Un jour manqué ne casse pas ta série quand tu en as un.</p>
+        <p className="tiny muted mt8">Jokers de série : {child.streak.freezes}. Un joker protège ta série si tu oublies un jour.</p>
       </section>
 
-      {chests.length > 0 && <Link to="/enfant/recompenses" className="note" style={{ textDecoration: 'none', color: 'inherit' }}>🎁 {chests.length} coffre{chests.length > 1 ? 's' : ''} à ouvrir !</Link>}
-      {due.length > 0 && <Link to={`/enfant/lecon/${due[0].id}`} className="note" style={{ textDecoration: 'none', color: 'inherit' }}>🧠 Un petit rappel ? Réviser « {due[0].title} »</Link>}
+      {chests.length > 0 && <Link to="/enfant/recompenses" className="note row gap8" style={{ textDecoration: 'none', color: 'inherit' }}><Ico e="🎁" size={22} /> {chests.length} coffre{chests.length > 1 ? 's' : ''} à ouvrir !</Link>}
+      {due.length > 0 && <Link to={`/enfant/lecon/${due[0].id}`} className="note row gap8" style={{ textDecoration: 'none', color: 'inherit' }}><Ico e="🧠" size={22} /> Un petit rappel ? Réviser « {due[0].title} »</Link>}
 
       <section>
         <h3 className="mb8">Mes matières</h3>
@@ -87,7 +88,7 @@ export default function ChildHome() {
             const done = ls.filter(l => masteryOf(child.lessons[l.id]) !== 'none').length
             return (
               <Link key={sid} to={`/enfant/matiere/${sid}`} className="subj">
-                <span className="em" style={{ background: m.soft }}>{m.emoji}</span>
+                <span className="em" style={{ background: m.soft, color: m.color }}><Ico e={m.emoji} color="currentColor" /></span>
                 <b>{m.name}</b>
                 <span className="tiny muted">{m.blurb}</span>
                 <div className="bar"><i style={{ width: `${ls.length ? (done / ls.length) * 100 : 0}%`, background: m.color }} /></div>
