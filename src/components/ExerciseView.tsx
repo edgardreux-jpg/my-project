@@ -16,11 +16,24 @@ interface Props {
   eliminated?: string[]
 }
 
+/** Texte lu à voix haute : la consigne, et pour un QCM les réponses proposées. */
+export function sayText(ex: Exercise): string {
+  let t = ex.prompt
+  if (ex.type === 'qcm' && ex.choices?.length) {
+    const labels = ex.choices.map(c => c.label)
+    t += ' ' + (labels.length > 1 ? labels.slice(0, -1).join(', ') + ', ou ' + labels[labels.length - 1] : labels[0]) + ' ?'
+  }
+  return t
+}
+
 export default function ExerciseView({ ex, answer, setAnswer, locked, status, reveal, onEnter, eliminated }: Props) {
   return (
     <div>
       {ex.passage && <div className="passage">{ex.passage}</div>}
-      <h2 className="q-title">{ex.prompt}</h2>
+      <div className="q-head">
+        <h2 className="q-title">{ex.prompt}</h2>
+        {canSpeak() && ex.type !== 'dictation' && <button type="button" className="saybtn" aria-label="Écouter la consigne" onClick={() => speak(sayText(ex))}><Volume2 size={24} /></button>}
+      </div>
       {ex.visual && <Visual v={ex.visual} />}
       <Body ex={ex} answer={answer} setAnswer={setAnswer} locked={locked} status={status} reveal={reveal} onEnter={onEnter} eliminated={eliminated} />
     </div>
@@ -67,7 +80,7 @@ function Body({ ex, answer, setAnswer, locked, status, reveal, onEnter, eliminat
 
 function TextAnswer({ ex, answer, setAnswer, locked, status, onEnter }: Pick<Props, 'ex' | 'answer' | 'setAnswer' | 'locked' | 'status' | 'onEnter'>) {
   const ref = useRef<HTMLInputElement>(null)
-  useEffect(() => { if (!locked) ref.current?.focus() }, [locked, ex.id])
+  useEffect(() => { if (!locked) { ref.current?.focus(); ref.current?.select() } }, [locked, ex.id])
   const num = ex.type === 'number_input'
   return (
     <div className="col" style={{ alignItems: 'stretch' }}>

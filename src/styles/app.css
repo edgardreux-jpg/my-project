@@ -264,3 +264,22 @@ button{font:inherit;color:inherit;cursor:pointer}
   .subjects{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .badge .e{font-size:1.8rem}
 }
+
+/* Audit UX : rien ne dépasse sur téléphone, cibles tactiles plus grandes */
+.ptop .in{flex-wrap:wrap}
+@media (max-width:560px){
+  .ptop .in{gap:8px;padding:8px 12px}
+  .ptop .in .btn .lbl,.ptop .in .pill{display:none}
+  .picker{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .pick{padding:16px 10px}
+}
+.sw{width:58px;height:36px}.sw::after{width:30px;height:30px}.sw.on::after{left:25px}
+.toggle{min-height:48px}
+.sizebtn{min-width:48px;min-height:48px}
+.q-head{display:flex;align-items:flex-start;gap:10px}
+.q-head .q-title{flex:1}
+.saybtn{flex:none;width:48px;height:48px;border-radius:14px;border:2px solid var(--line2);background:#fff;display:grid;place-items:center;color:var(--teal);cursor:pointer}
+.saybtn:active{transform:translateY(1px)}
+.sw::before{content:'';position:absolute;inset:-7px -4px}
+.sizebtn{height:48px!important}
+.ptoolbar .iconbtn{width:48px;height:48px}

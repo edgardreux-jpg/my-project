@@ -50,10 +50,11 @@ export default function Me() {
       <section className="card">
         <h3>Confort</h3>
         <div className="toggle"><div><b>Sons</b><div className="tiny muted">Petits bruitages pendant les leçons</div></div><Switch label="Sons" on={child.sound} onChange={v => set(c => { c.sound = v })} /></div>
+        <div className="toggle"><div><b>Lire les consignes</b><div className="tiny muted">La consigne est lue à voix haute à chaque question</div></div><Switch label="Lire les consignes" on={child.readAloud ?? child.grade === 'ce1'} onChange={v => set(c => { c.readAloud = v })} /></div>
         <div className="toggle"><div><b>Passage automatique</b><div className="tiny muted">Aller tout de suite à la question suivante après une bonne réponse</div></div><Switch label="Passage automatique" on={child.autoNext !== false} onChange={v => set(c => { c.autoNext = v })} /></div>
         <div className="toggle"><div><b>Police facile à lire</b><div className="tiny muted">Lettres plus distinctes, utile en cas de dyslexie</div></div><Switch label="Police facile à lire" on={child.font === 'dys'} onChange={v => set(c => { c.font = v ? 'dys' : 'default' })} /></div>
         <div className="toggle"><div><b>Taille du texte</b></div>
-          <div className="row gap8">{[1, 1.15, 1.3].map((s, i) => <button key={s} className={`btn sm ${child.scale === s ? '' : 'ghost'}`} onClick={() => set(c => { c.scale = s })} aria-label={`Taille ${i + 1}`}>{'A'.repeat(i + 1)}</button>)}</div>
+          <div className="row gap8">{[1, 1.15, 1.3].map((s, i) => <button key={s} className={`btn sm sizebtn ${child.scale === s ? '' : 'ghost'}`} onClick={() => set(c => { c.scale = s })} aria-label={`Taille ${i + 1}`}>{'A'.repeat(i + 1)}</button>)}</div>
         </div>
       </section>
       <button className="btn quiet block" onClick={() => { switchProfile(); nav('/profils') }}>Changer de profil</button>

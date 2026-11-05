@@ -33,8 +33,8 @@ export default function ParentShell() {
         <span className="pill teal">Espace parent</span>
         <div className="grow" />
         <span className="small muted" style={{ display: 'none' }}>{account.name}</span>
-        <Link className="btn ghost sm" to="/profils"><Users size={16} /> Profils enfants</Link>
-        <button className="btn quiet sm" onClick={() => { logout(); nav('/') }}><LogOut size={16} /> Déconnexion</button>
+        <Link className="btn ghost sm" to="/profils"><Users size={16} /><span className="lbl"> Profils enfants</span></Link>
+        <button className="btn quiet sm" aria-label="Déconnexion" onClick={() => { logout(); nav('/') }}><LogOut size={16} /><span className="lbl"> Déconnexion</span></button>
       </div></header>
       <main className="pmain"><Outlet /></main>
       {syncing && <div className="toast" style={{ top: 'auto', bottom: 16 }} role="status">Enregistrement…</div>}

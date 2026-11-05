@@ -60,7 +60,7 @@ export default function SubjectPath() {
                     {!l ? <Lock size={26} /> : mastery === 'none' ? (isNext ? '▶' : '★') : <Check size={32} strokeWidth={4} />}
                     {prog && prog.best > 0 && <span className="st">{'⭐'.repeat(prog.best)}</span>}
                   </span>
-                  <span className="node-label"><b>{l ? l.title : it.themeTitle}</b><span className="tiny muted">{l ? (mastery === 'mastered' ? 'Maîtrisé' : mastery === 'none' ? `${l.ex.length} exercices` : 'Refaire pour progresser') : 'Bientôt disponible'}</span></span>
+                  <span className="node-label"><b>{l ? l.title : it.themeTitle}</b><span className="tiny muted">{l ? (mastery === 'mastered' ? 'Maîtrisé' : mastery === 'none' ? `${l.ex.length} exercices` : (prog && prog.best >= 3 ? 'À revoir plus tard pour la maîtriser' : 'Rejoue pour gagner des étoiles')) : 'Bientôt disponible'}</span></span>
                 </>
               )
               return l

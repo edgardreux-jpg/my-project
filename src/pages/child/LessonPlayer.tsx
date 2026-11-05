@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Volume2, X } from 'lucide-react'
+import { BookOpen, Volume2, X } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { DIAGNOSTICS, lessonById, meta, pathFor } from '../../lib/curriculum'
 import { canCheck, expectedLabel, isCorrect } from '../../lib/exercise'
 import { canSpeak, sfx, speak, stopSpeaking } from '../../lib/audio'
 import { applySession, BADGES, CHESTS, levelOf } from '../../lib/progress'
 import type { Exercise, Reward } from '../../types'
-import ExerciseView from '../../components/ExerciseView'
+import ExerciseView, { sayText } from '../../components/ExerciseView'
 import { Confetti, Modal } from '../../components/common'
 
 type Phase = 'intro' | 'play' | 'done'
@@ -42,6 +42,8 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   const [done, setDone] = useState(0)
   const [reward, setReward] = useState<Reward | null>(null)
   const [quit, setQuit] = useState(false)
+  const [review, setReview] = useState(false)
+  const [handled, setHandled] = useState(0)
   const [shake, setShake] = useState(false)
   const start = useRef(Date.now())
   const saved = useRef(false)
@@ -86,6 +88,16 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     return () => { window.removeEventListener('keydown', onKey); clearTimeout(bufT.current) }
   }, [])
 
+  // Lecture automatique de la consigne (activée par défaut en CE1)
+  const curEx = phase === 'play' ? exercises[queue[0]] : undefined
+  const readAloud = child ? (child.readAloud ?? child.grade === 'ce1') : false
+  useEffect(() => {
+    if (!curEx || !readAloud || !canSpeak() || curEx.type === 'dictation') return
+    const t = setTimeout(() => speak(sayText(curEx)), 250)
+    return () => clearTimeout(t)
+  }, [curEx?.id, readAloud, phase])
+  useEffect(() => () => stopSpeaking(), [])
+
   if (!child || (!diagnostic && !lesson) || total === 0) {
     return (
       <div className="reward"><h2>Cette leçon n’est pas disponible.</h2>
@@ -103,15 +115,12 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     } else {
       sfx('oops', sound)
       setShake(true); setTimeout(() => setShake(false), 400)
-      if (attempt === 0 && cur.type === 'qcm') {
-        // QCM : on grise le mauvais choix et on laisse choisir directement, sans bouton « Réessayer »
+      if (attempt === 0) {
+        // Premier essai raté : indice en bandeau et on corrige directement, sans bouton « Réessayer »
         setMissed(x => [...x, cur.id])
-        setEliminated([given]); setTip(cur.hint || 'Regarde bien les autres réponses.')
-        setAttempt(1); setAnswer(undefined)
-      } else if (attempt === 0) {
-        setMissed(x => [...x, cur.id])
-        setChecked({ ok: false, hintOnly: !!cur.hint })
-        if (!cur.hint) setChecked({ ok: false, hintOnly: false })
+        setTip(cur.hint || 'Regarde bien et essaie encore.')
+        setAttempt(1)
+        if (cur.type === 'qcm') { setEliminated([given]); setAnswer(undefined) }
       } else {
         setChecked({ ok: false, hintOnly: false })
       }
@@ -134,6 +143,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     const wasOk = checked.ok
     if (!wasOk && !requeued.includes(idx)) { q = [...q, idx]; setRequeued(r => [...r, idx]) }
     else setDone(d => d + 1)
+    setHandled(h => h + 1)
     setQueue(q); setChecked(null); setAnswer(undefined); setAttempt(0); setEliminated([]); setTip(null)
     if (q.length === 0) finish()
   }
@@ -270,13 +280,14 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     delay: Math.min(3800, 1200 + (cur?.explanation?.length ?? 0) * 28),
   }
 
-  const pct = (done / total) * 100
+  const pct = Math.min(100, (handled / (total + requeued.length)) * 100)
   return (
     <div className="player">
       <div className="ptoolbar">
         <button className="iconbtn" aria-label="Quitter la leçon" onClick={() => setQuit(true)}><X /></button>
         <div className="bar" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${pct}%` }} /></div>
-        <span className="tiny muted">{Math.min(done + 1, total)}/{total}</span>
+        {!diagnostic && lesson && <button className="iconbtn" aria-label="Revoir la leçon" title="Revoir la leçon" onClick={() => { stopSpeaking(); setReview(true) }}><BookOpen /></button>}
+        <span className="tiny muted">{Math.min(handled + 1, total)}/{total}</span>
       </div>
       <div className={`pbody ${shake ? 'shake' : ''}`}>
         {cur && (
@@ -285,12 +296,22 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
             reveal={!!checked && !checked.ok && attempt > 0} onEnter={() => check()} />
         )}
       </div>
-      {tip && !checked && <div className="note" role="status" style={{ margin: '0 auto', maxWidth: 560 }}><b>Pas tout à fait, essaie encore.</b> <span className="small">Indice : {tip}</span></div>}
+      {tip && !checked && cur?.type === 'qcm' && <div className="note" role="status" style={{ margin: '0 auto', maxWidth: 560 }}><b>Pas tout à fait, essaie encore.</b> <span className="small">Indice : {tip}</span></div>}
       {checked ? feedbackNode() : cur?.type === 'qcm' ? null : (
-        <div className="fb"><div className="in">
-          <span className="grow" />
+        <div className={`fb ${tip ? 'hint' : ''}`}><div className="in">
+          {tip ? <div className="grow" role="status"><b>Pas tout à fait, essaie encore.</b><div className="small">Indice : {tip}</div></div> : <span className="grow" />}
           <button className="btn lg" disabled={!cur || !canCheck(cur, answer)} onClick={() => check()}>Vérifier</button>
         </div></div>
+      )}
+      {review && lesson && (
+        <Modal label="Revoir la leçon" onClose={() => { stopSpeaking(); setReview(false) }}>
+          <h2>{lesson.title}</h2>
+          <p className="lead mt8">{lesson.intro}</p>
+          <div className="col mt16">
+            {canSpeak() && <button className="btn quiet block" onClick={() => speak(lesson.intro)}><Volume2 size={18} /> Écouter</button>}
+            <button className="btn block" autoFocus onClick={() => { stopSpeaking(); setReview(false) }}>Retour à l’exercice</button>
+          </div>
+        </Modal>
       )}
       {quit && (
         <Modal label="Quitter la leçon" onClose={() => setQuit(false)}>
