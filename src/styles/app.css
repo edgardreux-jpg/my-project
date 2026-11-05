@@ -260,3 +260,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   .mastery-row{grid-template-columns:1fr}
   .kpis{grid-template-columns:1fr 1fr}
 }
+@media (max-width:720px){
+  .subjects{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .badge .e{font-size:1.8rem}
+}

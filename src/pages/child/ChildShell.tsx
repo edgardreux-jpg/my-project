@@ -1,3 +1,4 @@
+import { applyVoicePrefs } from '../../lib/audio'
 import { useEffect, useState } from 'react'
 import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { Home, Gift, UserRound, Map as MapIcon, Lock, Users } from 'lucide-react'
@@ -18,6 +19,10 @@ export default function ChildShell() {
     document.documentElement.style.setProperty('--scale', String(child.scale))
     return () => { document.body.classList.remove('dys'); document.documentElement.style.setProperty('--scale', '1') }
   }, [child?.font, child?.scale, child])
+
+  useEffect(() => {
+    if (child) applyVoicePrefs(child.voice, child.rate)
+  }, [child?.id, child?.voice, child?.rate])
 
   useEffect(() => {
     if (!child || !child.breakMin) return

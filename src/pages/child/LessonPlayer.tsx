@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Volume2, X } from 'lucide-react'
 import { useStore } from '../../state/store'
-import { DIAGNOSTICS, lessonById, meta } from '../../lib/curriculum'
+import { DIAGNOSTICS, lessonById, meta, pathFor } from '../../lib/curriculum'
 import { canCheck, expectedLabel, isCorrect } from '../../lib/exercise'
 import { canSpeak, sfx, speak, stopSpeaking } from '../../lib/audio'
 import { applySession, BADGES, CHESTS, levelOf } from '../../lib/progress'
@@ -28,7 +28,10 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   )
   const m = meta(lesson?.subject ?? 'ma')
 
-  const [phase, setPhase] = useState<Phase>('intro')
+  // Une leçon déjà faite démarre directement (pas d'écran d'intro à chaque fois)
+  const [phase, setPhase] = useState<Phase>(() => (!diagnostic && lesson && (child?.lessons[lesson.id]?.done ?? 0) > 0 ? 'play' : 'intro'))
+  const [eliminated, setEliminated] = useState<string[]>([])
+  const [tip, setTip] = useState<string | null>(null)
   const [queue, setQueue] = useState<number[]>(() => exercises.map((_, i) => i))
   const [attempt, setAttempt] = useState(0)
   const [answer, setAnswer] = useState<any>(undefined)
@@ -49,6 +52,30 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
 
   useEffect(() => () => stopSpeaking(), [])
 
+  // Le dernier rendu expose ses actions aux effets ci-dessous (clavier, passage automatique)
+  const api = useRef<{ next?: () => void; check?: () => void; retry?: () => void; pick?: (a: any) => void; delay?: number }>({})
+
+  // Bonne réponse : passage automatique à la suite, le temps de lire l'explication
+  useEffect(() => {
+    if (!checked?.ok || child?.autoNext === false) return
+    const t = setTimeout(() => api.current.next?.(), api.current.delay ?? 1600)
+    return () => clearTimeout(t)
+  }, [checked, child?.autoNext])
+
+  // Clavier : Entrée valide ou continue, 1 à 9 choisissent une réponse de QCM
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      if (t && ['INPUT', 'TEXTAREA', 'BUTTON', 'SELECT'].includes(t.tagName)) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const a = api.current
+      if (e.key === 'Enter') { e.preventDefault(); a.check?.(); a.next?.() ; return }
+      if (/^[1-9]$/.test(e.key)) a.pick?.(Number(e.key) - 1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   if (!child || (!diagnostic && !lesson) || total === 0) {
     return (
       <div className="reward"><h2>Cette leçon n’est pas disponible.</h2>
@@ -66,7 +93,12 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     } else {
       sfx('oops', sound)
       setShake(true); setTimeout(() => setShake(false), 400)
-      if (attempt === 0) {
+      if (attempt === 0 && cur.type === 'qcm') {
+        // QCM : on grise le mauvais choix et on laisse choisir directement, sans bouton « Réessayer »
+        setMissed(x => [...x, cur.id])
+        setEliminated([given]); setTip(cur.hint || 'Regarde bien les autres réponses.')
+        setAttempt(1); setAnswer(undefined)
+      } else if (attempt === 0) {
         setMissed(x => [...x, cur.id])
         setChecked({ ok: false, hintOnly: !!cur.hint })
         if (!cur.hint) setChecked({ ok: false, hintOnly: false })
@@ -92,7 +124,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     const wasOk = checked.ok
     if (!wasOk && !requeued.includes(idx)) { q = [...q, idx]; setRequeued(r => [...r, idx]) }
     else setDone(d => d + 1)
-    setQueue(q); setChecked(null); setAnswer(undefined); setAttempt(0)
+    setQueue(q); setChecked(null); setAnswer(undefined); setAttempt(0); setEliminated([]); setTip(null)
     if (q.length === 0) finish()
   }
 
@@ -154,7 +186,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
           <p className="lead" style={{ margin: '0 auto 8px' }}>{intro}</p>
           {canSpeak() && <button className="btn quiet sm mt8" onClick={() => speak(intro)}><Volume2 size={18} /> Écouter</button>}
           <p className="muted small mt16">{total} exercices · environ {Math.max(2, Math.round(total * 0.7))} minutes</p>
-          <button className="btn lg mt16" onClick={() => { stopSpeaking(); sfx('tap', sound); start.current = Date.now(); setPhase('play') }}>C’est parti</button>
+          <button className="btn lg mt16" autoFocus onClick={() => { stopSpeaking(); sfx('tap', sound); start.current = Date.now(); setPhase('play') }}>C’est parti</button>
         </div>
       </div>
     )
@@ -163,6 +195,12 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   if (phase === 'done' && reward) {
     const stars = reward.stars
     const lv = levelOf(child.xp)
+    const nextLesson = (() => {
+      if (!lesson) return null
+      const items = pathFor(child.grade, lesson.subject).flatMap(g => g.items).filter(i => i.lesson)
+      const i = items.findIndex(x => x.lesson!.id === lesson.id)
+      return i >= 0 ? items[i + 1]?.lesson ?? null : null
+    })()
     return (
       <div className="player">
         {stars === 3 && <Confetti />}
@@ -187,12 +225,26 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
             </div>
           )}
           <div className="col mt24">
-            <button className="btn lg block" onClick={() => nav('/enfant')}>Continuer</button>
+            {nextLesson
+              ? <button className="btn lg block" autoFocus onClick={() => nav(`/enfant/lecon/${nextLesson.id}`)}>Leçon suivante</button>
+              : <button className="btn lg block" autoFocus onClick={() => nav('/enfant')}>Continuer</button>}
+            {nextLesson && <button className="btn quiet block" onClick={() => nav('/enfant')}>Accueil</button>}
             {lesson && <button className="btn quiet block" onClick={() => nav(`/enfant/matiere/${lesson.subject}`)}>Retour au parcours</button>}
           </div>
         </div>
       </div>
     )
+  }
+
+  api.current = {
+    next: () => { if (phase === 'play' && checked) { if (!checked.ok && attempt === 0 && cur?.type !== 'qcm') retry(); else next() } },
+    check: () => { if (phase === 'play' && !checked) check() },
+    pick: (n: number) => {
+      if (phase !== 'play' || checked || !cur || cur.type !== 'qcm') return
+      const c = cur.choices?.[n]
+      if (c && !eliminated.includes(c.id)) pick(c.id)
+    },
+    delay: Math.min(3800, 1200 + (cur?.explanation?.length ?? 0) * 28),
   }
 
   const pct = (done / total) * 100
@@ -205,12 +257,13 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
       </div>
       <div className={`pbody ${shake ? 'shake' : ''}`}>
         {cur && (
-          <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={pick}
+          <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={pick} eliminated={eliminated}
             locked={!!checked && (checked.ok || attempt > 0)} status={checked ? checked.ok : null}
             reveal={!!checked && !checked.ok && attempt > 0} onEnter={() => check()} />
         )}
       </div>
-      {checked ? feedbackNode() : (
+      {tip && !checked && <div className="note" role="status" style={{ margin: '0 auto', maxWidth: 560 }}><b>Pas tout à fait, essaie encore.</b> <span className="small">Indice : {tip}</span></div>}
+      {checked ? feedbackNode() : cur?.type === 'qcm' ? null : (
         <div className="fb"><div className="in">
           <span className="grow" />
           <button className="btn lg" disabled={!cur || !canCheck(cur, answer)} onClick={() => check()}>Vérifier</button>

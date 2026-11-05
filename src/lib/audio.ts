@@ -71,20 +71,39 @@ export function listVoices(lang = 'fr'): SpeechSynthesisVoice[] {
     .sort((a, b) => voiceScore(b) - voiceScore(a))
 }
 
-export const getVoiceName = () => lsGet(VKEY) || ''
-export const setVoiceName = (n: string) => lsSet(VKEY, n)
-export const getRate = () => Number(lsGet(RKEY) || 0.95)
-export const setRate = (r: number) => lsSet(RKEY, String(r))
+let prefVoice = lsGet(VKEY) || ''
+let prefRate = Number(lsGet(RKEY) || 0.95)
 
-function pickVoice(lang: string): SpeechSynthesisVoice | undefined {
-  const base = lang.slice(0, 2)
-  const all = listVoices(base)
-  const chosen = getVoiceName()
-  if (base === 'fr' && chosen) {
-    const c = all.find(v => v.name === chosen)
+/** Applique les réglages de voix du profil enfant (synchronisés avec le compte). */
+export function applyVoicePrefs(voice?: string, rate?: number) {
+  if (voice !== undefined) { prefVoice = voice; lsSet(VKEY, voice) }
+  if (rate !== undefined) { prefRate = rate; lsSet(RKEY, String(rate)) }
+}
+
+export const getVoiceName = () => prefVoice
+export const getRate = () => prefRate
+
+/** Voix effectivement utilisée en français : celle choisie, sinon la plus naturelle (comme dans la liste). */
+export function effectiveVoice(lang = 'fr'): SpeechSynthesisVoice | undefined {
+  const all = listVoices(lang)
+  if (lang === 'fr' && prefVoice) {
+    const c = all.find(v => v.name === prefVoice)
     if (c) return c
   }
-  return all.find(v => v.lang.toLowerCase() === lang.toLowerCase()) ?? all[0]
+  return all[0]
+}
+
+function pickVoice(lang: string): SpeechSynthesisVoice | undefined {
+  return effectiveVoice(lang.slice(0, 2))
+}
+
+function whenVoices(fn: () => void) {
+  const synth = window.speechSynthesis
+  if (synth.getVoices().length > 0) return fn()
+  let done = false
+  const go = () => { if (done) return; done = true; synth.removeEventListener('voiceschanged', go); fn() }
+  synth.addEventListener('voiceschanged', go)
+  setTimeout(go, 600)
 }
 
 export function speak(text: string, lang = 'fr-FR') {
@@ -92,13 +111,15 @@ export function speak(text: string, lang = 'fr-FR') {
   try {
     const synth = window.speechSynthesis
     synth.cancel()
-    const u = new SpeechSynthesisUtterance(text)
-    u.lang = lang
-    u.rate = lang.startsWith('en') ? Math.min(getRate(), 0.9) : getRate()
-    u.pitch = 1.02
-    const v = pickVoice(lang)
-    if (v) u.voice = v
-    synth.speak(u)
+    whenVoices(() => {
+      const u = new SpeechSynthesisUtterance(text)
+      u.lang = lang
+      u.rate = lang.startsWith('en') ? Math.min(prefRate, 0.9) : prefRate
+      u.pitch = 1.02
+      const v = pickVoice(lang)
+      if (v) u.voice = v
+      synth.speak(u)
+    })
   } catch {
     /* la lecture audio est un confort, jamais bloquante */
   }

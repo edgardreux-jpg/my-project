@@ -13,20 +13,21 @@ interface Props {
   /** affiche la bonne réponse (après la seconde erreur) */
   reveal: boolean
   onEnter: () => void
+  eliminated?: string[]
 }
 
-export default function ExerciseView({ ex, answer, setAnswer, locked, status, reveal, onEnter }: Props) {
+export default function ExerciseView({ ex, answer, setAnswer, locked, status, reveal, onEnter, eliminated }: Props) {
   return (
     <div>
       {ex.passage && <div className="passage">{ex.passage}</div>}
       <h2 className="q-title">{ex.prompt}</h2>
       {ex.visual && <Visual v={ex.visual} />}
-      <Body ex={ex} answer={answer} setAnswer={setAnswer} locked={locked} status={status} reveal={reveal} onEnter={onEnter} />
+      <Body ex={ex} answer={answer} setAnswer={setAnswer} locked={locked} status={status} reveal={reveal} onEnter={onEnter} eliminated={eliminated} />
     </div>
   )
 }
 
-function Body({ ex, answer, setAnswer, locked, status, reveal, onEnter }: Props) {
+function Body({ ex, answer, setAnswer, locked, status, reveal, onEnter, eliminated }: Props) {
   switch (ex.type) {
     case 'qcm':
       return (
@@ -34,10 +35,12 @@ function Body({ ex, answer, setAnswer, locked, status, reveal, onEnter }: Props)
           {ex.choices!.map((c, i) => {
             const sel = answer === c.id
             let cls = sel ? 'sel' : ''
+            const gone = !!eliminated?.includes(c.id)
+            if (gone) cls = 'ko'
             if (locked && sel) cls = status ? 'ok' : 'ko'
             if (locked && reveal && c.id === ex.expected) cls = 'ok'
             return (
-              <button key={c.id} role="radio" aria-checked={sel} disabled={locked} className={`opt ${cls}`} onClick={() => setAnswer(c.id)}>
+              <button key={c.id} role="radio" aria-checked={sel} disabled={locked || gone} className={`opt ${cls}`} onClick={() => setAnswer(c.id)}>
                 <span className="k">{i + 1}</span>{c.label}
               </button>
             )

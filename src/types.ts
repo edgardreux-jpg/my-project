@@ -85,6 +85,9 @@ export interface Child {
   goal: 1 | 2 | 3
   breakMin: number          // 0 = pas de rappel
   sound: boolean
+  autoNext?: boolean
+  voice?: string
+  rate?: number        // passage automatique après une bonne réponse (par défaut oui)
   font: 'default' | 'dys'
   scale: number
   hiddenSubjects: string[]
