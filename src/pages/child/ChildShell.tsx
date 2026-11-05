@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { Home, Gift, UserRound, Map as MapIcon, Lock, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
-import { Avatar, Modal, Toast } from '../../components/common'
+import { Avatar, Logo, Modal, Toast } from '../../components/common'
 
 export default function ChildShell() {
   const { child, mode, leaveChild, account, switchProfile, loading } = useStore()
@@ -43,6 +43,7 @@ export default function ChildShell() {
   return (
     <div className="cshell">
       <aside className="side">
+        <div style={{ padding: '4px 8px 12px' }}><Logo /></div>
         <div className="row" style={{ padding: '4px 8px 14px' }}>
           <Avatar emoji={child.avatar} frame={child.frame} size={46} />
           <div><b>{child.nickname}</b><div className="tiny muted">{child.grade.toUpperCase()}</div></div>

@@ -1,15 +1,18 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { useStore } from '../state/store'
 
-export function Logo({ to = '/' }: { to?: string }) {
+export function Logo({ to }: { to?: string }) {
+  const { mode } = useStore()
+  const dest = to ?? (mode === 'parent' ? '/parent' : mode === 'child' ? '/enfant' : mode === 'locked' ? '/profils' : '/')
   return (
-    <Link to={to} className="logo" aria-label="Pépite, accueil">
+    <Link to={dest} className="logo" aria-label="EduFun, accueil">
       <svg viewBox="0 0 32 32" aria-hidden="true">
         <path d="M16 2 28 10 24 28H8L4 10Z" fill="#F5C65D" stroke="#D9A23A" strokeWidth="2" strokeLinejoin="round" />
         <path d="M16 2 12 12 16 28 20 12Z" fill="#FFE59A" />
         <path d="M4 10h24" stroke="#D9A23A" strokeWidth="2" />
       </svg>
-      Pépite
+      EduFun
     </Link>
   )
 }

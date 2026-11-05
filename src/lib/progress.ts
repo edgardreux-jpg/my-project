@@ -12,7 +12,7 @@ export const LEVEL_STEPS = [
   { name: 'Explorateur', xp: 200 },
   { name: 'Aventurier', xp: 400 },
   { name: 'Chercheur d’or', xp: 700 },
-  { name: 'Maître des pépites', xp: 1100 },
+  { name: 'Maître EduFun', xp: 1100 },
 ]
 
 export function levelOf(xp: number) {

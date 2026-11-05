@@ -193,7 +193,7 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
   const subs = subjectsOf(child.grade)
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(child, null, 2)], { type: 'application/json' })
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `pepite-${child.nickname}.json`; a.click()
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `edufun-${child.nickname}.json`; a.click()
     URL.revokeObjectURL(a.href)
   }
   return (

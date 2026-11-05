@@ -88,7 +88,7 @@ export default function Landing() {
         <div className="grid2">
           <div className="col">
             <div className="feat"><div className="ic"><LC size={24} /></div><h3>L’évolution, semaine après semaine</h3><p className="muted">Temps passé, réussite au premier essai, jours actifs, comparés à la période précédente.</p></div>
-            <div className="feat"><div className="ic">🎯</div><h3>Les notions à consolider</h3><p className="muted">Pépite repère les thèmes où l’enfant bute, pour l’aider au bon moment.</p></div>
+            <div className="feat"><div className="ic">🎯</div><h3>Les notions à consolider</h3><p className="muted">EduFun repère les thèmes où l’enfant bute, pour l’aider au bon moment.</p></div>
             <div className="feat"><div className="ic">🛡️</div><h3>Vous gardez la main</h3><p className="muted">Matières visibles, objectif du jour, pauses, leçons proposées, export et suppression des données.</p></div>
           </div>
           <div className="card"><h3>Ce que vous verrez</h3>
@@ -118,7 +118,7 @@ export default function Landing() {
         <h2 className="h-lg mb16">Questions fréquentes</h2>
         <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons. Dans cette version, tout est conservé sur l’appareil, rien n’est transmis.</p></details>
         <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non sans le mot de passe du compte. Le profil enfant s’ouvre avec un code secret à 4 chiffres.</p></details>
-        <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. Pépite est un complément et ne remplace pas l’école ni une évaluation.</p></details>
+        <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EduFun est un complément et ne remplace pas l’école ni une évaluation.</p></details>
         <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et l’exercice revient plus tard.</p></details>
         <details><summary>Peut-on suivre plusieurs enfants ?</summary><p>Oui, avec un profil par enfant et une vue d’ensemble pour la famille.</p></details>
         <details><summary>Les données sont-elles synchronisées entre appareils ?</summary><p>Pas encore. Elles restent sur l’appareil utilisé. Vous pouvez exporter la progression d’un enfant.</p></details>
@@ -126,7 +126,7 @@ export default function Landing() {
 
       <footer className="footer"><div className="in">
         <div className="row wrap" style={{ alignItems: 'flex-start' }}>
-          <div className="grow"><b style={{ color: '#fff', fontSize: '1.2rem' }}>Pépite</b><p className="small mt8">Une plateforme éducative pour les enfants du CE1 au CM2.</p></div>
+          <div className="grow"><b style={{ color: '#fff', fontSize: '1.2rem' }}>EduFun</b><p className="small mt8">Une plateforme éducative pour les enfants du CE1 au CM2.</p></div>
           <div style={{ maxWidth: 420 }}><b style={{ color: '#fff' }}>Sources officielles</b>
             <ul className="small" style={{ paddingLeft: 18 }}>{Object.values(SOURCES).slice(0, 5).map(s => <li key={s.url}><a href={s.url} target="_blank" rel="noreferrer">{s.title}</a></li>)}</ul>
             <Link to="/confidentialite" style={{ color: '#fff' }}>Confidentialité et toutes les sources</Link></div>
