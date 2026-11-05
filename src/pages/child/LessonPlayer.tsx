@@ -56,9 +56,9 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     )
   }
 
-  const check = () => {
-    if (!cur || checked || !canCheck(cur, answer)) return
-    const ok = isCorrect(cur, answer)
+  const check = (given: any = answer) => {
+    if (!cur || checked || !canCheck(cur, given)) return
+    const ok = isCorrect(cur, given)
     if (ok) {
       sfx('good', sound)
       if (attempt === 0) setFirstOk(n => n + 1)
@@ -74,6 +74,12 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
         setChecked({ ok: false, hintOnly: false })
       }
     }
+  }
+
+  // QCM : la réponse est vérifiée dès qu'on la coche, sans bouton « Vérifier »
+  const pick = (a: any) => {
+    setAnswer(a)
+    if (cur && cur.type === 'qcm' && !checked) check(a)
   }
 
   const retry = () => { setChecked(null); setAnswer(undefined); setAttempt(1) }
@@ -199,15 +205,15 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
       </div>
       <div className={`pbody ${shake ? 'shake' : ''}`}>
         {cur && (
-          <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={setAnswer}
+          <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={pick}
             locked={!!checked && (checked.ok || attempt > 0)} status={checked ? checked.ok : null}
-            reveal={!!checked && !checked.ok && attempt > 0} onEnter={check} />
+            reveal={!!checked && !checked.ok && attempt > 0} onEnter={() => check()} />
         )}
       </div>
       {checked ? feedbackNode() : (
         <div className="fb"><div className="in">
           <span className="grow" />
-          <button className="btn lg" disabled={!cur || !canCheck(cur, answer)} onClick={check}>Vérifier</button>
+          <button className="btn lg" disabled={!cur || !canCheck(cur, answer)} onClick={() => check()}>Vérifier</button>
         </div></div>
       )}
       {quit && (
