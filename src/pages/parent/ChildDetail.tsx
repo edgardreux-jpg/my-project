@@ -9,7 +9,6 @@ import {
   topMissed, totalStars, uid, weakSpots, weeksSeries, mastersTotals,
 } from '../../lib/progress'
 import { LESSONS, SUBJECT_META, lessonById, meta, subjectsOf, themeInfo } from '../../lib/curriculum'
-import { validPin } from '../../lib/auth'
 import type { Child } from '../../types'
 import { Ico, Stars, avatarColor } from '../../components/Icon'
 import { School } from 'lucide-react'
@@ -230,8 +229,6 @@ function Activity({ child, set, today }: { child: Child; set: (fn: (c: Child) =>
 }
 
 function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child) => void) => void; onDelete: () => void }) {
-  const [pin, setPin] = useState('')
-  const [msg, setMsg] = useState('')
   const subs = subjectsOf(child.grade)
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(child, null, 2)], { type: 'application/json' })
@@ -249,12 +246,6 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
             <option value={0}>Aucun</option><option value={15}>15 min</option><option value={20}>20 min</option><option value={30}>30 min</option></select></div>
         <div className="toggle"><div><b>Sons</b></div><Switch label="Sons" on={child.sound} onChange={v => set(c => { c.sound = v })} /></div>
         <div className="toggle"><div><b>Police facile à lire</b></div><Switch label="Police facile à lire" on={child.font === 'dys'} onChange={v => set(c => { c.font = v ? 'dys' : 'default' })} /></div>
-        <h3 className="mt16">Code secret de l’enfant</h3>
-        <p className="small muted" style={{ margin: '0 0 8px' }}>{child.pin ? `${child.nickname} doit taper son code à 4 chiffres pour ouvrir son profil.` : `${child.nickname} ouvre son profil en touchant son avatar. Un code est utile si plusieurs enfants partagent l’appareil.`}</p>
-        <div className="row wrap gap8"><input className="input" style={{ maxWidth: 160 }} inputMode="numeric" maxLength={4} placeholder={child.pin ? 'Nouveau code' : 'Code à 4 chiffres'} value={pin} onChange={e => { setPin(e.target.value.replace(/\D/g, '')); setMsg('') }} aria-label="Code secret à 4 chiffres" />
-          <button className="btn" onClick={() => { if (validPin(pin)) { set(c => { c.pin = pin }); setPin(''); setMsg(child.pin ? 'Code modifié.' : 'Code activé.') } else setMsg('4 chiffres exactement.') }}>{child.pin ? 'Changer' : 'Activer un code'}</button>
-          {child.pin && <button className="btn ghost" onClick={() => { set(c => { c.pin = '' }); setPin(''); setMsg('Code retiré : le profil s’ouvre d’un simple toucher.') }}>Retirer le code</button>}</div>
-        {msg && <p className="small muted mt8">{msg}</p>}
       </section>
       <section className="card"><h3>Matières visibles</h3>
         <p className="small muted mb8">Masquez une matière pour la retirer de l’espace de {child.nickname}.</p>

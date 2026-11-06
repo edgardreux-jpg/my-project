@@ -192,8 +192,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const acc = ref.current.session && ref.current.accounts.find(a => a.id === ref.current.session!.accountId)
       const ch = acc?.children.find(c => c.id === id)
       if (!acc || !ch) return { ok: false, error: 'Profil introuvable.' }
-      const direct = ref.current.session!.mode === 'parent'
-      if (!direct && ch.pin && ch.pin !== pin) return { ok: false, error: 'Code incorrect.' }
       edit(d => { d.session = { accountId: acc.id, mode: 'child', childId: id } })
       return { ok: true }
     },

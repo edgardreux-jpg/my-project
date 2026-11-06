@@ -30,7 +30,7 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
 const SHOTS = [
   { file: 'parent-tableau', icon: 'chart', title: 'L’évolution, semaine après semaine', text: 'Temps passé, réussite au premier essai et leçons acquises, comparés à la semaine précédente.', cap: 'Tableau de bord : la carte de l’enfant' },
   { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
-  { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, code secret, matières visibles.', cap: 'Réglages de l’enfant' },
+  { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, matières visibles, classe.', cap: 'Réglages de l’enfant' },
 ] as const
 
 /** Vraies captures de l'espace parent : la carte se retourne au survol, au clic ou au choix d'un point à gauche. */
@@ -281,7 +281,7 @@ export default function Landing() {
       <section className="section" id="faq"><div className="in faq" style={{ maxWidth: 760 }}>
         <h2 className="h-lg mb16">Questions fréquentes</h2>
         <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons, rien de plus. Ces données sont enregistrées sur un serveur sécurisé et ne sont visibles que par le compte parent, et par l’enseignant si le parent a saisi son code de classe.</p></details>
-        <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non : l’espace parent est protégé par votre code parent à 4 chiffres. L’enfant ouvre son propre profil en touchant son avatar, ou avec un code secret si vous en activez un.</p></details>
+        <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non : l’espace parent est protégé par votre code parent à 4 chiffres. L’enfant ouvre son propre profil en touchant simplement son avatar.</p></details>
         <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EDUFUN est un complément et ne remplace pas l’école ni une évaluation.</p></details>
         <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et l’exercice revient plus tard.</p></details>
         <details><summary>Peut-on suivre plusieurs enfants ?</summary><p>Oui, avec un profil par enfant et une vue d’ensemble pour la famille.</p></details>

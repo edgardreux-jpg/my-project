@@ -2,15 +2,13 @@ import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { Lock } from 'lucide-react'
 import { useStore } from '../state/store'
-import { Avatar, Logo, Modal, PinPad } from '../components/common'
+import { Avatar, Logo, Modal } from '../components/common'
 import { AddChildModal } from './parent/Dashboard'
 import type { Child } from '../types'
 
 export default function Profiles() {
   const { account, mode, enterChild, leaveChild, logout, loading } = useStore()
   const nav = useNavigate()
-  const [pinFor, setPinFor] = useState<Child | null>(null)
-  const [err, setErr] = useState('')
   const [ask, setAsk] = useState(false)
   const [pw, setPw] = useState('')
   const [pwErr, setPwErr] = useState('')
@@ -19,15 +17,8 @@ export default function Profiles() {
   if (!account) return <Navigate to="/connexion" replace />
   if (account.role === 'teacher') return <Navigate to="/enseignant" replace />
 
-  const pick = async (c: Child) => {
-    // Sans code secret (le cas par défaut), l'enfant entre d'un seul toucher
-    if (mode === 'parent' || !c.pin) { const r = await enterChild(c.id); if (r.ok) nav('/enfant') } else { setPinFor(c); setErr('') }
-  }
-  const tryPin = async (pin: string) => {
-    if (!pinFor) return
-    const r = await enterChild(pinFor.id, pin)
-    if (r.ok) nav('/enfant'); else setErr(r.error)
-  }
+  // L'enfant entre d'un seul toucher sur son avatar : seul l'espace parent est protégé par un code.
+  const pick = async (c: Child) => { const r = await enterChild(c.id); if (r.ok) nav('/enfant') }
   const tryParent = async () => {
     if (mode === 'parent') { nav('/parent'); return }
     const r = await leaveChild(pw)
@@ -53,12 +44,6 @@ export default function Profiles() {
         </div>
         <p className="center tiny"><Link to="/confidentialite">Confidentialité</Link></p>
       </div>
-      {pinFor && (
-        <Modal label="Code secret" onClose={() => setPinFor(null)}>
-          <div className="center col" style={{ alignItems: 'center' }}><Avatar emoji={pinFor.avatar} frame={pinFor.frame} size={72} /><h2>Bonjour {pinFor.nickname}</h2><p className="muted small">Entre ton code secret</p></div>
-          <div className="mt16"><PinPad onDone={tryPin} error={err} /></div>
-        </Modal>
-      )}
       {ask && (
         <Modal label="Espace parent" onClose={() => setAsk(false)}>
           <h2>Espace parent</h2>
