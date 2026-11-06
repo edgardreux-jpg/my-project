@@ -6,7 +6,7 @@ import { addDays, dayKey, diffDays } from './dates'
 import { mastersTotals, periodTotals, weakSpots } from './progress'
 
 /* ---------- Démonstration locale (aucune donnée réelle) ---------- */
-const AV = ['🐰', '🐱', '🐶', '🐦', '🦊', '🐼', '🦁', '🦄']
+const AV = ['princesse', 'chevalier', 'dragon', 'scientifique', 'footballeur', 'fantome', 'professeur', 'chanteur', 'danseur']
 const NAMES = ['Inès', 'Lucas', 'Jade', 'Nathan', 'Lina', 'Hugo', 'Chloé', 'Adam', 'Zoé', 'Malo', 'Léa', 'Sacha']
 let demo: { classes: ClassRow[]; students: Map<string, ClassStudent[]> } | null = null
 function demoState() {
@@ -63,7 +63,7 @@ export function studentStats(rows: ClassStudent[], today = dayKey()): StudentSta
     const t = mastersTotals(c)
     const last = c.sessions.length ? c.sessions[c.sessions.length - 1].day : null
     return {
-      id: r.child_id, child: c, nickname: c.nickname ?? 'Élève', avatar: c.avatar ?? '🐰', grade: c.grade ?? '',
+      id: r.child_id, child: c, nickname: c.nickname ?? 'Élève', avatar: c.avatar ?? 'princesse', grade: c.grade ?? '',
       weekMs: cur.ms, weekLessons: cur.lessons, acc: cur.acc, prevAcc: prev.acc,
       acquired: t.acquired, started: t.started, last, idleDays: last ? diffDays(today, last) : null,
       weak: weakSpots(c).slice(0, 2).map(w => ({ title: w.title, subject: w.subject })),

@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../state/store'
-import { Ico, avatarColor } from './Icon'
+import { Ico } from './Icon'
+import { avatarSrc } from '../lib/avatars'
 
 export function Logo({ to }: { to?: string }) {
   const { mode, account } = useStore()
@@ -16,8 +17,8 @@ export function Logo({ to }: { to?: string }) {
 
 export function Avatar({ emoji, frame = 'none', size = 56 }: { emoji: string; frame?: string; size?: number }) {
   return (
-    <span className={`avatar f-${frame}`} style={{ width: size, height: size, fontSize: size * 0.5, color: avatarColor(emoji), background: `color-mix(in srgb, ${avatarColor(emoji)} 14%, #fff)` }} aria-hidden="true">
-      <Ico e={emoji} />
+    <span className={`avatar f-${frame}`} style={{ width: size, height: size }} aria-hidden="true">
+      <img src={avatarSrc(emoji)} alt="" width={size} height={size} loading="lazy" />
     </span>
   )
 }

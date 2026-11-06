@@ -8,6 +8,7 @@ import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotal
 import { BASE_AVATARS } from '../../lib/progress'
 import { meta } from '../../lib/curriculum'
 import type { Child, LevelId } from '../../types'
+import { avatarLabel, avatarSrc } from '../../lib/avatars'
 
 const COLORS = ['#17766E', '#F28D62', '#7751A8', '#3A76CE']
 
@@ -62,7 +63,7 @@ export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
           <div className="wrap gap8">{(['ce1', 'ce2', 'cm1', 'cm2'] as LevelId[]).map(g => <button type="button" key={g} className={`btn sm ${grade === g ? '' : 'ghost'}`} onClick={() => setGrade(g)}>{g.toUpperCase()}</button>)}</div>
         </div>
         <div className="field"><label>Avatar</label>
-          <div className="wrap gap8">{BASE_AVATARS.map(a => <button type="button" key={a} className="iconbtn" style={{ width: 52, height: 52, fontSize: '1.8rem', border: a === av ? '3px solid var(--teal)' : '3px solid transparent' }} aria-label={`Avatar ${a}`} onClick={() => setAv(a)}>{a}</button>)}</div>
+          <div className="wrap gap8">{BASE_AVATARS.map(a => <button type="button" key={a} className={`avpick ${a === av ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === av} onClick={() => setAv(a)}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}</div>
         </div>
         <div className="field"><label htmlFor="pin">Code secret à 4 chiffres</label><input id="pin" className="input" inputMode="numeric" maxLength={4} value={pin} onChange={e => setPin(e.target.value.replace(/\D/g, ''))} />
           <span className="tiny muted">Il sert à ouvrir le profil de l’enfant quand vous n’êtes pas connecté.</span></div>

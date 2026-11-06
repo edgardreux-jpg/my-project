@@ -4,6 +4,7 @@ import { BADGES, CHESTS, levelOf, LEVEL_STEPS, openChest, readyChests, totalStar
 import { Confetti } from '../../components/common'
 import { sfx } from '../../lib/audio'
 import { Ico, Stars, avatarColor } from '../../components/Icon'
+import { avatarSrc } from '../../lib/avatars'
 
 export default function Rewards() {
   const { child, mutateChild } = useStore()
@@ -37,7 +38,7 @@ export default function Rewards() {
             const can = ready.some(r => r.id === c.id)
             return (
               <div key={c.id} className={`badge ${can || isOpen ? '' : 'off'}`}>
-                <div className={`e ${can ? 'chest' : ''}`}><Ico e={isOpen ? c.kind === 'avatar' ? c.value : '🖼️' : '🎁'} color={isOpen && c.kind === 'avatar' ? avatarColor(c.value) : undefined} /></div>
+                <div className={`e ${can ? 'chest' : ''}`}>{isOpen && c.kind === 'avatar' ? <img src={avatarSrc(c.value)} alt="" className="chest-av" /> : <Ico e={isOpen ? '🖼️' : '🎁'} />}</div>
                 <b className="small">{isOpen ? c.label : c.title}</b>
                 {can ? <button className="btn sm mt8" onClick={() => open(c.id)}>Ouvrir</button> : <div className="tiny muted mt8">{isOpen ? 'Ouvert' : `${c.xp} points`}</div>}
               </div>

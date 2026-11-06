@@ -5,6 +5,7 @@ import { Logo, Spark } from '../components/common'
 import { Ico, Stars } from '../components/Icon'
 import { LEVELS, SOURCES, levelStats } from '../lib/curriculum'
 import { useStore } from '../state/store'
+import { avatarSrc } from '../lib/avatars'
 import { useRef, useState, type ReactNode } from 'react'
 
 /** Carte d'illustration qui se retourne au survol (souris) ou au clic / toucher. */
@@ -65,7 +66,7 @@ export default function Landing() {
         <div className="hero-art-wrap">
           <div className="hero-art">
             <FlipCard className="a-kid" label="côté enfant" front={<>
-              <span className="role kid">Côté enfant</span>
+              <div className="row" style={{ gap: 10 }}><img className="kid-av" src={avatarSrc('princesse')} alt="" /><div className="col" style={{ gap: 2 }}><span className="role kid" style={{ alignSelf: 'flex-start' }}>Côté enfant</span><b className="small">Mila, 7 ans</b></div></div>
               <div className="row mt8"><span className="pill teal">Mathématiques</span><span className="grow" /><Stars n={2} size={16} /></div>
               <h3 style={{ margin: '10px 0 8px' }}>Combien font 240 + 130 ?</h3>
               <div className="opts">
@@ -74,7 +75,7 @@ export default function Landing() {
               </div>
               <div className="hint mt8"><Lightbulb size={16} /> Indice : 240 + 100, puis encore + 30.</div>
             </>} back={<>
-              <span className="role kid">Côté enfant</span>
+              <div className="row" style={{ gap: 10 }}><img className="kid-av" src={avatarSrc('princesse')} alt="" /><div className="col" style={{ gap: 2 }}><span className="role kid" style={{ alignSelf: 'flex-start' }}>Côté enfant</span><b className="small">Mila, 7 ans</b></div></div>
               <div className="row mt8"><span className="pill" style={{ background: '#E4EEFB', color: '#1F4F95' }}>Anglais</span><span className="grow" /><Stars n={3} size={16} /></div>
               <h3 style={{ margin: '10px 0 8px' }}>Comment dit-on « un chat » ?</h3>
               <div className="opts">

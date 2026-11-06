@@ -57,7 +57,7 @@ export function play(child: Child, subjects: string[], days: number, perDayBase:
 
 export async function buildDemoAccount(): Promise<Account> {
   const salt = 'demo'
-  const mila = newChild('Mila', 'ce1', '🐰', DEMO_PIN)
+  const mila = newChild('Mila', 'ce1', 'princesse', DEMO_PIN)
   mila.goal = 2
   play(mila, ['ma', 'fr', 'qlm'], 34, 1, 0.58, 0.9, 7)
   const sami = newChild('Sami', 'ce2', '🐶', '4321')

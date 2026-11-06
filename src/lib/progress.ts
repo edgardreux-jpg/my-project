@@ -25,17 +25,17 @@ export function levelOf(xp: number) {
 }
 
 /* ---------- avatars, cadres, coffres ---------- */
-export const BASE_AVATARS = ['🐰', '🐱', '🐶', '🐦']
+export const BASE_AVATARS = ['princesse', 'chevalier', 'dragon', 'scientifique', 'footballeur']
 export const FRAMES = ['none', 'gold', 'mint', 'violet', 'sunset', 'rainbow']
 
 export interface Chest { id: string; xp: number; title: string; kind: 'avatar' | 'frame'; value: string; label: string }
 export const CHESTS: Chest[] = [
-  { id: 'c1', xp: 60, title: 'Coffre de la forêt', kind: 'avatar', value: '🦊', label: 'Avatar écureuil' },
+  { id: 'c1', xp: 60, title: 'Coffre de la forêt', kind: 'avatar', value: 'fantome', label: 'Avatar fantôme' },
   { id: 'c2', xp: 150, title: 'Coffre doré', kind: 'frame', value: 'gold', label: 'Cadre doré' },
-  { id: 'c3', xp: 300, title: 'Coffre des neiges', kind: 'avatar', value: '🐼', label: 'Avatar panda' },
-  { id: 'c4', xp: 500, title: 'Coffre de la savane', kind: 'avatar', value: '🦁', label: 'Avatar tortue' },
+  { id: 'c3', xp: 300, title: 'Coffre des neiges', kind: 'avatar', value: 'professeur', label: 'Avatar professeur' },
+  { id: 'c4', xp: 500, title: 'Coffre de la savane', kind: 'avatar', value: 'chanteur', label: 'Avatar chanteur' },
   { id: 'c5', xp: 800, title: 'Coffre violet', kind: 'frame', value: 'violet', label: 'Cadre violet' },
-  { id: 'c6', xp: 1200, title: 'Coffre magique', kind: 'avatar', value: '🦄', label: 'Avatar oiseau de papier' },
+  { id: 'c6', xp: 1200, title: 'Coffre magique', kind: 'avatar', value: 'danseur', label: 'Avatar danseur' },
 ]
 
 export const readyChests = (c: Child) => CHESTS.filter(x => c.xp >= x.xp && !c.chestsOpened.includes(x.id))
