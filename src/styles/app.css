@@ -591,3 +591,25 @@ html:is([data-theme=cm2],[data-theme=pro]) .wordmark{font-size:1.35rem}
 @media (prefers-reduced-motion:reduce){.guide-btn,.guide-bubble{animation:none}}
 /* Au-dessus de la barre d'onglets de l'espace enfant sur téléphone */
 @media (max-width:900px){.guide{bottom:16px;right:12px}.guide.kid{bottom:86px}.guide-btn{width:58px;height:58px}}
+
+/* Espace parent : vraies captures qui se retournent */
+.featbtn{display:block;width:100%;text-align:left;background:none;border:2px solid transparent;border-radius:16px;padding:12px;margin:-12px 0 8px -12px;cursor:pointer;font:inherit;color:inherit;transition:background .15s,border-color .15s}
+.featbtn:hover{background:#fff}
+.featbtn.on{background:#fff;border-color:var(--teal);box-shadow:var(--shadow)}
+.featbtn:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.shotwrap{display:flex;flex-direction:column;gap:10px;align-self:start}
+.shotflip{border:0;background:none;padding:0;cursor:pointer;perspective:1400px;display:block;width:100%;-webkit-tap-highlight-color:transparent}
+.shotflip:focus-visible{outline:3px solid var(--teal);outline-offset:4px;border-radius:18px}
+.shot-in{display:grid;transition:transform .6s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.shot-face{grid-area:1/1;display:flex;flex-direction:column;background:#fff;border:2px solid var(--line2);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.shot-face.back{transform:rotateY(180deg)}
+.shot-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#F2F4F7;border-bottom:1px solid var(--line2);font-size:.78rem;color:var(--ink2)}
+.shot-bar i{width:9px;height:9px;border-radius:50%;background:#D5DAE1}
+.shot-bar i:first-child{background:#F2A49A}.shot-bar i:nth-child(2){background:#F5D58A}.shot-bar i:nth-child(3){background:#9FD8B0}
+.shot-bar b{margin-left:8px;font-weight:700}
+.shot-face img{display:block;width:100%;height:380px;object-fit:contain;object-position:top center;background:#F5F7FA;padding:14px}
+.shot-dots{display:flex;justify-content:center;gap:6px}
+.shot-dots i{width:8px;height:8px;border-radius:99px;background:var(--line)}
+.shot-dots i.on{width:22px;background:var(--teal)}
+@media (max-width:900px){.shot-face img{height:300px}}
+@media (prefers-reduced-motion:reduce){.shot-in{transition:none}}

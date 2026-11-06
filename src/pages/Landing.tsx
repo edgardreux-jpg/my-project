@@ -26,6 +26,57 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
   )
 }
 
+const SHOTS = [
+  { file: 'parent-tableau', icon: 'chart', title: 'L’évolution, semaine après semaine', text: 'Temps passé, réussite au premier essai et leçons acquises, comparés à la semaine précédente.', cap: 'Tableau de bord : la carte de l’enfant' },
+  { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
+  { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, code secret, matières visibles.', cap: 'Réglages de l’enfant' },
+] as const
+
+/** Vraies captures de l'espace parent : la carte se retourne au survol, au clic ou au choix d'un point à gauche. */
+function ParentShots() {
+  const [cur, setCur] = useState(0)
+  const [angle, setAngle] = useState(0)
+  const [faces, setFaces] = useState<[number, number]>([0, 1])
+  const mouse = useRef(false)
+  const go = (to: number) => {
+    if (to === cur) return
+    const frontVisible = (angle / 180) % 2 === 0
+    setFaces(f => frontVisible ? [f[0], to] : [to, f[1]])
+    setAngle(a => a + 180); setCur(to)
+  }
+  const next = () => go((cur + 1) % SHOTS.length)
+  const src = (i: number) => `${import.meta.env.BASE_URL}screens/${SHOTS[i].file}.webp`
+  return (
+    <>
+      <div className="col">
+        {SHOTS.map((s, i) => (
+          <button key={s.file} type="button" className={`feat featbtn ${cur === i ? 'on' : ''}`} aria-pressed={cur === i} onClick={() => go(i)}>
+            <div className="ic">{s.icon === 'chart' ? <LC size={24} /> : <Ico e={s.icon} color="currentColor" />}</div>
+            <h3>{s.title}</h3><p className="muted">{s.text}</p>
+          </button>
+        ))}
+      </div>
+      <div className="shotwrap">
+        <button type="button" className="shotflip" aria-label={`Capture : ${SHOTS[cur].cap}. Voir la suivante`}
+          onPointerEnter={e => { if (e.pointerType === 'mouse') { mouse.current = true; next() } }}
+          onPointerDown={e => { mouse.current = e.pointerType === 'mouse' }}
+          onClick={() => { if (!mouse.current) next(); mouse.current = false }}>
+          <span className="shot-in" style={{ transform: `rotateY(${angle}deg)` }}>
+            {faces.map((f, k) => (
+              <span key={k} className={`shot-face ${k ? 'back' : ''}`}>
+                <span className="shot-bar"><i /><i /><i /><b>{SHOTS[f].cap}</b></span>
+                <img src={src(f)} alt={SHOTS[f].cap} loading="lazy" />
+              </span>
+            ))}
+          </span>
+        </button>
+        <div className="shot-dots" aria-hidden="true">{SHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
+        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). Survolez ou touchez pour passer à la suivante.</p>
+      </div>
+    </>
+  )
+}
+
 export default function Landing() {
   // Le site navigue avec « # » : on fait défiler vers la section au lieu de changer de page
   const go = (id: string) => (e: React.MouseEvent) => {
@@ -156,17 +207,7 @@ export default function Landing() {
         <span className="eyebrow">Pour les parents</span>
         <h2 className="h-lg mb16">Un suivi honnête et utile</h2>
         <div className="grid2">
-          <div className="col">
-            <div className="feat"><div className="ic"><LC size={24} /></div><h3>L’évolution, semaine après semaine</h3><p className="muted">Temps passé, réussite au premier essai, jours actifs, comparés à la période précédente.</p></div>
-            <div className="feat"><div className="ic"><Ico e="🎯" color="currentColor" /></div><h3>Les notions à consolider</h3><p className="muted">EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.</p></div>
-            <div className="feat"><div className="ic"><Ico e="🛡️" color="currentColor" /></div><h3>Vous gardez la main</h3><p className="muted">Matières visibles, objectif du jour, pauses, leçons proposées, export et suppression des données.</p></div>
-          </div>
-          <div className="card"><h3>Ce que vous verrez</h3>
-            <div className="kpis" style={{ gridTemplateColumns: '1fr 1fr' }}>
-              {[['1 h 20', 'cette semaine'], ['84 %', 'réussite 1er essai'], ['6 / 7', 'jours actifs'], ['12', 'notions acquises']].map(([v, l]) => <div key={l} className="card flat kpi"><div className="v">{v}</div><div className="l">{l}</div></div>)}
-            </div>
-            <p className="tiny muted mt16">Exemple fictif. Les chiffres réels dépendent des séances terminées.</p>
-          </div>
+          <ParentShots />
         </div>
       </div></section>
 
