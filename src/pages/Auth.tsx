@@ -4,7 +4,7 @@ import { useStore } from '../state/store'
 import { Logo } from '../components/common'
 
 export default function Auth({ signup = false, teacher = false }: { signup?: boolean; teacher?: boolean }) {
-  const { signup: doSignup, login, loginGoogle, loginDemo, loginDemoTeacher, mode, account, loading } = useStore()
+  const { signup: doSignup, login, loginGoogle, loginDemo, loginDemoTeacher, logout, mode, account, loading } = useStore()
   const nav = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -15,6 +15,16 @@ export default function Auth({ signup = false, teacher = false }: { signup?: boo
   const [info, setInfo] = useState('')
   if (loading) return <div className="auth"><p className="muted">Chargement…</p></div>
   if (account && account.role === 'teacher') return <Navigate to="/enseignant" replace />
+  // Déjà connecté en parent (ou en démo) : on explique au lieu de renvoyer vers l'espace parent
+  if (account && teacher) return (
+    <div className="auth"><div className="card col gap12" style={{ maxWidth: 440, width: '100%' }}>
+      <Logo />
+      <h1 style={{ fontSize: '1.5rem' }}>Espace enseignant</h1>
+      <p className="muted">Vous êtes connecté avec le compte parent <b>{account.email}</b>. L’espace enseignant utilise un compte séparé.</p>
+      <button className="btn block" onClick={() => logout()}>Se déconnecter et continuer</button>
+      <Link className="btn ghost block" to="/parent">Rester dans l’espace parent</Link>
+    </div></div>
+  )
   if (account && mode === 'parent') return <Navigate to="/parent" replace />
   if (account && mode !== 'out') return <Navigate to="/profils" replace />
 
