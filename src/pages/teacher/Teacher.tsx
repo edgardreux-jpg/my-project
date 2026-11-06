@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronLeft, Clock, Copy, LogOut, Plus, School, Target, Trash2, UserMinus, Users } from 'lucide-react'
+import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, Plus, School, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, Logo, Modal } from '../../components/common'
 import { Ico } from '../../components/Icon'
@@ -56,18 +56,28 @@ export function TeacherHome() {
   const [classes, setClasses] = useState<ClassRow[] | null>(null)
   const [add, setAdd] = useState(false)
   const nav = useNavigate()
-  const reload = useCallback(() => { api.list().then(setClasses) }, [api])
+  const [sum, setSum] = useState<Record<string, StudentStat[]>>({})
+  const reload = useCallback(() => {
+    api.list().then(async list => {
+      setClasses(list)
+      const entries = await Promise.all(list.map(async c => { try { return [c.id, studentStats(await api.overview(c.id))] as const } catch { return [c.id, [] as StudentStat[]] as const } }))
+      setSum(Object.fromEntries(entries))
+    })
+  }, [api])
   useEffect(reload, [reload])
+  const all = Object.values(sum).flat()
 
   return (
     <div className="col gap20">
-      <div className="row wrap">
+      <div className="row wrap p-head">
         <div className="grow" style={{ minWidth: 260 }}>
+          <div className="p-date">{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
           <h1>Bonjour {account?.name}</h1>
-          <p className="muted">Créez une classe, donnez son code aux familles, puis suivez la progression de vos élèves.</p>
+          <p className="muted">Voici où en sont vos élèves cette semaine.</p>
         </div>
         <button className="btn" onClick={() => setAdd(true)}><Plus size={18} /> Créer une classe</button>
       </div>
+      {all.length > 0 && <ClassStrip s={all} title={`7 derniers jours · ${classes?.length ?? 0} classe${(classes?.length ?? 0) > 1 ? 's' : ''}`} />}
 
       {classes === null ? <p className="muted">Chargement…</p> : classes.length === 0 ? (
         <div className="card center col gap12" style={{ padding: 32 }}>
@@ -80,22 +90,28 @@ export function TeacherHome() {
         <div className="grid2">
           {classes.map(c => (
             <Link key={c.id} to={`/enseignant/classe/${c.id}`} className="card classcard">
-              <div className="row"><span className="cls-ic"><School size={22} /></span><div className="grow"><h3 style={{ margin: 0 }}>{c.name}</h3><div className="small muted">{gradeTitle(c.grade)}</div></div></div>
+              <div className="row"><span className="cls-ic"><School size={22} /></span><div className="grow"><h3 style={{ margin: 0 }}>{c.name}</h3><div className="small muted">{gradeTitle(c.grade)}</div></div><ChevronRight size={20} className="muted" /></div>
+              {(() => { const st = sum[c.id] ?? [], act = st.filter(x => x.weekLessons > 0).length, ac = st.filter(x => x.acc != null), avg = ac.length ? ac.reduce((a, x) => a + x.acc!, 0) / ac.length : null
+                return st.length ? <div className="t-mini">
+                  <span><b>{st.length}</b> élève{st.length > 1 ? 's' : ''}</span>
+                  <span><b>{act}</b> actif{act > 1 ? 's' : ''}</span>
+                  <span><b>{avg == null ? '–' : `${Math.round(avg * 100)} %`}</b> réussite</span>
+                  <div className="p-lvl" style={{ maxWidth: 'none', gridColumn: '1/-1' }} title="Élèves actifs cette semaine"><i style={{ width: `${(act / st.length) * 100}%` }} /></div>
+                </div> : <div className="small muted">Aucun élève inscrit pour l’instant.</div> })()}
               <div className="row wrap gap8"><span className="small muted">Code de classe</span><CodeBox code={c.code} /></div>
-              <span className="small" style={{ color: 'var(--teal-d)', fontWeight: 800 }}>Voir les élèves et les statistiques</span>
             </Link>
           ))}
         </div>
       )}
 
-      <div className="card flat col gap8" style={{ background: 'var(--teal-s)', border: 0 }}>
-        <b>Comment les élèves rejoignent la classe</b>
-        <ol className="small" style={{ margin: 0, paddingLeft: 20, lineHeight: 1.6 }}>
-          <li>Vous donnez le code de classe aux familles (cahier de liaison, ENT, réunion).</li>
-          <li>Le parent l’entre dans son espace, sur la fiche de son enfant, rubrique « Classe ».</li>
-          <li>L’élève apparaît aussitôt dans votre tableau. Le parent peut quitter la classe à tout moment.</li>
-        </ol>
-      </div>
+      <section className="card">
+        <h3>Comment les élèves rejoignent la classe</h3>
+        <div className="t-steps">
+          <div><span className="p-ic"><Share2 size={18} /></span><b>1. Vous donnez le code</b><span className="small muted">Cahier de liaison, ENT ou réunion de rentrée.</span></div>
+          <div><span className="p-ic"><KeyRound size={18} /></span><b>2. Le parent le saisit</b><span className="small muted">Dans son espace, fiche de l’enfant, rubrique « Classe ».</span></div>
+          <div><span className="p-ic"><UserCheck size={18} /></span><b>3. L’élève apparaît ici</b><span className="small muted">Le parent peut quitter la classe à tout moment.</span></div>
+        </div>
+      </section>
 
       {add && <NewClass onClose={() => setAdd(false)} onCreate={async (n, g) => {
         const r = await api.create(n, g)
@@ -130,6 +146,27 @@ function NewClass({ onClose, onCreate }: { onClose: () => void; onCreate: (name:
   )
 }
 
+/** Bandeau de synthèse sobre (même style que l'espace parent). */
+function ClassStrip({ s, title }: { s: StudentStat[]; title: string }) {
+  const active = s.filter(x => x.weekLessons > 0).length
+  const accs = s.filter(x => x.acc != null)
+  const avgAcc = accs.length ? accs.reduce((a, x) => a + x.acc!, 0) / accs.length : null
+  const avgMs = s.length ? s.reduce((a, x) => a + x.weekMs, 0) / s.length : 0
+  const idle = s.filter(x => x.idleDays == null || x.idleDays >= 7).length
+  const items = [
+    { ic: <Users size={18} />, v: `${active} / ${s.length}`, l: 'élèves actifs' },
+    { ic: <Clock size={18} />, v: fmtMin(avgMs), l: 'temps moyen par élève' },
+    { ic: <Target size={18} />, v: avgAcc == null ? '–' : `${Math.round(avgAcc * 100)} %`, l: 'réussite au 1er essai' },
+    { ic: <AlertCircle size={18} />, v: String(idle), l: 'inactifs depuis 7 j ou plus', warn: idle > 0 },
+  ]
+  return (
+    <section className="p-week" aria-label={title}>
+      <span className="p-week-t">{title}</span>
+      {items.map(i => <div key={i.l} className="p-wk"><span className={`p-ic ${i.warn ? 'gold' : ''}`}>{i.ic}</span><div><b>{i.v}</b><small>{i.l}</small></div></div>)}
+    </section>
+  )
+}
+
 function Trend({ now, before }: { now: number | null; before: number | null }) {
   if (now == null || before == null) return null
   const d = Math.round((now - before) * 100)
@@ -147,6 +184,8 @@ export function ClassView() {
   const [sort, setSort] = useState<'name' | 'acc' | 'time' | 'last'>('name')
   const [kick, setKick] = useState<StudentStat | null>(null)
   const [del, setDel] = useState(false)
+  const [filter, setFilter] = useState<'all' | 'help' | 'idle'>('all')
+  const [msgCopied, setMsgCopied] = useState(false)
 
   const reload = useCallback(async () => {
     const list = await api.list()
@@ -165,8 +204,10 @@ export function ClassView() {
   const avgMs = s.length ? s.reduce((a, x) => a + x.weekMs, 0) / s.length : 0
   const idle = s.filter(x => x.idleDays == null || x.idleDays >= 7)
   const weak = classWeakSpots(s)
+  const needHelp = s.filter(x => x.acc != null && x.acc < .8)
   const sorted = [...s].sort((a, b) =>
     sort === 'acc' ? (a.acc ?? 2) - (b.acc ?? 2) : sort === 'time' ? a.weekMs - b.weekMs : sort === 'last' ? (b.idleDays ?? 999) - (a.idleDays ?? 999) : a.nickname.localeCompare(b.nickname, 'fr'))
+  const shown = filter === 'help' ? sorted.filter(x => needHelp.includes(x)) : filter === 'idle' ? sorted.filter(x => idle.includes(x)) : sorted
 
   return (
     <div className="col gap20">
@@ -180,6 +221,10 @@ export function ClassView() {
         <div className="col gap4" style={{ alignItems: 'flex-start' }}>
           <span className="tiny muted" style={{ fontWeight: 800 }}>CODE À DONNER AUX FAMILLES</span>
           <CodeBox code={cls.code} big />
+          <button className="btn quiet sm" onClick={() => {
+            const txt = `Bonjour,\n\nVotre enfant peut rejoindre la classe « ${cls.name} » sur EDUFUN (https://pepite-nine.vercel.app) pour s’entraîner à la maison.\n\n1. Connectez-vous à votre espace parent.\n2. Ouvrez la fiche de votre enfant, rubrique « Classe ».\n3. Saisissez le code : ${cls.code}\n\nJe verrai uniquement son pseudo et sa progression dans les leçons. Vous pouvez quitter la classe à tout moment.\n\nMerci !`
+            navigator.clipboard?.writeText(txt).then(() => { setMsgCopied(true); setTimeout(() => setMsgCopied(false), 2000) }).catch(() => {})
+          }}><MessageSquareText size={16} /> {msgCopied ? 'Message copié' : 'Copier le message pour les familles'}</button>
         </div>
       </div>
 
@@ -193,12 +238,7 @@ export function ClassView() {
         </div>
       ) : stats && (
         <>
-          <div className="kpis">
-            <div className="tile-stat"><div className="ts-label"><Users size={14} /> Actifs</div><div className="ts-value">{active.length}<span className="ts-of"> / {s.length}</span></div><div className="ts-sub">élèves cette semaine</div></div>
-            <div className="tile-stat"><div className="ts-label"><Clock size={14} /> Temps moyen</div><div className="ts-value">{fmtMin(avgMs)}</div><div className="ts-sub">par élève, 7 derniers jours</div></div>
-            <div className="tile-stat"><div className="ts-label"><Target size={14} /> Réussite</div><div className="ts-value">{avgAcc == null ? '–' : `${Math.round(avgAcc * 100)} %`}</div><div className="ts-sub">au premier essai, moyenne</div></div>
-            <div className="tile-stat"><div className="ts-label"><AlertCircle size={14} /> Inactifs</div><div className="ts-value">{idle.length}</div><div className="ts-sub">depuis 7 jours ou plus</div></div>
-          </div>
+          <ClassStrip s={s} title="7 derniers jours" />
 
           {weak.length > 0 && (
             <div className="card col gap8">
@@ -207,8 +247,9 @@ export function ClassView() {
               {weak.map(w => (
                 <div key={w.title} className="weakrow">
                   <span style={{ color: meta(w.subject).color }}><Ico e={meta(w.subject).emoji} color="currentColor" size={20} /></span>
-                  <div className="grow"><b>{w.title}</b><div className="tiny muted">{w.names.join(', ')}</div></div>
-                  <span className="pill gold">{w.names.length} élève{w.names.length > 1 ? 's' : ''}</span>
+                  <div className="grow"><b>{w.title}</b><div className="tiny muted">{w.names.join(', ')}</div>
+                    <div className="p-lvl" style={{ maxWidth: 260 }}><i style={{ width: `${(w.names.length / s.length) * 100}%`, background: '#D9A23A' }} /></div></div>
+                  <span className="pill gold">{w.names.length} / {s.length} élèves</span>
                 </div>
               ))}
             </div>
@@ -217,18 +258,22 @@ export function ClassView() {
           <div className="card col gap12">
             <div className="row wrap gap8">
               <h2 className="grow" style={{ fontSize: '1.15rem' }}>Élèves</h2>
+              <div className="t-filter" role="tablist" aria-label="Filtrer les élèves">
+                {([['all', `Tous (${s.length})`], ['help', `À accompagner (${needHelp.length})`], ['idle', `Inactifs (${idle.length})`]] as const).map(([k, l]) => <button key={k} role="tab" aria-selected={filter === k} className={filter === k ? 'on' : ''} onClick={() => setFilter(k)}>{l}</button>)}
+              </div>
               <label className="small muted" htmlFor="srt">Trier par</label>
               <select id="srt" className="input" style={{ width: 'auto', minHeight: 40, padding: '6px 10px' }} value={sort} onChange={e => setSort(e.target.value as typeof sort)}>
                 <option value="name">Prénom</option><option value="acc">Réussite (plus faible d’abord)</option><option value="time">Temps (plus faible d’abord)</option><option value="last">Inactivité</option>
               </select>
             </div>
             <div className="stu-head" aria-hidden="true"><span>Élève</span><span>Cette semaine</span><span>Réussite</span><span>Acquises</span><span>À consolider</span><span /></div>
-            {sorted.map(x => (
+            {shown.length === 0 && <p className="small muted">Aucun élève dans cette catégorie. Bonne nouvelle !</p>}
+            {shown.map(x => (
               <div key={x.id} className={`stu ${x.idleDays == null || x.idleDays >= 7 ? 'idle' : ''}`}>
                 <div className="stu-name"><Avatar emoji={x.avatar} size={36} /><div><b>{x.nickname}</b><div className="tiny muted">{x.grade.toUpperCase()} · {x.last ? relDay(x.last) : 'jamais connecté'}</div></div></div>
                 <div><span className="lbl-m">Cette semaine</span><b>{fmtMin(x.weekMs)}</b> <span className="tiny muted">{x.weekLessons} leçon{x.weekLessons > 1 ? 's' : ''}</span></div>
                 <div><span className="lbl-m">Réussite</span><b>{x.acc == null ? '–' : `${Math.round(x.acc * 100)} %`}</b> <Trend now={x.acc} before={x.prevAcc} /></div>
-                <div><span className="lbl-m">Acquises</span><b>{x.acquired}</b><span className="tiny muted"> / {x.started}</span></div>
+                <div><span className="lbl-m">Acquises</span><b>{x.acquired}</b><span className="tiny muted"> / {x.started}</span><div className="p-lvl" style={{ maxWidth: 90 }}><i style={{ width: `${x.started ? (x.acquired / x.started) * 100 : 0}%` }} /></div></div>
                 <div className="small"><span className="lbl-m">À consolider</span>{x.weak.length ? x.weak.map(w => w.title).join(', ') : <span className="muted">Rien à signaler</span>}</div>
                 <button className="iconbtn" aria-label={`Retirer ${x.nickname} de la classe`} title="Retirer de la classe" onClick={() => setKick(x)}><UserMinus size={18} /></button>
               </div>

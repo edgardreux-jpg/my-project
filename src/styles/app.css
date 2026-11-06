@@ -912,3 +912,18 @@ html:is([data-theme=cm1],[data-theme=cm2]) :is(.k-wave,.k-fox,.k-me-av){animatio
   .p-tabs button svg{display:none}
   .p-sug{flex-wrap:wrap}.p-sug .btn{margin-left:48px}
 }
+/* Espace enseignant : retouches sobres */
+.classcard{display:flex;flex-direction:column;gap:14px}
+.t-mini{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:4px 22px;font-size:.85rem;color:var(--ink2)}
+.t-mini b{color:var(--ink);font-size:1.05rem;margin-right:3px}
+.t-mini .p-lvl{margin-top:4px}
+.t-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:6px}
+.t-steps>div{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:var(--r-sm);background:var(--bg2)}
+.t-steps .p-ic{background:#fff}
+.t-filter{display:flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:10px;background:#fff;overflow-x:auto}
+.t-filter button{border:0;background:none;padding:6px 12px;border-radius:7px;font:inherit;font-size:.85rem;font-weight:700;color:var(--ink2);cursor:pointer;white-space:nowrap}
+.t-filter button.on{background:var(--teal);color:#fff}
+@media (max-width:900px){.t-steps{grid-template-columns:1fr}.t-filter{width:100%;order:3}}
+.classcard,.classcard:hover,.classcard *{text-decoration:none!important}
+.classcard:hover{border-color:var(--teal)}
+@media (max-width:900px){.t-filter button{flex:1;padding:6px 6px;font-size:.78rem}label[for=srt]{display:none}}
