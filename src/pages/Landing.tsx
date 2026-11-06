@@ -38,13 +38,24 @@ function ParentShots() {
   const [cur, setCur] = useState(0)
   const [angle, setAngle] = useState(0)
   const [faces, setFaces] = useState<[number, number]>([0, 1])
-  const go = (to: number) => {
+  const swipe = useRef<{ x: number; y: number; moved: boolean } | null>(null)
+  const go = (to: number, dir = 1) => {
     if (to === cur) return
-    const frontVisible = (angle / 180) % 2 === 0
+    const frontVisible = Math.round(angle / 180) % 2 === 0
     setFaces(f => frontVisible ? [f[0], to] : [to, f[1]])
-    setAngle(a => a + 180); setCur(to)
+    setAngle(a => a + 180 * dir); setCur(to)
   }
-  const next = () => go((cur + 1) % SHOTS.length)
+  const N = SHOTS.length
+  // Glisser l'image : à gauche pour l'écran suivant, à droite pour le précédent
+  const touch = {
+    onTouchStart: (e: React.TouchEvent) => { const t = e.touches[0]; swipe.current = { x: t.clientX, y: t.clientY, moved: false } },
+    onTouchEnd: (e: React.TouchEvent) => {
+      const s0 = swipe.current; if (!s0) return
+      const t = e.changedTouches[0], dx = t.clientX - s0.x, dy = t.clientY - s0.y
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) { s0.moved = true; dx < 0 ? go((cur + 1) % N, 1) : go((cur - 1 + N) % N, -1) }
+    },
+  }
+  const tapNext = () => { if (swipe.current?.moved) { swipe.current = null; return } swipe.current = null; go((cur + 1) % N) }
   const src = (i: number) => `${import.meta.env.BASE_URL}screens/${SHOTS[i].file}.webp`
   return (
     <>
@@ -59,7 +70,7 @@ function ParentShots() {
       </div>
       <div className="shotwrap">
         <button type="button" className="shotflip" aria-label={`Capture : ${SHOTS[cur].cap}. Voir la suivante`}
-          onClick={next}>
+          {...touch} onClick={tapNext}>
           <span className="shot-in" style={{ transform: `rotateY(${angle}deg)` }}>
             {faces.map((f, k) => (
               <span key={k} className={`shot-face ${k ? 'back' : ''}`}>
@@ -71,7 +82,7 @@ function ParentShots() {
         </button>
         <p className="shot-desc">{SHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{SHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez une pastille pour changer d’écran.</span></p>
+        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
       </div>
     </>
   )
@@ -87,6 +98,7 @@ const LV_LOOK: Record<string, { color: string; dark: string; soft: string; cycle
 /** Carte de niveau : recto = chiffres clés, verso = une vraie question du niveau et les matières. */
 function LevelFlip({ id }: { id: LevelId }) {
   const [on, setOn] = useState(false)
+  const ptr = useRef('')  // type du dernier appui : sur téléphone (Safari compris), un toucher retourne la carte
   const lv = LEVELS.find(l => l.id === id)!, s = levelStats(id), k = LV_LOOK[id]
   const full = id === 'ce1' || id === 'ce2'
   const subjects = levelData(id).subjects
@@ -96,7 +108,9 @@ function LevelFlip({ id }: { id: LevelId }) {
       aria-pressed={on} aria-label={`${lv.title} : voir un exemple de question`}
       onPointerEnter={e => { if (e.pointerType === 'mouse') setOn(true) }}
       onPointerLeave={e => { if (e.pointerType === 'mouse') setOn(false) }}
-      onClick={e => { if ((e.nativeEvent as PointerEvent).pointerType !== 'mouse') setOn(v => !v) }}>
+      onPointerDown={e => { ptr.current = e.pointerType }}
+      onTouchStart={() => { ptr.current = 'touch' }}
+      onClick={() => { if (ptr.current !== 'mouse') setOn(v => !v); ptr.current = '' }}>
       <span className="lvf-in">
         <span className="lvf-face">
           <span className="lvf-top"><span>{k.cycle}</span><span>{lv.ages}</span></span>
@@ -136,12 +150,24 @@ function KidShots() {
   const [cur, setCur] = useState(0)
   const [angle, setAngle] = useState(0)
   const [faces, setFaces] = useState<[number, number]>([0, 1])
-  const go = (to: number) => {
+  const swipe = useRef<{ x: number; y: number; moved: boolean } | null>(null)
+  const go = (to: number, dir = 1) => {
     if (to === cur) return
-    const frontVisible = (angle / 180) % 2 === 0
+    const frontVisible = Math.round(angle / 180) % 2 === 0
     setFaces(f => frontVisible ? [f[0], to] : [to, f[1]])
-    setAngle(a => a + 180); setCur(to)
+    setAngle(a => a + 180 * dir); setCur(to)
   }
+  const N = KSHOTS.length
+  // Glisser l'image : à gauche pour l'écran suivant, à droite pour le précédent
+  const touch = {
+    onTouchStart: (e: React.TouchEvent) => { const t = e.touches[0]; swipe.current = { x: t.clientX, y: t.clientY, moved: false } },
+    onTouchEnd: (e: React.TouchEvent) => {
+      const s0 = swipe.current; if (!s0) return
+      const t = e.changedTouches[0], dx = t.clientX - s0.x, dy = t.clientY - s0.y
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) { s0.moved = true; dx < 0 ? go((cur + 1) % N, 1) : go((cur - 1 + N) % N, -1) }
+    },
+  }
+  const tapNext = () => { if (swipe.current?.moved) { swipe.current = null; return } swipe.current = null; go((cur + 1) % N) }
   const src = (i: number) => `${import.meta.env.BASE_URL}screens/${KSHOTS[i].file}.webp`
   return (
     <div className="kidshots">
@@ -155,7 +181,7 @@ function KidShots() {
         ))}
       </div>
       <div className="phonewrap">
-        <button type="button" className="phoneflip" aria-label={`Capture : ${KSHOTS[cur].cap}. Voir la suivante`} onClick={() => go((cur + 1) % KSHOTS.length)}>
+        <button type="button" className="phoneflip" aria-label={`Capture : ${KSHOTS[cur].cap}. Voir la suivante`} {...touch} onClick={tapNext}>
           <span className="shot-in" style={{ transform: `rotateY(${angle}deg)` }}>
             {faces.map((f, k) => (
               <span key={k} className={`phone ${k ? 'back' : ''}`}><img src={src(f)} alt={KSHOTS[f].cap} loading="lazy" /></span>
