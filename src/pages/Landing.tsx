@@ -121,6 +121,53 @@ function LevelFlip({ id }: { id: LevelId }) {
   )
 }
 
+const KSHOTS = [
+  { file: 'kid-mondes', icon: '⭐', title: 'Des étoiles pour progresser', text: 'Jusqu’à trois étoiles par leçon, selon les réussites au premier essai.', cap: 'Mes mondes' },
+  { file: 'kid-serie', icon: '🔥', title: 'Des séries qui pardonnent', text: 'Les jokers protègent d’un jour manqué. Pas de culpabilité.', cap: 'Accueil : ma série' },
+  { file: 'kid-tresors', icon: '🎁', title: 'Des coffres et des badges', text: 'Avatars et cadres à débloquer au fil des efforts.', cap: 'Mes trésors' },
+  { file: 'kid-indice', icon: '💡', title: 'Un indice avant la solution', text: 'Après une erreur, un indice et une deuxième chance.', cap: 'Pendant une leçon' },
+  { file: 'kid-rappel', icon: '🔁', title: 'Des rappels espacés', text: 'Les notions déjà vues reviennent en « défi mémoire ».', cap: 'Accueil : défi mémoire' },
+  { file: 'kid-accessible', icon: '🔤', title: 'Accessible', text: 'Police adaptée à la dyslexie, taille du texte, lecture à voix haute.', cap: 'Mes réglages' },
+] as const
+
+/** Vraies captures de l'espace enfant, dans un téléphone qui se retourne au survol des encarts. */
+function KidShots() {
+  const [cur, setCur] = useState(0)
+  const [angle, setAngle] = useState(0)
+  const [faces, setFaces] = useState<[number, number]>([0, 1])
+  const go = (to: number) => {
+    if (to === cur) return
+    const frontVisible = (angle / 180) % 2 === 0
+    setFaces(f => frontVisible ? [f[0], to] : [to, f[1]])
+    setAngle(a => a + 180); setCur(to)
+  }
+  const src = (i: number) => `${import.meta.env.BASE_URL}screens/${KSHOTS[i].file}.webp`
+  return (
+    <div className="kidshots">
+      <div className="kfeats">
+        {KSHOTS.map((s, i) => (
+          <button key={s.file} type="button" className={`feat featbtn ${cur === i ? 'on' : ''}`} aria-pressed={cur === i}
+            onPointerEnter={e => { if (e.pointerType === 'mouse') go(i) }} onFocus={() => go(i)} onClick={() => go(i)}>
+            <div className="ic"><Ico e={s.icon} color="currentColor" /></div>
+            <h3>{s.title}</h3><p className="muted">{s.text}</p>
+          </button>
+        ))}
+      </div>
+      <div className="phonewrap">
+        <button type="button" className="phoneflip" aria-label={`Capture : ${KSHOTS[cur].cap}. Voir la suivante`} onClick={() => go((cur + 1) % KSHOTS.length)}>
+          <span className="shot-in" style={{ transform: `rotateY(${angle}deg)` }}>
+            {faces.map((f, k) => (
+              <span key={k} className={`phone ${k ? 'back' : ''}`}><img src={src(f)} alt={KSHOTS[f].cap} loading="lazy" /></span>
+            ))}
+          </span>
+        </button>
+        <div className="shot-dots" aria-hidden="true">{KSHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
+        <p className="tiny muted center">Vraies captures de l’espace enfant. Survolez un encart pour changer d’écran.</p>
+      </div>
+    </div>
+  )
+}
+
 export default function Landing() {
   // Le site navigue avec « # » : on fait défiler vers la section au lieu de changer de page
   const go = (id: string) => (e: React.MouseEvent) => {
@@ -237,14 +284,7 @@ export default function Landing() {
       <section className="section alt" id="enfants"><div className="in">
         <span className="eyebrow">Pour les enfants</span>
         <h2 className="h-lg mb16">Motivant, sans pression</h2>
-        <div className="grid3">
-          <div className="feat"><div className="ic"><Ico e="⭐" color="currentColor" /></div><h3>Des étoiles pour progresser</h3><p className="muted">Jusqu’à trois étoiles par leçon, selon les réussites au premier essai.</p></div>
-          <div className="feat"><div className="ic"><Ico e="🔥" color="currentColor" /></div><h3>Des séries qui pardonnent</h3><p className="muted">Les jokers de série protègent d’un jour manqué. Pas de culpabilité.</p></div>
-          <div className="feat"><div className="ic"><Ico e="🎁" color="currentColor" /></div><h3>Des coffres et des badges</h3><p className="muted">Avatars et cadres à débloquer au fil des efforts.</p></div>
-          <div className="feat"><div className="ic"><Ico e="💡" color="currentColor" /></div><h3>Un indice avant la solution</h3><p className="muted">Après une erreur, un indice et une deuxième chance. Puis une explication claire.</p></div>
-          <div className="feat"><div className="ic"><Ico e="🔁" color="currentColor" /></div><h3>Des rappels espacés</h3><p className="muted">Les notions déjà vues reviennent après quelques jours pour s’ancrer.</p></div>
-          <div className="feat"><div className="ic"><Ico e="🔤" color="currentColor" /></div><h3>Accessible</h3><p className="muted">Police adaptée à la dyslexie, taille du texte réglable, lecture à voix haute.</p></div>
-        </div>
+        <KidShots />
       </div></section>
 
       <section className="section" id="parents"><div className="in">

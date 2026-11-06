@@ -855,3 +855,18 @@ html:is([data-theme=cm1],[data-theme=cm2]) :is(.k-wave,.k-fox,.k-me-av){animatio
   .k-quest{flex-wrap:wrap}.k-quest .k-btn3d{margin-left:68px}
 }
 .k-won .k-btn3d{background:var(--teal);color:#fff;box-shadow:0 5px 0 var(--teal-d);position:relative}
+/* Espace enfant : captures dans un téléphone */
+.kidshots{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:36px;align-items:center}
+.kfeats{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.kfeats .featbtn{margin:0;padding:14px}
+.kfeats .featbtn h3{font-size:1.02rem}
+.phonewrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phoneflip{border:0;background:none;padding:0;cursor:pointer;perspective:1400px;display:block;width:300px;max-width:100%;-webkit-tap-highlight-color:transparent}
+.phoneflip:focus-visible{outline:3px solid var(--teal);outline-offset:6px;border-radius:44px}
+.phone{grid-area:1/1;display:block;border-radius:44px;padding:10px;background:#1C2433;box-shadow:0 24px 60px rgba(34,50,74,.25),inset 0 0 0 2px #3A4458;backface-visibility:hidden;-webkit-backface-visibility:hidden;position:relative}
+.phone::before{content:"";position:absolute;top:18px;left:50%;width:84px;height:22px;margin-left:-42px;border-radius:99px;background:#1C2433;z-index:2}
+.phone.back{transform:rotateY(180deg)}
+.phone img{display:block;width:100%;aspect-ratio:390/760;object-fit:cover;object-position:top;border-radius:34px;background:#FFF9EF}
+@media (max-width:900px){.kidshots{grid-template-columns:1fr}.kfeats{grid-template-columns:1fr 1fr}.phonewrap{order:-1}.phoneflip{width:250px}}
+@media (max-width:560px){.kfeats{grid-template-columns:1fr}}
+.phone::before{display:none}
