@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronDown, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, Plus, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
+import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronDown, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, FileSpreadsheet, Plus, Printer, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, Logo, Modal } from '../../components/common'
 import { Ico } from '../../components/Icon'
 import { LESSONS, LEVELS, lessonById, meta } from '../../lib/curriculum'
 import type { TaskRow } from '../../lib/cloud'
-import { fmtMin, relDay } from '../../lib/dates'
+import { addDays, dayKey, diffDays, dueLabel, fmtMin, nextWeekday, relDay } from '../../lib/dates'
 import type { ClassRow } from '../../lib/cloud'
 import { classWeakSpots, studentStats, teacherApi, type StudentStat } from '../../lib/teacher'
 
@@ -147,6 +147,22 @@ function NewClass({ onClose, onCreate }: { onClose: () => void; onCreate: (name:
   )
 }
 
+/** Export CSV lisible par Excel (séparateur « ; », accents conservés). */
+function exportCsv(name: string, s: StudentStat[], tasks: TaskRow[]) {
+  const q = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`
+  const head = ['Élève', 'Niveau', 'Dernière séance', 'Temps 7 jours (min)', 'Leçons 7 jours', 'Réussite 1er essai (%)', 'Leçons acquises', 'Leçons commencées', 'À consolider', 'Révisions faites']
+  const rows = s.map(x => {
+    const mine = tasks.filter(t => !t.target || t.target.includes(x.id))
+    const done = mine.filter(t => x.child.sessions.some(se => se.lessonId === t.lesson_id && se.at >= t.created_at)).length
+    return [x.nickname, x.grade.toUpperCase(), x.last ?? 'jamais', Math.round(x.weekMs / 60000), x.weekLessons, x.acc == null ? '' : Math.round(x.acc * 100), x.acquired, x.started, x.weak.map(w => w.title).join(' / '), `${done} / ${mine.length}`]
+  })
+  const csv = '\ufeff' + [head, ...rows].map(r => r.map(q).join(';')).join('\r\n')
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
+  a.download = `edufun-${name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}-${dayKey()}.csv`
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+}
+
 /** Bandeau de synthèse sobre (même style que l'espace parent). */
 function ClassStrip({ s, title }: { s: StudentStat[]; title: string }) {
   const active = s.filter(x => x.weekLessons > 0).length
@@ -169,7 +185,7 @@ function ClassStrip({ s, title }: { s: StudentStat[]; title: string }) {
 }
 
 /** Fenêtre « Proposer une révision » : une leçon, toute la classe ou quelques élèves, un mot facultatif. */
-function ProposeTask({ students, grade, init, onClose, onSend }: { students: StudentStat[]; grade: string; init: { lessonId?: string; ids?: string[] }; onClose: () => void; onSend: (lessonId: string, msg: string | null, target: string[] | null) => Promise<string | null> }) {
+function ProposeTask({ students, grade, init, onClose, onSend }: { students: StudentStat[]; grade: string; init: { lessonId?: string; ids?: string[] }; onClose: () => void; onSend: (lessonId: string, msg: string | null, target: string[] | null, due: string | null) => Promise<string | null> }) {
   const levels = new Set([grade, ...students.map(x => x.grade)].filter(g => g && g !== 'multi'))
   const lessons = LESSONS.filter(l => levels.has(l.level))
   const subjects = [...new Set(lessons.map(l => l.subject))]
@@ -177,15 +193,18 @@ function ProposeTask({ students, grade, init, onClose, onSend }: { students: Stu
   const [some, setSome] = useState(!!init.ids?.length)
   const [ids, setIds] = useState<string[]>(init.ids ?? [])
   const [msg, setMsg] = useState('')
+  const [due, setDue] = useState<string>(nextWeekday(0))
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
+  const today = dayKey()
+  const quick: [string, string][] = [['', 'Sans date'], [addDays(today, 1), 'Demain'], [nextWeekday(0), 'Lundi'], [addDays(today, 7), 'Dans une semaine']]
   return (
     <Modal label="Proposer une révision" onClose={onClose}>
       <form className="col gap12" onSubmit={async e => {
         e.preventDefault()
         if (!lessonId) { setErr('Choisissez une leçon.'); return }
         if (some && !ids.length) { setErr('Choisissez au moins un élève.'); return }
-        setBusy(true); const r = await onSend(lessonId, msg.trim() || null, some ? ids : null); setBusy(false); if (r) setErr(r)
+        setBusy(true); const r = await onSend(lessonId, msg.trim() || null, some ? ids : null, due || null); setBusy(false); if (r) setErr(r)
       }}>
         <h2>Proposer une révision</h2>
         <div className="field"><label htmlFor="tl">Notion à réviser</label>
@@ -196,6 +215,11 @@ function ProposeTask({ students, grade, init, onClose, onSend }: { students: Stu
         <div className="field"><label>Pour qui ?</label>
           <div className="t-filter" style={{ width: 'max-content' }}><button type="button" className={!some ? 'on' : ''} onClick={() => setSome(false)}>Toute la classe</button><button type="button" className={some ? 'on' : ''} onClick={() => setSome(true)}>Certains élèves</button></div>
           {some && <div className="t-pick">{students.map(x => <label key={x.id}><input type="checkbox" checked={ids.includes(x.id)} onChange={e => setIds(v => e.target.checked ? [...v, x.id] : v.filter(y => y !== x.id))} /> {x.nickname}</label>)}</div>}
+        </div>
+        <div className="field"><label htmlFor="td">À faire pour</label>
+          <div className="row wrap gap8">{quick.map(([v, l]) => <button type="button" key={l} className={`btn sm ${due === v ? '' : 'ghost'}`} aria-pressed={due === v} onClick={() => setDue(v)}>{l}</button>)}
+            <input id="td" type="date" className="input" style={{ width: 'auto', minHeight: 38, padding: '4px 10px' }} min={today} value={due} onChange={e => setDue(e.target.value)} aria-label="Date d’échéance" /></div>
+          {due && <span className="tiny muted">Un rappel s’affiche chez l’élève la veille et le jour même.</span>}
         </div>
         <div className="field"><label htmlFor="tm">Un mot pour les élèves (facultatif)</label>
           <input id="tm" className="input" maxLength={140} placeholder="On en reparle en classe lundi !" value={msg} onChange={e => setMsg(e.target.value)} /></div>
@@ -269,6 +293,7 @@ export function ClassView() {
             const txt = `Bonjour,\n\nVotre enfant peut rejoindre la classe « ${cls.name} » sur EDUFUN (https://pepite-nine.vercel.app) pour s’entraîner à la maison.\n\n1. Connectez-vous à votre espace parent.\n2. Ouvrez la fiche de votre enfant, rubrique « Classe ».\n3. Saisissez le code : ${cls.code}\n\nJe verrai uniquement son pseudo et sa progression dans les leçons. Vous pouvez quitter la classe à tout moment.\n\nMerci !`
             navigator.clipboard?.writeText(txt).then(() => { setMsgCopied(true); setTimeout(() => setMsgCopied(false), 2000) }).catch(() => {})
           }}><MessageSquareText size={16} /> {msgCopied ? 'Message copié' : 'Copier le message pour les familles'}</button>
+          <Link className="btn quiet sm" to={`/enseignant/classe/${id}/fiche`}><Printer size={16} /> Fiche à imprimer</Link>
         </div>
       </div>
 
@@ -314,7 +339,7 @@ export function ClassView() {
                 <div key={t.id} className="weakrow">
                   <span style={{ color: meta(l?.subject ?? 'ma').color }}><Ico e={meta(l?.subject ?? 'ma').emoji} color="currentColor" size={20} /></span>
                   <div className="grow"><b>{l?.title ?? 'Leçon'}</b>
-                    <div className="tiny muted">{relDay(t.created_at.slice(0, 10))} · {t.target ? `${who.length} élève${who.length > 1 ? 's' : ''} : ${who.map(x => x.nickname).join(', ')}` : 'toute la classe'}{t.message ? ` · « ${t.message} »` : ''}</div>
+                    <div className="tiny muted">{relDay(t.created_at.slice(0, 10))}{t.due_date ? <> · <b className={diffDays(t.due_date, dayKey()) < 0 && done < who.length ? 'late' : ''}>pour {dueLabel(t.due_date)}</b></> : null} · {t.target ? `${who.length} élève${who.length > 1 ? 's' : ''} : ${who.map(x => x.nickname).join(', ')}` : 'toute la classe'}{t.message ? ` · « ${t.message} »` : ''}</div>
                     <div className="p-lvl" style={{ maxWidth: 260 }}><i style={{ width: `${who.length ? (done / who.length) * 100 : 0}%` }} /></div></div>
                   <span className={`pill ${done === who.length && who.length ? 'green' : ''}`}>{done} / {who.length} faite{done > 1 ? 's' : ''}</span>
                   <button className="iconbtn" aria-label="Retirer cette révision" title="Retirer" onClick={async () => { await api.delTask(t.id); reload() }}><Trash2 size={17} /></button>
@@ -329,6 +354,7 @@ export function ClassView() {
               <div className="t-filter" role="tablist" aria-label="Filtrer les élèves">
                 {([['all', `Tous (${s.length})`], ['help', `À accompagner (${needHelp.length})`], ['idle', `Inactifs (${idle.length})`]] as const).map(([k, l]) => <button key={k} role="tab" aria-selected={filter === k} className={filter === k ? 'on' : ''} onClick={() => setFilter(k)}>{l}</button>)}
               </div>
+              <button className="btn quiet sm" onClick={() => exportCsv(cls.name, s, tasks)}><FileSpreadsheet size={16} /> Exporter (tableur)</button>
               <label className="small muted" htmlFor="srt">Trier par</label>
               <select id="srt" className="input" style={{ width: 'auto', minHeight: 40, padding: '6px 10px' }} value={sort} onChange={e => setSort(e.target.value as typeof sort)}>
                 <option value="name">Prénom</option><option value="acc">Réussite (plus faible d’abord)</option><option value="time">Temps (plus faible d’abord)</option><option value="last">Inactivité</option>
@@ -357,8 +383,8 @@ export function ClassView() {
       </div>
       <p className="tiny muted">Vous voyez le pseudo et la progression des élèves inscrits par leur famille, rien d’autre. Les familles peuvent quitter la classe à tout moment.</p>
 
-      {propose && <ProposeTask students={s} grade={cls.grade} init={propose} onClose={() => setPropose(null)} onSend={async (lessonId, msg, target) => {
-        const e = await api.addTask(id, lessonId, msg, target); if (e) return e
+      {propose && <ProposeTask students={s} grade={cls.grade} init={propose} onClose={() => setPropose(null)} onSend={async (lessonId, msg, target, due) => {
+        const e = await api.addTask(id, lessonId, msg, target, due); if (e) return e
         setPropose(null); reload(); return null
       }} />}
       {kick && <Modal label="Retirer un élève" onClose={() => setKick(null)}>
@@ -371,6 +397,38 @@ export function ClassView() {
         <p className="muted">Le code ne fonctionnera plus et les élèves seront retirés de la classe. Leur progression reste chez leurs familles.</p>
         <div className="row gap8 mt16"><button className="btn ghost grow" onClick={() => setDel(false)}>Annuler</button><button className="btn grow" onClick={async () => { await api.remove(id); nav('/enseignant') }}>Supprimer</button></div>
       </Modal>}
+    </div>
+  )
+}
+
+/** Fiche à imprimer : 8 coupons à découper et coller dans le cahier de liaison. */
+export function ClassSheet() {
+  const { id = '' } = useParams()
+  const api = useApi()
+  const { account } = useStore()
+  const [cls, setCls] = useState<ClassRow | null | undefined>(undefined)
+  useEffect(() => { api.list().then(l => setCls(l.find(c => c.id === id) ?? null)) }, [api, id])
+  if (cls === null) return <Navigate to="/enseignant" replace />
+  if (!cls) return <p className="muted">Chargement…</p>
+  const site = 'pepite-nine.vercel.app'
+  return (
+    <div className="col gap16">
+      <div className="row wrap gap8 no-print">
+        <Link to={`/enseignant/classe/${id}`} className="row small grow"><ChevronLeft size={18} /> Retour à la classe</Link>
+        <button className="btn" onClick={() => window.print()}><Printer size={18} /> Imprimer ou enregistrer en PDF</button>
+      </div>
+      <p className="small muted no-print" style={{ margin: 0 }}>8 coupons par page A4, à découper et à coller dans le cahier de liaison. Pour un PDF, choisissez « Enregistrer au format PDF » comme imprimante.</p>
+      <div className="sheet">
+        {Array.from({ length: 8 }, (_, i) => (
+          <div key={i} className="coupon">
+            <div className="row" style={{ gap: 8 }}><img src={`${import.meta.env.BASE_URL}logo.png`} alt="" /><b className="fred"><span style={{ color: '#17766E' }}>EDU</span><span style={{ color: '#E07A4B' }}>FUN</span></b><span className="grow" /><span className="tiny">{gradeTitle(cls.grade)}</span></div>
+            <p className="c-t">{account?.name ? `${account.name} invite votre enfant` : 'Votre enfant est invité'} à rejoindre la classe <b>« {cls.name} »</b> pour s’entraîner à la maison.</p>
+            <div className="c-code">{cls.code}</div>
+            <ol><li>Créez un compte parent sur <b>{site}</b></li><li>Ajoutez votre enfant, puis ouvrez sa fiche, rubrique « Classe »</li><li>Saisissez le code ci-dessus</li></ol>
+            <p className="c-f">L’enseignant voit seulement le pseudo et la progression. Vous pouvez quitter la classe à tout moment.</p>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

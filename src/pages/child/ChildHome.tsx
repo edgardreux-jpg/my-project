@@ -3,7 +3,7 @@ import { Flame, Play, Compass, Brain, Gift, Zap, Check, Snowflake, Hand, School 
 import { useStore } from '../../state/store'
 import { lessonById, lessonsOf, meta, subjectsOf } from '../../lib/curriculum'
 import { taskDone, useTeacherTasks } from '../../lib/tasks'
-import { dayKey, WEEKDAY_INITIALS, addDays, weekStart, parseDay } from '../../lib/dates'
+import { dayKey, WEEKDAY_INITIALS, addDays, weekStart, parseDay, diffDays, dueLabel } from '../../lib/dates'
 import { CHESTS, dueForReview, liveStreak, readyChests, recommend, todayCount, visibleSubjects } from '../../lib/progress'
 import { Ico } from '../../components/Icon'
 import { avatarSrc } from '../../lib/avatars'
@@ -33,6 +33,8 @@ export default function ChildHome() {
   const today_ = learned.has(today)
   const foxSay = (() => {
     if (!child.sessions.length) return { t: 'Bienvenue ! Je suis Foxy. Appuie sur « Jouer » pour ta toute première leçon.', tone: '' }
+    const urgent = tasks.find(t => t.due && diffDays(t.due, today) <= 1)
+    if (urgent) return { t: `${urgent.teacher} attend ta mission pour ${dueLabel(urgent.due!, today)} ! Elle ne prend que quelques minutes.`, tone: 'warn' }
     if (streak > 0 && !today_) return { t: `Ta série de ${streak} jour${streak > 1 ? 's' : ''} est en danger ! Une leçon aujourd’hui et elle est sauvée.`, tone: 'warn' }
     if (goal - n === 1) return { t: 'Plus qu’une leçon pour ton objectif du jour !', tone: 'go' }
     if (tasks.length) return { t: `${tasks[0].teacher} t’a préparé une mission. Tu la relèves ?`, tone: 'go' }
@@ -57,9 +59,9 @@ export default function ChildHome() {
       )}
 
       {tasks.map(t => { const l = lessonById.get(t.lessonId)!; const tm = meta(l.subject); return (
-        <Link key={t.id} to={`/enfant/lecon/${t.lessonId}`} className="k-banner teacher">
+        <Link key={t.id} to={`/enfant/lecon/${t.lessonId}`} className={`k-banner teacher ${t.due && diffDays(t.due, today) <= 1 ? 'urgent' : ''}`}>
           <span className="k-banner-ic"><School size={28} /></span>
-          <span className="grow"><span className="k-up tiny">Mission de {t.teacher}</span><b>Révise « {l.title} »</b><span className="small">{tm.name}{t.message ? ` · ${t.message}` : ''}</span></span>
+          <span className="grow"><span className="k-up tiny">Mission de {t.teacher}{t.due ? <span className="k-due">pour {dueLabel(t.due, today)}</span> : null}</span><b>Révise « {l.title} »</b><span className="small">{tm.name}{t.message ? ` · ${t.message}` : ''}</span></span>
           <span className="k-btn3d sm teal"><Play size={16} fill="currentColor" /> Jouer</span>
         </Link>) })}
 

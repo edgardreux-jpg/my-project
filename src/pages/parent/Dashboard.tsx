@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw, School, Check, ChevronDown } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
-import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay } from '../../lib/dates'
+import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay, dueLabel } from '../../lib/dates'
 import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotals } from '../../lib/progress'
 import { BASE_AVATARS, uid, yourKid } from '../../lib/progress'
 import { lessonById, meta } from '../../lib/curriculum'
@@ -128,7 +128,7 @@ export function SchoolNotes({ kids, only }: { kids: Child[]; only?: string }) {
           <div className="grow small">
             {done ? <><b>{k.nickname}</b> a fait la révision demandée par {t.teacher} : « {l.title} ».</>
               : <><b>{t.teacher}</b> invite {yourKid(k)} <b>{k.nickname}</b> à réviser la notion suivante : <b>« {l.title} »</b> ({meta(l.subject).name}).</>}
-            <div className="tiny muted">{t.className} · {relDay(t.at.slice(0, 10), dayKey())}{t.message ? ` · « ${t.message} »` : ''}</div>
+            <div className="tiny muted">{t.className} · {relDay(t.at.slice(0, 10), dayKey())}{t.due && !done ? <> · <b>à faire pour {dueLabel(t.due)}</b></> : null}{t.message ? ` · « ${t.message} »` : ''}</div>
           </div>
           {done ? <span className="pill green">Faite</span> : <span className="pill gold">À faire</span>}
         </div>) })}

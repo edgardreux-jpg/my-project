@@ -107,14 +107,14 @@ export async function myMemberships(): Promise<Membership[]> {
 }
 
 /* ---------- Révisions proposées par l'enseignant ---------- */
-export interface TaskRow { id: string; class_id: string; lesson_id: string; message: string | null; target: string[] | null; created_at: string }
-export interface MyTask { task_id: string; child_id: string; class_name: string; teacher_name: string; lesson_id: string; message: string | null; created_at: string }
+export interface TaskRow { id: string; class_id: string; lesson_id: string; message: string | null; target: string[] | null; created_at: string; due_date?: string | null }
+export interface MyTask { task_id: string; child_id: string; class_name: string; teacher_name: string; lesson_id: string; message: string | null; created_at: string; due_date: string | null }
 export async function listTasks(classId: string): Promise<TaskRow[]> {
   const { data } = await sb.from('pp_class_tasks').select('*').eq('class_id', classId).order('created_at', { ascending: false })
   return (data ?? []) as TaskRow[]
 }
-export async function addTask(classId: string, lessonId: string, message: string | null, target: string[] | null): Promise<string | null> {
-  const { error } = await sb.from('pp_class_tasks').insert({ class_id: classId, lesson_id: lessonId, message, target })
+export async function addTask(classId: string, lessonId: string, message: string | null, target: string[] | null, due: string | null = null): Promise<string | null> {
+  const { error } = await sb.from('pp_class_tasks').insert({ class_id: classId, lesson_id: lessonId, message, target, due_date: due })
   return error ? 'La révision n’a pas pu être envoyée. Réessayez.' : null
 }
 export async function deleteTask(id: string) { await sb.from('pp_class_tasks').delete().eq('id', id) }

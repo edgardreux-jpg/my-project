@@ -16,7 +16,7 @@ import Me from './pages/child/Me'
 import ThemeSync from './components/ThemeSync'
 import RecoveryModal from './components/RecoveryModal'
 import GuideBot from './components/GuideBot'
-import { ClassView, TeacherHome, TeacherShell } from './pages/teacher/Teacher'
+import { ClassSheet, ClassView, TeacherHome, TeacherShell } from './pages/teacher/Teacher'
 
 export default function App() {
   return (
@@ -34,6 +34,7 @@ export default function App() {
           <Route path="/enseignant" element={<TeacherShell />}>
             <Route index element={<TeacherHome />} />
             <Route path="classe/:id" element={<ClassView />} />
+            <Route path="classe/:id/fiche" element={<ClassSheet />} />
           </Route>
           <Route path="/profils" element={<Profiles />} />
           <Route path="/confidentialite" element={<Privacy />} />

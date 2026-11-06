@@ -56,3 +56,18 @@ export function fmtMin(ms: number): string {
   const r = m % 60
   return r ? `${h} h ${pad(r)}` : `${h} h`
 }
+
+/** Échéance lisible : « aujourd’hui », « demain », « lundi 9 nov. », « en retard ». */
+export function dueLabel(due: string, today = dayKey()): string {
+  const d = diffDays(due, today)
+  if (d < 0) return 'en retard'
+  if (d === 0) return 'aujourd’hui'
+  if (d === 1) return 'demain'
+  return parseDay(due).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' })
+}
+/** Prochain lundi (ou dans n jours). */
+export function nextWeekday(target: number, today = dayKey()): string {
+  const d = parseDay(today); const cur = (d.getDay() + 6) % 7
+  const add = ((target - cur + 7) % 7) || 7
+  return addDays(today, add)
+}
