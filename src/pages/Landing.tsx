@@ -1,9 +1,10 @@
 import type React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb, Volume2 } from 'lucide-react'
+import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb, Volume2, RotateCw, Check } from 'lucide-react'
 import { Logo, Spark } from '../components/common'
 import { Ico, Stars } from '../components/Icon'
-import { LEVELS, SOURCES, levelStats } from '../lib/curriculum'
+import { LEVELS, SOURCES, levelStats, levelData, meta } from '../lib/curriculum'
+import type { LevelId } from '../types'
 import { useStore } from '../state/store'
 import { avatarSrc } from '../lib/avatars'
 import { useRef, useState, type ReactNode } from 'react'
@@ -72,6 +73,51 @@ function ParentShots() {
         <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</p>
       </div>
     </>
+  )
+}
+
+const LV_LOOK: Record<string, { color: string; dark: string; soft: string; cycle: string; q: string; opts: string[]; ok: number; subj: string }> = {
+  ce1: { color: '#E07A4B', dark: '#B4552B', soft: '#FFEADF', cycle: 'Cycle 2', subj: 'fr', q: 'Quel mot contient le son « ou » ?', opts: ['loup', 'lion', 'chat'], ok: 0 },
+  ce2: { color: '#17766E', dark: '#0D514C', soft: '#E3F4EE', cycle: 'Cycle 2', subj: 'ma', q: 'Quel outil sert à tracer un cercle ?', opts: ['L’équerre', 'Le compas', 'La règle'], ok: 1 },
+  cm1: { color: '#11616B', dark: '#0A434A', soft: '#DDEDEE', cycle: 'Cycle 3', subj: 'ma', q: 'Combien font 2 400 + 1 300 ?', opts: ['3 700', '3 600', '4 700'], ok: 0 },
+  cm2: { color: '#1E3A5F', dark: '#0F2238', soft: '#E2E8F1', cycle: 'Cycle 3', subj: 'ma', q: 'Combien font 24 000 + 13 000 ?', opts: ['36 000', '37 000', '38 000'], ok: 1 },
+}
+
+/** Carte de niveau : recto = chiffres clés, verso = une vraie question du niveau et les matières. */
+function LevelFlip({ id }: { id: LevelId }) {
+  const [on, setOn] = useState(false)
+  const lv = LEVELS.find(l => l.id === id)!, s = levelStats(id), k = LV_LOOK[id]
+  const full = id === 'ce1' || id === 'ce2'
+  const subjects = levelData(id).subjects
+  const m = meta(k.subj)
+  return (
+    <button type="button" className={`lvf ${on ? 'on' : ''}`} style={{ ['--lc' as string]: k.color, ['--ld' as string]: k.dark, ['--ls' as string]: k.soft } as React.CSSProperties}
+      aria-pressed={on} aria-label={`${lv.title} : voir un exemple de question`}
+      onPointerEnter={e => { if (e.pointerType === 'mouse') setOn(true) }}
+      onPointerLeave={e => { if (e.pointerType === 'mouse') setOn(false) }}
+      onClick={e => { if ((e.nativeEvent as PointerEvent).pointerType !== 'mouse') setOn(v => !v) }}>
+      <span className="lvf-in">
+        <span className="lvf-face">
+          <span className="lvf-top"><span>{k.cycle}</span><span>{lv.ages}</span></span>
+          <span className="lvf-title">{lv.title}</span>
+          <span className="lvf-stats">
+            <span><b>{s.themes}</b><small>thèmes au programme</small></span>
+            <span><b>{s.lessons}</b><small>leçons jouables</small></span>
+          </span>
+          <span className="lvf-subj" aria-hidden="true">{subjects.slice(0, 7).map(su => <i key={su.id} style={{ background: meta(su.id).soft, color: meta(su.id).color }}><Ico e={meta(su.id).emoji} size={14} color="currentColor" /></i>)}</span>
+          <span className={`lvf-status ${full ? 'ok' : 'wip'}`}>{full ? <><BookOpenCheck size={15} /> Programme complet</> : <><Sparkles size={15} /> En construction</>}</span>
+          <span className="lvf-hint"><RotateCw size={13} /> Un exemple au dos</span>
+        </span>
+        <span className="lvf-face back">
+          <span className="lvf-top"><span>{lv.title} · {m.name}</span><span>Exemple</span></span>
+          <span className="lvf-q">{k.q}</span>
+          <span className="lvf-opts">{k.opts.map((o, i) => <span key={o} className={i === k.ok ? 'ok' : ''}>{i === k.ok && <Check size={14} />}{o}</span>)}</span>
+          <span className="lvf-sub">{subjects.length} matières, dont</span>
+          <span className="lvf-tags">{subjects.slice(0, 4).map(su => <span key={su.id}>{meta(su.id).name}</span>)}</span>
+          <span className="lvf-foot">{full ? 'Toutes les notions de l’année sont jouables.' : 'Programme cadré, premières leçons de découverte.'}</span>
+        </span>
+      </span>
+    </button>
   )
 }
 
@@ -213,13 +259,8 @@ export default function Landing() {
         <span className="eyebrow">Programme</span>
         <h2 className="h-lg mb8">Du CE1 au CM2</h2>
         <p className="lead mb16">Le CE1 ({ce1.lessons} leçons) et le CE2 ({ce2.lessons} leçons) sont complets. Le CM1 et le CM2 s’enrichissent : leur programme est cadré et les premières leçons de découverte sont jouables.</p>
-        <div className="grid4">
-          {LEVELS.map(l => { const s = levelStats(l.id); return (
-            <div key={l.id} className="card lvl-card"><div className="big">{l.title}</div><div className="muted small">{l.ages}</div>
-              <div className="mt8"><b>{s.themes}</b> <span className="small muted">thèmes au programme</span></div>
-              <div><b>{s.lessons}</b> <span className="small muted">leçons jouables</span></div>
-              <span className={`pill mt8 ${l.id === 'ce1' || l.id === 'ce2' ? 'green' : 'gold'}`}>{l.id === 'ce1' || l.id === 'ce2' ? 'Programme complet' : 'En construction'}</span></div>
-          ) })}
+        <div className="lvl-grid">
+          {LEVELS.map(l => <LevelFlip key={l.id} id={l.id} />)}
         </div>
       </div></section>
 
