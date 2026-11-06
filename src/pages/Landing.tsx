@@ -69,8 +69,9 @@ function ParentShots() {
             ))}
           </span>
         </button>
+        <p className="shot-desc">{SHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{SHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</p>
+        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez une pastille pour changer d’écran.</span></p>
       </div>
     </>
   )
@@ -161,10 +162,25 @@ function KidShots() {
             ))}
           </span>
         </button>
+        <p className="shot-desc">{KSHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{KSHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace enfant. Survolez un encart pour changer d’écran.</p>
+        <p className="tiny muted center">Vraies captures de l’espace enfant. <span className="only-desk">Survolez un encart pour changer d’écran.</span><span className="only-mob">Touchez une pastille pour changer d’écran.</span></p>
       </div>
     </div>
+  )
+}
+
+/** FAQ : deux colonnes sur ordinateur, deux onglets sur mobile pour éviter un long défilement. */
+function FaqTabs({ left, right }: { left: ReactNode; right: ReactNode }) {
+  const [tab, setTab] = useState(0)
+  return (
+    <>
+      <div className="faq-tabs" role="tablist" aria-label="Thème des questions">
+        <button role="tab" aria-selected={tab === 0} className={tab === 0 ? 'on' : ''} onClick={() => setTab(0)}><Sparkles size={16} /> Apprendre</button>
+        <button role="tab" aria-selected={tab === 1} className={tab === 1 ? 'on' : ''} onClick={() => setTab(1)}><School size={16} /> Suivi et école</button>
+      </div>
+      <div className={`faq-grid t${tab}`}>{left}{right}</div>
+    </>
   )
 }
 
@@ -260,7 +276,7 @@ export default function Landing() {
               </div>
             </>} />
           </div>
-          <p className="tiny muted center mt8 flip-tip">Survolez ou touchez une carte pour la retourner</p>
+          <p className="tiny muted center mt8 flip-tip"><span className="only-desk">Survolez ou touchez une carte pour la retourner</span><span className="only-mob">Touchez une carte pour la retourner, glissez pour voir les autres</span></p>
         </div>
       </div></section>
 
@@ -321,7 +337,7 @@ export default function Landing() {
       <section className="section" id="faq"><div className="in faq">
         <span className="eyebrow">Questions fréquentes</span>
         <h2 className="h-lg mb16">Vous vous demandez peut-être…</h2>
-        <div className="faq-grid">
+        <FaqTabs left={<>
           <div className="faq-col">
             <h3 className="faq-h"><span className="faq-ic"><Sparkles size={18} /></span> Apprendre avec EDUFUN</h3>
             <details><summary>Pour quels âges et quels niveaux ?</summary><p>Pour les enfants de 7 à 11 ans, du CE1 au CM2. Le CE1 et le CE2 sont complets ; le CM1 et le CM2 s’enrichissent régulièrement de nouvelles leçons.</p></details>
@@ -333,6 +349,7 @@ export default function Landing() {
             <details><summary>Et s’il ne lit pas encore très bien ?</summary><p>Les consignes peuvent être lues à voix haute. Une police adaptée à la dyslexie et une taille de texte réglable sont aussi disponibles.</p></details>
             <details><summary>Faut-il installer une application ?</summary><p>Non. EDUFUN fonctionne dans le navigateur, sur ordinateur, tablette ou téléphone, au clavier comme au toucher.</p></details>
           </div>
+        </>} right={<>
           <div className="faq-col">
             <h3 className="faq-h"><span className="faq-ic"><School size={18} /></span> Suivi, école et données</h3>
             <details><summary>L’enseignant(e) de mon enfant peut-il suivre son évolution ?</summary><p>Oui, si vous le souhaitez. L’enseignant vous donne un code de classe ; vous le saisissez sur la fiche de votre enfant, rubrique « Classe ». Vous pouvez quitter la classe à tout moment.</p></details>
@@ -344,7 +361,7 @@ export default function Landing() {
             <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons, rien de plus. Aucune publicité, aucun achat intégré.</p></details>
             <details><summary>Les données sont-elles synchronisées et supprimables ?</summary><p>Oui : avec le même compte, vous retrouvez la progression sur tous vos appareils. Vous pouvez exporter ou supprimer le profil d’un enfant à tout moment.</p></details>
           </div>
-        </div>
+        </>} />
       </div></section>
 
       <footer className="footer"><div className="in">

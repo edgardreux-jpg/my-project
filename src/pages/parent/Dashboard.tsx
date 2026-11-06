@@ -245,7 +245,7 @@ export default function Dashboard() {
             })}
           </div>
 
-          <div className="grid2">
+          <div className="grid2 p-charts">
             <section className="card">
               <h3>Temps d’apprentissage de la famille</h3>
               <BarChart labels={family.labels} values={family.minutes} unit="min" />
