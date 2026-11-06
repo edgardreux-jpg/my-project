@@ -164,7 +164,7 @@ function KidShots() {
         </button>
         <p className="shot-desc">{KSHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{KSHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace enfant. <span className="only-desk">Survolez un encart pour changer d’écran.</span><span className="only-mob">Touchez une pastille pour changer d’écran.</span></p>
+        <p className="tiny muted center">Vraies captures de l’espace enfant. <span className="only-desk">Touchez une pastille pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
       </div>
     </div>
   )
