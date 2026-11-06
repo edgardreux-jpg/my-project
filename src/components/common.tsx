@@ -4,11 +4,11 @@ import { useStore } from '../state/store'
 import { Ico } from './Icon'
 import { avatarSrc } from '../lib/avatars'
 
-export function Logo({ to }: { to?: string }) {
-  const { mode, account } = useStore()
-  const dest = to ?? (account?.role === 'teacher' ? '/enseignant' : mode === 'parent' ? '/parent' : mode === 'child' ? '/enfant' : mode === 'locked' ? '/profils' : '/')
+export function Logo() {
+  // Le logo ramène toujours à la page d'accueil du site
+  const dest = '/'
   return (
-    <Link to={dest} className="logo" aria-label="EDUFUN, accueil">
+    <Link to={dest} className="logo" aria-label="EDUFUN, page d’accueil">
       <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" width={40} height={40} />
       <span className="wordmark"><span className="w1">EDU</span><span className="w2">FUN</span></span>
     </Link>

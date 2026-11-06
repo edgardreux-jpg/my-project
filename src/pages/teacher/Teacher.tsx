@@ -26,7 +26,7 @@ export function TeacherShell() {
   return (
     <div className="pshell">
       <header className="ptop"><div className="in">
-        <Logo to="/enseignant" />
+        <Logo />
         <span className="pill gold">Espace enseignant</span>
         <div className="grow" />
         <button className="btn quiet sm" aria-label="Déconnexion" onClick={() => { logout(); nav('/') }}><LogOut size={16} /><span className="lbl"> Déconnexion</span></button>

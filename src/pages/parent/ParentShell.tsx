@@ -30,7 +30,7 @@ export default function ParentShell() {
   return (
     <div className="pshell">
       <header className="ptop"><div className="in">
-        <Logo to="/parent" />
+        <Logo />
         <span className="pill teal">Espace parent</span>
         <div className="grow" />
         <span className="small muted" style={{ display: 'none' }}>{account.name}</span>
