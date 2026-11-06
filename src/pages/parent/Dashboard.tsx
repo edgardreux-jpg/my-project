@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw, School, Check, ChevronDown } from 'lucide-react'
+import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw, School, Check, ChevronDown, Mail } from 'lucide-react'
 import { useStore } from '../../state/store'
-import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
+import { Avatar, BarChart, Empty, LineChart, Modal, Switch } from '../../components/common'
+import { getMailPrefs, setMailPrefs } from '../../lib/cloud'
 import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay, dueLabel } from '../../lib/dates'
 import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotals } from '../../lib/progress'
 import { BASE_AVATARS, uid, yourKid } from '../../lib/progress'
@@ -89,6 +90,21 @@ function insight(c: Child, today: string): { tone: 'green' | 'gold' | 'red' | 't
   const w = weakSpots(c)[0]
   if (w) return { tone: 'gold', text: `À consolider : ${w.title}.` }
   return { tone: 'green', text: 'Rythme régulier, continuez ainsi.' }
+}
+
+/** Préférences d'e-mails (compte réel uniquement). */
+function MailPrefs({ userId }: { userId: string }) {
+  const [p, setP] = useState<{ weekly: boolean; tasks: boolean } | null>(null)
+  useEffect(() => { getMailPrefs(userId).then(setP).catch(() => {}) }, [userId])
+  if (!p) return null
+  const up = (n: typeof p) => { setP(n); setMailPrefs(userId, n) }
+  return (
+    <section className="card">
+      <h3 className="row gap8"><Mail size={19} /> E-mails</h3>
+      <div className="toggle"><div><b>Bilan du dimanche</b><div className="tiny muted">Chaque dimanche soir, la semaine de vos enfants en un coup d’œil</div></div><Switch label="Bilan du dimanche" on={p.weekly} onChange={v => up({ ...p, weekly: v })} /></div>
+      <div className="toggle"><div><b>Révisions proposées par l’école</b><div className="tiny muted">Quand l’enseignant propose une notion à réviser</div></div><Switch label="Révisions proposées par l’école" on={p.tasks} onChange={v => up({ ...p, tasks: v })} /></div>
+    </section>
+  )
 }
 
 /** Bandeau « cette semaine en famille ». */
@@ -275,6 +291,7 @@ export default function Dashboard() {
           <Suggestions kids={kids} today={today} />
         </>
       )}
+      {account.cloud && <MailPrefs userId={account.id} />}
       <p className="tiny muted">EDUFUN suit la progression de l’enfant dans les leçons. Il ne s’agit ni d’une évaluation officielle ni d’une note scolaire.</p>
       {add && <AddChildModal onClose={() => setAdd(false)} />}
     </div>

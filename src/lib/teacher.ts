@@ -39,7 +39,7 @@ export const teacherApi = (isDemo: boolean) => isDemo ? {
   overview: async (id: string) => demoState().students.get(id) ?? [],
   removeMember: async (cid: string, kid: string) => { const s = demoState(); s.students.set(cid, (s.students.get(cid) ?? []).filter(x => x.child_id !== kid)) },
   tasks: async (cid: string) => demoState().tasks.filter(t => t.class_id === cid),
-  addTask: async (cid: string, lessonId: string, message: string | null, target: string[] | null, due: string | null = null) => { demoState().tasks.unshift({ id: 'demo-t-' + Date.now(), class_id: cid, lesson_id: lessonId, message, target, created_at: new Date().toISOString(), due_date: due }); return null as string | null },
+  addTask: async (cid: string, lessonId: string, message: string | null, target: string[] | null, due: string | null = null, _title: string | null = null, _subject: string | null = null) => { demoState().tasks.unshift({ id: 'demo-t-' + Date.now(), class_id: cid, lesson_id: lessonId, message, target, created_at: new Date().toISOString(), due_date: due }); return null as string | null },
   delTask: async (id: string) => { const s = demoState(); s.tasks = s.tasks.filter(t => t.id !== id) },
 } : {
   list: cloud.listClasses,

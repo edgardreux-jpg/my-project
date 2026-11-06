@@ -384,7 +384,7 @@ export function ClassView() {
       <p className="tiny muted">Vous voyez le pseudo et la progression des élèves inscrits par leur famille, rien d’autre. Les familles peuvent quitter la classe à tout moment.</p>
 
       {propose && <ProposeTask students={s} grade={cls.grade} init={propose} onClose={() => setPropose(null)} onSend={async (lessonId, msg, target, due) => {
-        const e = await api.addTask(id, lessonId, msg, target, due); if (e) return e
+        const l = lessonById.get(lessonId); const e = await api.addTask(id, lessonId, msg, target, due, l?.title ?? null, l ? meta(l.subject).name : null); if (e) return e
         setPropose(null); reload(); return null
       }} />}
       {kick && <Modal label="Retirer un élève" onClose={() => setKick(null)}>

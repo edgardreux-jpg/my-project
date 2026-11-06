@@ -113,12 +113,21 @@ export async function listTasks(classId: string): Promise<TaskRow[]> {
   const { data } = await sb.from('pp_class_tasks').select('*').eq('class_id', classId).order('created_at', { ascending: false })
   return (data ?? []) as TaskRow[]
 }
-export async function addTask(classId: string, lessonId: string, message: string | null, target: string[] | null, due: string | null = null): Promise<string | null> {
-  const { error } = await sb.from('pp_class_tasks').insert({ class_id: classId, lesson_id: lessonId, message, target, due_date: due })
+export async function addTask(classId: string, lessonId: string, message: string | null, target: string[] | null, due: string | null = null, title: string | null = null, subject: string | null = null): Promise<string | null> {
+  const { error } = await sb.from('pp_class_tasks').insert({ class_id: classId, lesson_id: lessonId, message, target, due_date: due, title, subject })
   return error ? 'La révision n’a pas pu être envoyée. Réessayez.' : null
 }
 export async function deleteTask(id: string) { await sb.from('pp_class_tasks').delete().eq('id', id) }
 export async function myTasks(): Promise<MyTask[]> {
   const { data } = await sb.rpc('pp_my_tasks')
   return (data ?? []) as MyTask[]
+}
+
+/* ---------- Préférences d'e-mails du parent ---------- */
+export async function getMailPrefs(userId: string): Promise<{ weekly: boolean; tasks: boolean }> {
+  const { data } = await sb.from('pp_profiles').select('mail_weekly, mail_tasks').eq('user_id', userId).maybeSingle()
+  return { weekly: data?.mail_weekly ?? true, tasks: data?.mail_tasks ?? true }
+}
+export async function setMailPrefs(userId: string, p: { weekly: boolean; tasks: boolean }) {
+  return sb.from('pp_profiles').update({ mail_weekly: p.weekly, mail_tasks: p.tasks }).eq('user_id', userId)
 }
