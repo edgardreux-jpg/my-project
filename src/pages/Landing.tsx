@@ -318,14 +318,33 @@ export default function Landing() {
         </div>
       </div></section>
 
-      <section className="section" id="faq"><div className="in faq" style={{ maxWidth: 760 }}>
-        <h2 className="h-lg mb16">Questions fréquentes</h2>
-        <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons, rien de plus. Ces données sont enregistrées sur un serveur sécurisé et ne sont visibles que par le compte parent, et par l’enseignant si le parent a saisi son code de classe.</p></details>
-        <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non : l’espace parent est protégé par votre code parent à 4 chiffres. L’enfant ouvre son propre profil en touchant simplement son avatar.</p></details>
-        <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EDUFUN est un complément et ne remplace pas l’école ni une évaluation.</p></details>
-        <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et l’exercice revient plus tard.</p></details>
-        <details><summary>Peut-on suivre plusieurs enfants ?</summary><p>Oui, avec un profil par enfant et une vue d’ensemble pour la famille.</p></details>
-        <details><summary>Les données sont-elles synchronisées entre appareils ?</summary><p>Oui. En vous connectant avec le même compte, vous retrouvez la progression sur tous vos appareils. Vous pouvez aussi exporter la progression d’un enfant.</p></details>
+      <section className="section" id="faq"><div className="in faq">
+        <span className="eyebrow">Questions fréquentes</span>
+        <h2 className="h-lg mb16">Vous vous demandez peut-être…</h2>
+        <div className="faq-grid">
+          <div className="faq-col">
+            <h3 className="faq-h"><span className="faq-ic"><Sparkles size={18} /></span> Apprendre avec EDUFUN</h3>
+            <details><summary>Pour quels âges et quels niveaux ?</summary><p>Pour les enfants de 7 à 11 ans, du CE1 au CM2. Le CE1 et le CE2 sont complets ; le CM1 et le CM2 s’enrichissent régulièrement de nouvelles leçons.</p></details>
+            <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EDUFUN est un complément : il ne remplace ni l’école ni une évaluation.</p></details>
+            <details><summary>Quelles matières sont proposées ?</summary><p>Français, mathématiques, questionner le monde, sciences, histoire, géographie et anglais, ainsi que vivre ensemble, arts plastiques, musique, sport et « grandir ensemble ».</p></details>
+            <details><summary>Combien de temps par jour ?</summary><p>Quelques minutes suffisent : une leçon dure 3 à 8 minutes. Vous fixez un objectif de 1 à 3 leçons par jour et un rappel de pause.</p></details>
+            <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et la notion revient plus tard pour s’ancrer.</p></details>
+            <details><summary>Comment mon enfant reste-t-il motivé ?</summary><p>Étoiles, séries de jours, coffres à ouvrir, avatars et badges à gagner. Les séries pardonnent un oubli grâce aux jokers : jamais de punition.</p></details>
+            <details><summary>Et s’il ne lit pas encore très bien ?</summary><p>Les consignes peuvent être lues à voix haute. Une police adaptée à la dyslexie et une taille de texte réglable sont aussi disponibles.</p></details>
+            <details><summary>Faut-il installer une application ?</summary><p>Non. EDUFUN fonctionne dans le navigateur, sur ordinateur, tablette ou téléphone, au clavier comme au toucher.</p></details>
+          </div>
+          <div className="faq-col">
+            <h3 className="faq-h"><span className="faq-ic"><School size={18} /></span> Suivi, école et données</h3>
+            <details><summary>L’enseignant(e) de mon enfant peut-il suivre son évolution ?</summary><p>Oui, si vous le souhaitez. L’enseignant vous donne un code de classe ; vous le saisissez sur la fiche de votre enfant, rubrique « Classe ». Vous pouvez quitter la classe à tout moment.</p></details>
+            <details><summary>Que voit exactement l’enseignant ?</summary><p>Le pseudo, le niveau et la progression de votre enfant dans les leçons : temps passé, réussite, notions acquises et à consolider. Jamais votre code parent ni les données de vos autres enfants.</p></details>
+            <details><summary>L’enseignant peut-il proposer des révisions ?</summary><p>Oui. Il choisit une notion pour la classe ou pour certains élèves. Votre enfant la retrouve en tête de son espace et vous recevez l’invitation dans votre tableau de bord.</p></details>
+            <details><summary>Je suis enseignant(e) : comment créer ma classe ?</summary><p>Créez un compte enseignant, puis une classe : vous obtenez un code et un message prêt à envoyer aux familles. Une classe de démonstration permet d’essayer avant.</p></details>
+            <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non : l’espace parent est protégé par votre code parent à 4 chiffres. L’enfant ouvre son propre espace en touchant son avatar.</p></details>
+            <details><summary>Peut-on suivre plusieurs enfants ?</summary><p>Oui, avec un profil par enfant et une vue d’ensemble de la famille chaque semaine.</p></details>
+            <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons, rien de plus. Aucune publicité, aucun achat intégré.</p></details>
+            <details><summary>Les données sont-elles synchronisées et supprimables ?</summary><p>Oui : avec le même compte, vous retrouvez la progression sur tous vos appareils. Vous pouvez exporter ou supprimer le profil d’un enfant à tout moment.</p></details>
+          </div>
+        </div>
       </div></section>
 
       <footer className="footer"><div className="in">

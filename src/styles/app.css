@@ -937,3 +937,13 @@ html:is([data-theme=cm1],[data-theme=cm2]) :is(.k-wave,.k-fox,.k-me-av){animatio
 .k-banner.teacher .k-up{color:var(--teal-d);display:block}
 .p-school{border-left:4px solid #D9A23A}
 .p-school h3{display:flex;align-items:center;gap:8px}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.faq-h{display:flex;align-items:center;gap:10px;font-size:1.1rem;margin:0 0 12px}
+.faq-ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--teal-s);color:var(--teal)}
+.faq details{transition:border-color .15s}
+.faq details[open]{border-color:var(--teal)}
+.faq summary{display:flex;justify-content:space-between;gap:12px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:1.3rem;line-height:1;color:var(--teal);flex:none}
+.faq details[open] summary::after{content:"–"}
+@media (max-width:900px){.faq-grid{grid-template-columns:1fr}}
