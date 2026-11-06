@@ -1,6 +1,9 @@
 import type { Child } from '../../types'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { Star, Flame, BookOpenCheck, Medal, Check, Lock, Settings2 } from 'lucide-react'
+import { levelOf, totalStars } from '../../lib/progress'
+import { LEVEL_ICONS } from './kidui'
 import { useStore } from '../../state/store'
 import { applyVoicePrefs, effectiveVoice, listVoices, speak, canSpeak, voiceScore } from '../../lib/audio'
 import { BASE_AVATARS, CHESTS, FRAMES } from '../../lib/progress'
@@ -24,21 +27,34 @@ export default function Me() {
   const locked = CHESTS.filter(c => c.kind === 'avatar' && !avatars.includes(c.value))
   const frames = ['none', ...child.unlocked.filter(u => FRAMES.includes(u))]
   const set = (fn: (c: Child) => void) => mutateChild(child.id, fn)
+  const lv = levelOf(child.xp), LI = LEVEL_ICONS[lv.index]
+  const doneN = Object.values(child.lessons).filter(p => p.done > 0).length
   return (
     <div className="col gap20">
-      <h1 className="h-lg">Moi</h1>
+      <section className="k-me">
+        <div className="k-me-bg" aria-hidden="true"><i /><i /></div>
+        <span className="k-me-av"><Avatar emoji={child.avatar} frame={child.frame} size={112} /></span>
+        <h1>{child.nickname}</h1>
+        <span className="k-me-lvl"><LI size={16} strokeWidth={2.6} /> {lv.name} · {child.grade.toUpperCase()}</span>
+        <div className="k-me-stats">
+          <span><Star size={20} strokeWidth={2.6} /><b>{totalStars(child)}</b><small>étoiles</small></span>
+          <span><Flame size={20} strokeWidth={2.6} /><b>{child.streak.best}</b><small>record de série</small></span>
+          <span><BookOpenCheck size={20} strokeWidth={2.4} /><b>{doneN}</b><small>leçons finies</small></span>
+          <span><Medal size={20} strokeWidth={2.4} /><b>{child.badges.length}</b><small>badges</small></span>
+        </div>
+      </section>
       <section className="card">
-        <div className="row"><Avatar emoji={child.avatar} frame={child.frame} size={80} /><div><h2>{child.nickname}</h2><div className="muted small">{child.grade.toUpperCase()}</div></div></div>
-        <h3 className="mt24">Mon avatar</h3>
-        <div className="wrap">{avatars.map(a => <button key={a} className={`avpick ${a === avatarId(child.avatar) ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === avatarId(child.avatar)} onClick={() => set(c => { c.avatar = a })}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}
-          {locked.map(c => <span key={c.id} className="avpick locked" title={`Dans le « ${c.title} » (${c.xp} points)`}><img src={avatarSrc(c.value)} alt="" /><span>{c.xp} pts</span></span>)}</div>
-        {locked.length > 0 && <p className="tiny muted mt8">Les avatars grisés se gagnent dans les coffres de la page Récompenses.</p>}
+        <h3>Choisis ton avatar</h3>
+        <div className="k-avs">{avatars.map(a => <button key={a} className={`k-av ${a === avatarId(child.avatar) ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === avatarId(child.avatar)} onClick={() => set(c => { c.avatar = a })}><img src={avatarSrc(a)} alt="" />{a === avatarId(child.avatar) && <i className="k-av-ok"><Check size={14} strokeWidth={3.4} /></i>}<span>{avatarLabel(a)}</span></button>)}
+          {locked.map(c => <Link to="/enfant/recompenses" key={c.id} className="k-av locked" title={`Dans le « ${c.title} » (${c.xp} points)`}><img src={avatarSrc(c.value)} alt="" /><i className="k-av-lock"><Lock size={13} strokeWidth={3} /></i><span>{c.xp} pts</span></Link>)}</div>
+        {locked.length > 0 && <p className="tiny muted mt8">Les avatars cadenassés se gagnent dans les coffres.</p>}
         {frames.length > 1 && <>
           <h3 className="mt16">Mon cadre</h3>
           <div className="wrap">{frames.map(f => <button key={f} className="iconbtn" style={{ width: 56, height: 56, border: f === child.frame ? '3px solid var(--teal)' : '3px solid transparent' }} aria-label={`Cadre ${f}`} onClick={() => set(c => { c.frame = f })}><Avatar emoji={child.avatar} frame={f} size={40} /></button>)}</div>
         </>}
       </section>
-      <section className="card">
+      <details className="card k-set"><summary><Settings2 size={20} /> Mes réglages <span className="tiny muted">voix, sons, taille du texte</span></summary>
+      <section className="mt16">
         <h3>Voix de lecture</h3>
         {voices.length === 0 ? <p className="small muted">Aucune voix française trouvée sur cet appareil. Essaie un autre navigateur (Chrome ou Edge proposent des voix plus naturelles).</p> : (
           <div className="col">
@@ -51,7 +67,7 @@ export default function Me() {
           </div>
         )}
       </section>
-      <section className="card">
+      <section className="mt16">
         <h3>Confort</h3>
         <div className="toggle"><div><b>Sons</b><div className="tiny muted">Petits bruitages pendant les leçons</div></div><Switch label="Sons" on={child.sound} onChange={v => set(c => { c.sound = v })} /></div>
         <div className="toggle"><div><b>Lire les consignes</b><div className="tiny muted">La consigne est lue à voix haute à chaque question</div></div><Switch label="Lire les consignes" on={child.readAloud ?? child.grade === 'ce1'} onChange={v => set(c => { c.readAloud = v })} /></div>
@@ -61,6 +77,7 @@ export default function Me() {
           <div className="row gap8">{[1, 1.15, 1.3].map((s, i) => <button key={s} className={`btn sm sizebtn ${child.scale === s ? '' : 'ghost'}`} onClick={() => set(c => { c.scale = s })} aria-label={`Taille ${i + 1}`}>{'A'.repeat(i + 1)}</button>)}</div>
         </div>
       </section>
+      </details>
       <button className="btn quiet block" onClick={() => { switchProfile(); nav('/profils') }}>Changer de profil</button>
     </div>
   )

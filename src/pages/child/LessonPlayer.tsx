@@ -238,7 +238,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
           {reward.freezeUsed && <p className="small muted mt8">Un joker de série t’a protégé pendant ton absence.</p>}
           {reward.levelUp && <div className="note mt16"><b>Nouveau niveau : {lv.name} !</b></div>}
           {reward.newBadges.map(b => { const d = BADGES.find(x => x.id === b)!; return <div key={b} className="note mt16 row gap8"><Ico e={d.emoji} size={22} /> Badge débloqué : <b>{d.title}</b></div> })}
-          {reward.newChests.length > 0 && <div className="note mt16 row gap8"><Ico e="🎁" size={22} /> Un coffre t’attend dans l’onglet Récompenses ({CHESTS.find(c => c.id === reward.newChests[0])?.title}).</div>}
+          {reward.newChests.length > 0 && <div className="note mt16 row gap8"><Ico e="🎁" size={22} /> Un coffre t’attend dans l’onglet Trésors ({CHESTS.find(c => c.id === reward.newChests[0])?.title}).</div>}
           {lesson?.adult && (
             <div className="card mt16" style={{ textAlign: 'left' }}>
               <h3 className="row gap8"><Ico e="👨‍👩‍👧" /> À faire avec un adulte</h3>

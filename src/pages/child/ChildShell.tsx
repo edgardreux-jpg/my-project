@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react'
 import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { Home, Gift, UserRound, Map as MapIcon, Lock, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
-import { Avatar, Logo, Modal, Toast } from '../../components/common'
+import { Logo, Modal, Toast } from '../../components/common'
+import { readyChests } from '../../lib/progress'
+import { Hud } from './kidui'
 
 export default function ChildShell() {
   const { child, mode, leaveChild, account, switchProfile, loading } = useStore()
@@ -38,29 +40,27 @@ export default function ChildShell() {
     if (r.ok) { setAsk(false); setPw(''); nav('/parent') } else setErr(r.error)
   }
 
+  const chests = readyChests(child).length
   const items = [
-    { to: '/enfant', end: true, icon: <Home size={22} />, label: 'Accueil' },
-    { to: '/enfant/matieres', icon: <MapIcon size={22} />, label: 'Matières' },
-    { to: '/enfant/recompenses', icon: <Gift size={22} />, label: 'Récompenses' },
-    { to: '/enfant/moi', icon: <UserRound size={22} />, label: 'Moi' },
+    { to: '/enfant', end: true, icon: <Home size={24} strokeWidth={2.4} />, label: 'Accueil', c: 'coral' },
+    { to: '/enfant/matieres', icon: <MapIcon size={24} strokeWidth={2.4} />, label: 'Mondes', c: 'teal' },
+    { to: '/enfant/recompenses', icon: <Gift size={24} strokeWidth={2.4} />, label: 'Trésors', c: 'gold', badge: chests },
+    { to: '/enfant/moi', icon: <UserRound size={24} strokeWidth={2.4} />, label: 'Moi', c: 'blue' },
   ]
+  const inner = (i: typeof items[number]) => <><span className="k-tab-ic">{i.icon}{!!i.badge && <b className="k-tab-badge">{i.badge}</b>}</span><span className="k-tab-l">{i.label}</span></>
 
   return (
     <div className="cshell">
       <aside className="side">
-        <div style={{ padding: '4px 8px 12px' }}><Logo /></div>
-        <div className="row" style={{ padding: '4px 8px 14px' }}>
-          <Avatar emoji={child.avatar} frame={child.frame} size={46} />
-          <div><b>{child.nickname}</b><div className="tiny muted">{child.grade.toUpperCase()}</div></div>
-        </div>
-        {items.map(i => <NavLink key={i.to} to={i.to} end={i.end} className={({ isActive }) => `nav ${isActive ? 'on' : ''}`}>{i.icon}{i.label}</NavLink>)}
+        <div style={{ padding: '4px 8px 16px' }}><Logo /></div>
+        {items.map(i => <NavLink key={i.to} to={i.to} end={i.end} className={({ isActive }) => `nav k-tab t-${i.c} ${isActive ? 'on' : ''}`}>{inner(i)}</NavLink>)}
         <div className="grow" />
         <button className="btn ghost sm" onClick={() => { switchProfile(); nav('/profils') }}><Users size={16} /> Changer de profil</button>
         <button className="btn quiet sm" onClick={() => setAsk(true)}><Lock size={16} /> Espace parent</button>
       </aside>
-      <main className="cmain"><Outlet /></main>
+      <main className="cmain"><Hud child={child} /><Outlet /></main>
       <nav className="tabbar" aria-label="Navigation">
-        {items.map(i => <NavLink key={i.to} to={i.to} end={i.end} className={({ isActive }) => (isActive ? 'on' : '')}>{i.icon}{i.label}</NavLink>)}
+        {items.map(i => <NavLink key={i.to} to={i.to} end={i.end} className={({ isActive }) => `k-tab t-${i.c} ${isActive ? 'on' : ''}`}>{inner(i)}</NavLink>)}
       </nav>
       {ask && (
         <Modal label="Retour à l’espace parent" onClose={() => setAsk(false)}>

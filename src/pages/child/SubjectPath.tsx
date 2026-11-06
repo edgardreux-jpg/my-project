@@ -1,32 +1,28 @@
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ChevronLeft, Lock, Check, Crown, Flag, Trophy } from 'lucide-react'
+import { ChevronLeft, Lock, Check, Crown, Flag, Trophy, Star, BookOpenCheck } from 'lucide-react'
 import { Avatar } from '../../components/common'
 import { useStore } from '../../state/store'
 import { meta, pathFor, type PathItem, SUBJECT_META, subjectsOf, lessonsOf } from '../../lib/curriculum'
-import { masteryOf, visibleSubjects } from '../../lib/progress'
+import { masteryOf, visibleSubjects, nextLessonInSubject, totalStars } from '../../lib/progress'
+import { SubjectTile } from './kidui'
 import { Ico, Stars } from '../../components/Icon'
 
 export function SubjectList() {
   const { child } = useStore()
   if (!child) return null
   const subs = visibleSubjects(child, subjectsOf(child.grade))
+  const open = subs.filter(sid => lessonsOf(child.grade, sid).length > 0), soon = subs.filter(sid => lessonsOf(child.grade, sid).length === 0)
+  const done = Object.values(child.lessons).filter(p => p.done > 0).length
   return (
-    <div className="col gap20">
-      <h1 className="h-lg">Mes matières</h1>
-      <div className="subjects">
-        {subs.map(sid => {
-          const m = SUBJECT_META[sid]
-          const n = lessonsOf(child.grade, sid).length
-          return (
-            <Link key={sid} to={`/enfant/matiere/${sid}`} className="subj" style={{ opacity: n ? 1 : .6 }}>
-              <span className="em" style={{ background: m.soft, color: m.color }}><Ico e={m.emoji} color="currentColor" /></span>
-              <b>{m.name}</b>
-              <span className="tiny muted">{n ? `${n} leçons` : 'Bientôt'}</span>
-            </Link>
-          )
-        })}
+    <div className="col gap20 k-page">
+      <div>
+        <h1 className="k-hi">Mes mondes</h1>
+        <p className="k-sub">Choisis une matière et suis le chemin. Chaque leçon réussie rapporte des étoiles !</p>
       </div>
+      <div className="row wrap gap8"><span className="k-chip star big"><Star size={18} strokeWidth={2.6} /> {totalStars(child)} étoiles</span><span className="k-chip lvl big"><BookOpenCheck size={18} strokeWidth={2.4} /> {done} leçon{done > 1 ? 's' : ''} terminée{done > 1 ? 's' : ''}</span></div>
+      <div className="k-subjects big">{open.map(sid => <SubjectTile key={sid} child={child} sid={sid} next={nextLessonInSubject(child, sid)?.title ?? null} />)}</div>
+      {soon.length > 0 && <><h3 className="k-h3">Bientôt</h3><div className="k-subjects">{soon.map(sid => <SubjectTile key={sid} child={child} sid={sid} />)}</div></>}
     </div>
   )
 }
@@ -94,7 +90,7 @@ export default function SubjectPath() {
 
   return (
     <div>
-      <Link to="/enfant/matieres" className="row small" style={{ marginBottom: 10 }}><ChevronLeft size={18} /> Matières</Link>
+      <Link to="/enfant/matieres" className="row small" style={{ marginBottom: 10 }}><ChevronLeft size={18} /> Mes mondes</Link>
       <div className="card flat map-head" style={{ background: m.soft, border: 0 }}>
         <span className="mh-ic" style={{ color: m.color }}><Ico e={m.emoji} color="currentColor" /></span>
         <div className="grow">

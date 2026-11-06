@@ -60,12 +60,13 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Réglages', 'Les habitudes (objectif, pauses), les matières visibles, et la rubrique « Classe » pour entrer le code donné par l’enseignant.'),
   ]
   if (path === '/enfant') return [
-    P('Salut, c’est Foxy !', 'Ici, c’est ton espace. Appuie sur le gros bouton pour continuer ta leçon.'),
+    P('Salut, c’est Foxy !', 'Ici, c’est ton espace. Appuie sur le gros bouton « Jouer » pour continuer ton aventure.'),
+    P('En haut', 'La flamme compte tes jours de suite, l’étoile tes étoiles gagnées. Le cadeau qui bouge ? Un coffre t’attend !'),
     P('Ta série', 'Les flammes comptent les jours où tu as appris. Un joker te protège si tu oublies un jour.'),
-    P('Tes matières', 'Plus bas, choisis une matière pour voir ton chemin de leçons.'),
+    P('Tes mondes', 'Plus bas, choisis un monde pour voir ton chemin de leçons.'),
   ]
   if (path === '/enfant/matieres') return [
-    P('Choisis une matière', 'Touche une matière pour ouvrir ta carte d’aventure.'),
+    P('Choisis un monde', 'Chaque matière est un monde. Touche-le pour ouvrir ta carte d’aventure.'),
   ]
   if (path.startsWith('/enfant/matiere/')) return [
     P('Ta carte d’aventure', 'Suis le chemin en pointillés ! Ton avatar t’attend sur la prochaine leçon.'),
@@ -74,14 +75,13 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Les mondes', 'Le chemin est découpé en mondes. Au bout, une coupe t’attend.'),
   ]
   if (path === '/enfant/recompenses') return [
-    P('Tes récompenses', 'Chaque leçon te donne des points. Avec assez de points, tu ouvres un coffre !'),
+    P('Tes trésors', 'Chaque leçon te donne des points. Avec assez de points, tu montes de niveau et tu ouvres des coffres !'),
     P('Les coffres', 'Ils cachent de nouveaux avatars et des cadres. Quand un coffre brille, appuie sur « Ouvrir ».'),
     P('Les badges', 'Les badges récompensent tes efforts : première leçon, série de jours, leçon sans faute…'),
   ]
   if (path === '/enfant/moi') return [
-    P('C’est toi !', 'Ici, tu choisis ton avatar. Les avatars grisés se gagnent dans les coffres.'),
-    P('La voix', 'Choisis la voix qui lit les consignes et règle sa vitesse.'),
-    P('Le confort', 'Tu peux couper les sons, faire lire les consignes ou agrandir le texte.'),
+    P('C’est toi !', 'Ici, tu choisis ton avatar. Ceux avec un cadenas se gagnent dans les coffres.'),
+    P('Mes réglages', 'Ouvre « Mes réglages » pour choisir la voix, couper les sons ou agrandir le texte.'),
   ]
   if (path === '/confidentialite') return [
     P('Vos données', 'Cette page explique quelles données EDUFUN garde, qui peut les voir et comment les supprimer.'),
