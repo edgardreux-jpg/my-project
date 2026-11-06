@@ -474,3 +474,12 @@ html:is([data-theme=cm2],[data-theme=pro]) body{font-size:calc(15px * var(--scal
 html[data-theme=ce2] .today{border-radius:20px;box-shadow:0 4px 0 var(--teal-d)}
 html:is([data-theme=cm1],[data-theme=cm2]) .today{background:var(--teal);border-radius:var(--r);box-shadow:0 6px 18px rgba(17,24,39,.18)}
 html:is([data-theme=cm1],[data-theme=cm2]) .today .btn{box-shadow:none}
+.section{scroll-margin-top:72px}
+/* Menu de la page d'accueil visible aussi sur téléphone, sur une ligne qui défile */
+@media (max-width:900px){
+  .top .in{flex-wrap:wrap;row-gap:4px}
+  .top nav{display:flex;order:3;width:100%;margin-left:0;gap:18px;overflow-x:auto;padding:2px 0 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .top nav::-webkit-scrollbar{display:none}
+  .top nav a{white-space:nowrap;font-size:.9rem;padding:6px 0}
+  .section{scroll-margin-top:110px}
+}

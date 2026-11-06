@@ -1,3 +1,4 @@
+import type React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ShieldCheck, BookOpenCheck, EyeOff, HardDrive, LineChart as LC } from 'lucide-react'
 import { Logo, Spark } from '../components/common'
@@ -6,6 +7,11 @@ import { LEVELS, SOURCES, levelStats } from '../lib/curriculum'
 import { useStore } from '../state/store'
 
 export default function Landing() {
+  // Le site navigue avec « # » : on fait défiler vers la section au lieu de changer de page
+  const go = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault()
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
   const { account, mode, loginDemo } = useStore()
   const nav = useNavigate()
   const cta = account ? (mode === 'parent' ? '/parent' : '/profils') : '/inscription'
@@ -15,7 +21,7 @@ export default function Landing() {
     <div>
       <header className="top"><div className="in">
         <Logo />
-        <nav aria-label="Sections"><a href="#parents">Parents</a><a href="#enfants">Enfants</a><a href="#niveaux">Niveaux</a><a href="#enseignants">Enseignants</a><a href="#faq">Questions</a></nav>
+        <nav aria-label="Sections"><a href="#parents" onClick={go("parents")}>Parents</a><a href="#enfants" onClick={go("enfants")}>Enfants</a><a href="#niveaux" onClick={go("niveaux")}>Niveaux</a><a href="#enseignants" onClick={go("enseignants")}>Enseignants</a><a href="#faq" onClick={go("faq")}>Questions</a></nav>
         <div className="grow" />
         {account ? <Link className="btn sm" to={cta}>Mon espace</Link> : <><Link className="btn quiet sm" to="/connexion">Connexion</Link><Link className="btn sm" to="/inscription">Créer un compte</Link></>}
       </div></header>
