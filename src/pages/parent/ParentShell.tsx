@@ -25,6 +25,7 @@ export default function ParentShell() {
   const nav = useNavigate()
   if (loading) return <div className="auth"><p className="muted">Chargement…</p></div>
   if (!account) return <Navigate to="/connexion" replace />
+  if (account.role === 'teacher') return <Navigate to="/enseignant" replace />
   if (mode !== 'parent') return <Navigate to="/profils" replace />
   return (
     <div className="pshell">

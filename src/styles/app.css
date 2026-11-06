@@ -376,3 +376,33 @@ button{font:inherit;color:inherit;cursor:pointer}
 .side-C .stop-label{top:calc(100% + 16px);left:50%;transform:translateX(-50%);text-align:center;max-width:220px}
 .stop .st{z-index:1}
 .goal{transform:translate(-50%,-50%)}
+
+/* Espace enseignant */
+.classcode{display:inline-flex;align-items:center;gap:10px;border:2px dashed var(--teal);background:#fff;border-radius:12px;padding:6px 10px;cursor:pointer;font:inherit;color:var(--ink);min-height:44px}
+.classcode .cc-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:900;letter-spacing:.18em;font-size:1rem}
+.classcode .cc-act{display:inline-flex;align-items:center;gap:4px;font-size:.78rem;font-weight:800;color:var(--teal-d)}
+.classcode.big{padding:10px 14px}.classcode.big .cc-code{font-size:1.6rem}
+.classcard{display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit}
+.classcard:hover{border-color:var(--teal)}
+.cls-ic{width:44px;height:44px;border-radius:12px;background:var(--gold-s);color:var(--gold-d);display:grid;place-items:center;flex:none}
+.cls-ic.big{width:56px;height:56px;border-radius:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpis .tile-stat{background:#fff;border:2px solid var(--line2);padding:12px}
+.weakrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.stu-head,.stu{display:grid;grid-template-columns:1.6fr 1fr 1fr .8fr 1.6fr 48px;gap:12px;align-items:center}
+.stu-head{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--ink2);padding:0 4px}
+.stu{padding:10px 4px;border-top:1px solid var(--line)}
+.stu.idle .stu-name b::after{content:'inactif';margin-left:6px;font-size:.68rem;background:var(--gold-s);color:#7A5300;border-radius:99px;padding:1px 7px;vertical-align:2px}
+.stu-name{display:flex;align-items:center;gap:10px;min-width:0}
+.trend{display:inline-flex;align-items:center;font-weight:800}.trend.up{color:#236140}.trend.down{color:#B3412C}
+.lbl-m{display:none}
+.teach-band{display:flex;flex-wrap:wrap;gap:20px;align-items:center;background:var(--gold-s);border:0}
+@media (max-width:760px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stu-head{display:none}
+  .stu{grid-template-columns:1fr 1fr;row-gap:8px;position:relative;padding:14px 4px}
+  .stu-name{grid-column:1/-1;padding-right:48px}
+  .stu>button{position:absolute;top:10px;right:0}
+  .stu .small:last-of-type{grid-column:1/-1}
+  .lbl-m{display:block;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--ink2)}
+}

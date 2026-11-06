@@ -4,8 +4,8 @@ import { useStore } from '../state/store'
 import { Ico, avatarColor } from './Icon'
 
 export function Logo({ to }: { to?: string }) {
-  const { mode } = useStore()
-  const dest = to ?? (mode === 'parent' ? '/parent' : mode === 'child' ? '/enfant' : mode === 'locked' ? '/profils' : '/')
+  const { mode, account } = useStore()
+  const dest = to ?? (account?.role === 'teacher' ? '/enseignant' : mode === 'parent' ? '/parent' : mode === 'child' ? '/enfant' : mode === 'locked' ? '/profils' : '/')
   return (
     <Link to={dest} className="logo" aria-label="EduFun, accueil">
       <svg viewBox="0 0 32 32" aria-hidden="true">

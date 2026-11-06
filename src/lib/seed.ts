@@ -23,7 +23,7 @@ function rng(seed: number) {
   return () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296 }
 }
 
-function play(child: Child, subjects: string[], days: number, perDayBase: number, accStart: number, accEnd: number, seed: number) {
+export function play(child: Child, subjects: string[], days: number, perDayBase: number, accStart: number, accEnd: number, seed: number) {
   const r = rng(seed)
   const today = dayKey()
   const queue = subjects.flatMap(sid => LESSONS.filter(l => l.level === child.grade && l.subject === sid))

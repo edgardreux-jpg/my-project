@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Download, Trash2, Play } from 'lucide-react'
 import { useStore } from '../../state/store'
@@ -12,6 +12,47 @@ import { LESSONS, SUBJECT_META, lessonById, meta, subjectsOf, themeInfo } from '
 import { validPin } from '../../lib/auth'
 import type { Child } from '../../types'
 import { Ico, Stars, avatarColor } from '../../components/Icon'
+import { School } from 'lucide-react'
+import { joinClass, myMemberships, removeMember, type Membership } from '../../lib/cloud'
+
+/** Rattacher l'enfant à la classe de son enseignant grâce au code de classe. */
+function ClassJoin({ child }: { child: Child }) {
+  const { account } = useStore()
+  const [list, setList] = useState<Membership[]>([])
+  const [code, setCode] = useState('')
+  const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null)
+  const [busy, setBusy] = useState(false)
+  const load = () => { if (account?.cloud) myMemberships().then(l => setList(l.filter(m => m.child_id === child.id))) }
+  useEffect(load, [child.id, account?.cloud])
+  return (
+    <section className="card" style={{ gridColumn: '1 / -1' }}>
+      <h3 className="row gap8"><School size={20} /> Classe</h3>
+      {list.map(m => (
+        <div key={m.class_id} className="toggle">
+          <div><b>{m.class_name}</b><div className="tiny muted">{m.teacher_name ? `Avec ${m.teacher_name} · ` : ''}rejointe {relDay(m.joined_at.slice(0, 10))}</div></div>
+          <button className="btn ghost sm" onClick={async () => { await removeMember(m.class_id, child.id); load() }}>Quitter la classe</button>
+        </div>
+      ))}
+      {!account?.cloud ? <p className="small muted">Disponible avec un vrai compte parent : la démonstration n’est pas reliée aux classes.</p> : (
+        <form className="col gap8 mt8" onSubmit={async e => {
+          e.preventDefault(); setBusy(true); setMsg(null)
+          const r = await joinClass(code, child.id); setBusy(false)
+          if (r.error) setMsg({ ok: false, t: r.error })
+          else { setMsg({ ok: true, t: `${child.nickname} a rejoint « ${r.name} ».` }); setCode(''); load() }
+        }}>
+          <label htmlFor="ccode" className="small"><b>Code de classe donné par l’enseignant</b></label>
+          <div className="row gap8">
+            <input id="ccode" className="input" style={{ maxWidth: 200, letterSpacing: '.15em', textTransform: 'uppercase', fontWeight: 800 }} maxLength={8} placeholder="ABC123"
+              value={code} onChange={e => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))} autoComplete="off" />
+            <button className="btn" disabled={busy || code.length < 6}>Rejoindre</button>
+          </div>
+          <p className="tiny muted" style={{ margin: 0 }}>L’enseignant verra le pseudo de {child.nickname}, son niveau et sa progression (temps, réussite, leçons). Vous pouvez quitter la classe à tout moment.</p>
+          {msg && <div className={msg.ok ? 'note' : 'err'} role="status">{msg.t}</div>}
+        </form>
+      )}
+    </section>
+  )
+}
 
 const TABS = [['apercu', 'Aperçu'], ['progression', 'Progression'], ['activite', 'Activité'], ['reglages', 'Réglages']] as const
 
@@ -35,7 +76,7 @@ export default function ChildDetail() {
         <Avatar emoji={child.avatar} frame={child.frame} size={72} />
         <div className="grow">
           <h1>{child.nickname}</h1>
-          <div className="muted">{child.grade.toUpperCase()} · niveau {lv.name} · {child.xp} XP · {totalStars(child)} étoiles · série de {liveStreak(child)} jour{liveStreak(child) > 1 ? 's' : ''}</div>
+          <div className="muted">{child.grade.toUpperCase()} · niveau {lv.name} · {child.xp} points · {totalStars(child)} étoiles · série de {liveStreak(child)} jour{liveStreak(child) > 1 ? 's' : ''}</div>
         </div>
         <button className="btn" onClick={async () => { await enterChild(child.id); nav('/enfant') }}><Play size={18} /> Ouvrir son espace</button>
       </div>
@@ -199,6 +240,7 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
   }
   return (
     <div className="grid2">
+      <ClassJoin child={child} />
       <section className="card"><h3>Habitudes</h3>
         <div className="toggle"><div><b>Objectif quotidien</b><div className="tiny muted">Nombre de leçons par jour</div></div>
           <div className="row gap8">{([1, 2, 3] as const).map(g => <button key={g} className={`btn sm ${child.goal === g ? '' : 'ghost'}`} onClick={() => set(c => { c.goal = g })}>{g}</button>)}</div></div>

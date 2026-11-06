@@ -17,6 +17,7 @@ export default function Profiles() {
   const [add, setAdd] = useState(false)
   if (loading) return <div className="auth"><p className="muted">Chargement…</p></div>
   if (!account) return <Navigate to="/connexion" replace />
+  if (account.role === 'teacher') return <Navigate to="/enseignant" replace />
 
   const pick = async (c: Child) => {
     if (mode === 'parent') { await enterChild(c.id); nav('/enfant') } else { setPinFor(c); setErr('') }

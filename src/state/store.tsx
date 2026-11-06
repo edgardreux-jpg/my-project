@@ -14,10 +14,11 @@ interface Store {
   child: Child | null
   loading: boolean
   syncing: boolean
-  signup(name: string, email: string, password: string, code: string): Promise<Result>
+  signup(name: string, email: string, password: string, code: string, role?: 'parent' | 'teacher'): Promise<Result>
   login(email: string, password: string): Promise<Result>
-  loginGoogle(): Promise<Result>
+  loginGoogle(role?: 'parent' | 'teacher'): Promise<Result>
   loginDemo(): Promise<void>
+  loginDemoTeacher(): void
   logout(): void
   enterChild(id: string, pin?: string): Promise<Result>
   /** Retour enfant vers parent : code parent (ou mot de passe pour un compte local). */
@@ -114,18 +115,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const api = useMemo<Store>(() => ({
     db, account, mode, child, loading, syncing,
 
-    async signup(name, email, password, code) {
+    async signup(name, email, password, code, role = 'parent') {
       email = email.trim().toLowerCase()
       if (!name.trim()) return { ok: false, error: 'Indiquez votre prénom.' }
       if (!validEmail(email)) return { ok: false, error: 'Adresse e-mail invalide.' }
       if (!validPassword(password)) return { ok: false, error: 'Le mot de passe doit contenir au moins 8 caractères.' }
-      if (!validPin(code)) return { ok: false, error: 'Le code parent doit contenir 4 chiffres.' }
+      if (role === 'parent' && !validPin(code)) return { ok: false, error: 'Le code parent doit contenir 4 chiffres.' }
       const salt = newSalt()
-      const hash = await hashSecret(code, salt)
+      const hash = role === 'parent' ? await hashSecret(code, salt) : null
       wantParent.current = true
       const { data, error } = await sb.auth.signUp({
         email, password,
-        options: { data: { name: name.trim(), code_salt: salt, code_hash: hash }, emailRedirectTo: window.location.href.split('#')[0] },
+        options: { data: role === 'parent' ? { name: name.trim(), code_salt: salt, code_hash: hash } : { name: name.trim(), role: 'teacher' }, emailRedirectTo: window.location.href.split('#')[0] },
       })
       if (error) { wantParent.current = false; return { ok: false, error: /fetch|network/i.test(error.message) ? NOT_CONFIGURED : /registered|exists/i.test(error.message) ? 'Un compte existe déjà avec cet e-mail.' : error.message } }
       if (!data.session) { wantParent.current = false; return { ok: true, pending: true } }
@@ -139,7 +140,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return { ok: true }
     },
 
-    async loginGoogle() {
+    async loginGoogle(role = 'parent') {
+      try { if (role === 'teacher') localStorage.setItem('edufun.role', 'teacher'); else localStorage.removeItem('edufun.role') } catch { /* ignore */ }
       const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href.split('#')[0] } })
       return error ? { ok: false, error: /provider is not enabled|unsupported/i.test(error.message) ? 'La connexion Google n’est pas encore activée sur ce projet.' : NOT_CONFIGURED } : { ok: true }
     },
@@ -149,6 +151,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (!acc) { acc = await buildDemoAccount(); const a = acc; edit(d => { d.accounts.push(a) }) }
       const id = acc.id
       edit(d => { d.session = { accountId: id, mode: 'parent' } })
+    },
+
+    loginDemoTeacher() {
+      const id = 'demo-teacher'
+      edit(d => {
+        if (!d.accounts.some(a => a.id === id)) d.accounts.push({ id, email: 'enseignant@demo.edufun', name: 'Mme Martin', salt: '', hash: '', createdAt: new Date().toISOString(), children: [], role: 'teacher' })
+        d.session = { accountId: id, mode: 'parent' }
+      })
     },
 
     logout() {

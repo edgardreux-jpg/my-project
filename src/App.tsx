@@ -13,6 +13,7 @@ import SubjectPath, { SubjectList } from './pages/child/SubjectPath'
 import LessonPlayer from './pages/child/LessonPlayer'
 import Rewards from './pages/child/Rewards'
 import Me from './pages/child/Me'
+import { ClassView, TeacherHome, TeacherShell } from './pages/teacher/Teacher'
 
 export default function App() {
   return (
@@ -22,6 +23,12 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/connexion" element={<Auth />} />
           <Route path="/inscription" element={<Auth signup />} />
+          <Route path="/enseignant/connexion" element={<Auth teacher />} />
+          <Route path="/enseignant/inscription" element={<Auth signup teacher />} />
+          <Route path="/enseignant" element={<TeacherShell />}>
+            <Route index element={<TeacherHome />} />
+            <Route path="classe/:id" element={<ClassView />} />
+          </Route>
           <Route path="/profils" element={<Profiles />} />
           <Route path="/confidentialite" element={<Privacy />} />
           <Route path="/parent" element={<ParentShell />}>

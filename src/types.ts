@@ -113,6 +113,8 @@ export interface Account {
   children: Child[]
   /** Compte synchronisé avec Supabase (sinon local, par exemple la démonstration). */
   cloud?: boolean
+  /** Parent (par défaut) ou enseignant. */
+  role?: 'parent' | 'teacher'
   /** Code parent (4 chiffres), utilisé pour quitter un profil enfant. */
   codeSalt?: string
   codeHash?: string

@@ -15,7 +15,7 @@ export default function Landing() {
     <div>
       <header className="top"><div className="in">
         <Logo />
-        <nav aria-label="Sections"><a href="#parents">Parents</a><a href="#enfants">Enfants</a><a href="#niveaux">Niveaux</a><a href="#faq">Questions</a></nav>
+        <nav aria-label="Sections"><a href="#parents">Parents</a><a href="#enfants">Enfants</a><a href="#niveaux">Niveaux</a><a href="#enseignants">Enseignants</a><a href="#faq">Questions</a></nav>
         <div className="grow" />
         {account ? <Link className="btn sm" to={cta}>Mon espace</Link> : <><Link className="btn quiet sm" to="/connexion">Connexion</Link><Link className="btn sm" to="/inscription">Créer un compte</Link></>}
       </div></header>
@@ -113,6 +113,20 @@ export default function Landing() {
               <div><b>{s.lessons}</b> <span className="small muted">leçons jouables</span></div>
               <span className={`pill mt8 ${l.id === 'ce1' || l.id === 'ce2' ? 'green' : 'gold'}`}>{l.id === 'ce1' || l.id === 'ce2' ? 'Programme complet' : 'En construction'}</span></div>
           ) })}
+        </div>
+      </div></section>
+
+      <section className="section" id="enseignants"><div className="in">
+        <div className="card teach-band">
+          <div className="grow" style={{ minWidth: 260 }}>
+            <span className="eyebrow">Enseignants</span>
+            <h2 className="h-lg mb8">Suivez votre classe</h2>
+            <p className="lead">Créez une classe, donnez son code aux familles, et voyez en un coup d’œil qui avance, qui décroche et quelles notions retravailler ensemble.</p>
+          </div>
+          <div className="col gap8" style={{ minWidth: 220 }}>
+            <Link className="btn lg" to="/enseignant/inscription">Créer un compte enseignant</Link>
+            <Link className="btn ghost" to="/enseignant/connexion">Connexion enseignant</Link>
+          </div>
         </div>
       </div></section>
 
