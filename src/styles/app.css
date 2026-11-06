@@ -562,3 +562,32 @@ html:is([data-theme=cm2],[data-theme=pro]) .wordmark{font-size:1.35rem}
 .linkbtn{background:none;border:0;padding:6px 0;color:var(--teal-d);font-weight:800;cursor:pointer;text-decoration:underline;align-self:flex-start;font-family:inherit}
 .avpick.locked{cursor:default;opacity:.55;filter:grayscale(.85)}
 .avpick.locked img{border:2px dashed var(--line)}
+
+/* Filou, le renard guide */
+.guide{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
+.guide>*{pointer-events:auto}
+.guide-btn{position:relative;width:68px;height:68px;border-radius:50%;border:3px solid #fff;background:#FFF4E8;box-shadow:0 6px 18px rgba(17,24,39,.22);cursor:pointer;padding:6px;display:grid;place-items:center;animation:filou 3.2s ease-in-out infinite}
+.guide-btn img{width:100%;height:100%;object-fit:contain;display:block}
+.guide-btn:hover{transform:scale(1.06)}
+.guide-btn.on{animation:none;box-shadow:0 0 0 4px #E8600A55,0 6px 18px rgba(17,24,39,.22)}
+.guide-btn:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+.guide-dot{position:absolute;top:-4px;right:-4px;width:24px;height:24px;border-radius:50%;background:#E8600A;color:#fff;font-weight:900;font-size:.85rem;display:grid;place-items:center;border:2px solid #fff}
+.guide-bubble{position:relative;width:min(340px,calc(100vw - 36px));background:#fff;border:2px solid #F3D9C2;border-radius:18px;box-shadow:0 12px 32px rgba(17,24,39,.18);padding:16px 16px 12px;animation:bubble .25s ease-out}
+.guide-bubble::after{content:'';position:absolute;right:26px;bottom:-9px;width:16px;height:16px;background:#fff;border-right:2px solid #F3D9C2;border-bottom:2px solid #F3D9C2;transform:rotate(45deg)}
+.guide-t{display:block;font-size:1rem;color:#0B3554;padding-right:28px}
+.guide-p{margin:6px 0 10px;font-size:.92rem;line-height:1.45;color:var(--ink)}
+.guide.kid .guide-p{font-size:1.02rem}
+.guide-x{position:absolute;top:8px;right:8px;width:32px;height:32px;border:0;background:none;border-radius:8px;color:var(--ink2);cursor:pointer;display:grid;place-items:center}
+.guide-x:hover{background:var(--bg2)}
+.guide-nav{display:flex;align-items:center;gap:6px}
+.guide-ic{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink2);display:grid;place-items:center;cursor:pointer}
+.guide-ic:disabled{opacity:.35;cursor:default}
+.guide-n{font-size:.75rem;font-weight:800;color:var(--ink2);min-width:30px;text-align:center}
+.guide-next{display:inline-flex;align-items:center;gap:4px;border:0;border-radius:10px;background:#E8600A;color:#fff;font:inherit;font-weight:800;font-size:.85rem;padding:9px 12px;cursor:pointer;min-height:36px}
+.guide-next:hover{background:#C9500A}
+.guide-auto{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:.72rem;color:var(--ink2);cursor:pointer}
+@keyframes filou{0%,100%{transform:translateY(0) rotate(0)}8%{transform:translateY(-4px) rotate(-6deg)}16%{transform:translateY(0) rotate(4deg)}24%{transform:rotate(0)}}
+@keyframes bubble{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.guide-btn,.guide-bubble{animation:none}}
+/* Au-dessus de la barre d'onglets de l'espace enfant sur téléphone */
+@media (max-width:900px){.guide{bottom:16px;right:12px}.guide.kid{bottom:86px}.guide-btn{width:58px;height:58px}}
