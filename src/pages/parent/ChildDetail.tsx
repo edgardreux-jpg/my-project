@@ -247,6 +247,8 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
     <div className="grid2">
       <ClassJoin child={child} />
       <section className="card"><h3>Habitudes</h3>
+        <div className="toggle"><div><b>{child.nickname} est</b><div className="tiny muted">Facultatif : personnalise les messages (« votre fille »)</div></div>
+          <div className="row gap8">{([['f', 'Fille'], ['m', 'Garçon'], ['', '–']] as const).map(([g, l]) => <button key={g} className={`btn sm ${(child.gender ?? '') === g ? '' : 'ghost'}`} aria-pressed={(child.gender ?? '') === g} aria-label={g ? l : 'Non précisé'} onClick={() => set(c => { if (g) c.gender = g; else delete c.gender })}>{l}</button>)}</div></div>
         <div className="toggle"><div><b>Objectif quotidien</b><div className="tiny muted">Nombre de leçons par jour</div></div>
           <div className="row gap8">{([1, 2, 3] as const).map(g => <button key={g} className={`btn sm ${child.goal === g ? '' : 'ghost'}`} onClick={() => set(c => { c.goal = g })}>{g}</button>)}</div></div>
         <div className="toggle"><div><b>Rappel de pause</b><div className="tiny muted">Après combien de minutes d’écran</div></div>

@@ -327,3 +327,6 @@ export function mastersTotals(c: Child) {
     mastered: all.filter(p => p.mastered).length,
   }
 }
+
+/** « votre fille », « votre fils » ou « votre enfant » selon le profil. */
+export const yourKid = (c: { gender?: 'f' | 'm' }) => c.gender === 'f' ? 'votre fille' : c.gender === 'm' ? 'votre fils' : 'votre enfant'

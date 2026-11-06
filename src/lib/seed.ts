@@ -58,9 +58,11 @@ export function play(child: Child, subjects: string[], days: number, perDayBase:
 export async function buildDemoAccount(): Promise<Account> {
   const salt = 'demo'
   const mila = newChild('Mila', 'ce1', 'princesse', '')
+  mila.gender = 'f'
   mila.goal = 2
   play(mila, ['ma', 'fr', 'qlm'], 34, 1, 0.58, 0.9, 7)
   const sami = newChild('Sami', 'ce2', 'footballeur', '')
+  sami.gender = 'm'
   const ce2 = LESSONS.filter(l => l.level === 'ce2').slice(0, 3)
   ce2.forEach((l, i) => {
     const at = new Date(`${addDays(dayKey(), -9 + i * 3)}T17:30:00`)

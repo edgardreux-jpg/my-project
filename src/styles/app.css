@@ -1138,3 +1138,7 @@ html:is([data-theme=cm1],[data-theme=cm2]) :is(.k-wave,.k-fox,.k-me-av){animatio
 .tour-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
 .tour-dots{display:flex;gap:5px;margin-right:auto}.tour-dots i{width:7px;height:7px;border-radius:99px;background:var(--line)}.tour-dots i.on{width:18px;background:var(--teal)}
 body.touring .guide{display:none}
+.install{display:flex;align-items:center;gap:14px}
+.install img{width:52px;height:52px;border-radius:14px;flex:none;box-shadow:0 2px 6px rgba(0,0,0,.12);background:#FFF8EF}
+.install b{display:block}.install p{margin:2px 0 0}
+@media (max-width:600px){.install{flex-wrap:wrap}.install .btn{margin-left:66px}}

@@ -81,6 +81,7 @@ export interface Child {
   avatar: string
   frame: string
   pin: string
+  gender?: 'f' | 'm'   // facultatif : personnalise les phrases (« votre fille »)
   createdAt: string
   goal: 1 | 2 | 3
   breakMin: number          // 0 = pas de rappel

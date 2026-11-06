@@ -5,9 +5,10 @@ import { useStore } from '../../state/store'
 import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
 import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay } from '../../lib/dates'
 import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotals } from '../../lib/progress'
-import { BASE_AVATARS, uid } from '../../lib/progress'
+import { BASE_AVATARS, uid, yourKid } from '../../lib/progress'
 import { lessonById, meta } from '../../lib/curriculum'
 import { taskDone, useTeacherTasks } from '../../lib/tasks'
+import InstallApp from '../../components/InstallApp'
 import type { Child, LevelId } from '../../types'
 import { avatarLabel, avatarSrc } from '../../lib/avatars'
 
@@ -52,8 +53,10 @@ export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
   const [nick, setNick] = useState('')
   const [grade, setGrade] = useState<LevelId>('ce1')
   const [av, setAv] = useState(BASE_AVATARS[0])
+  const [gender, setGender] = useState<'' | 'f' | 'm'>('')
   const [err, setErr] = useState('')
-  const submit = () => { const r = addChild(nick, grade, av, ''); if (r.ok) onClose(r.id); else setErr(r.error) }
+  const { mutateChild } = useStore()
+  const submit = () => { const r = addChild(nick, grade, av, ''); if (r.ok) { if (gender && r.id) mutateChild(r.id, c => { c.gender = gender }); onClose(r.id) } else setErr(r.error) }
   return (
     <Modal label="Ajouter un enfant" onClose={() => onClose()}>
       <h2>Ajouter un enfant</h2>
@@ -61,6 +64,10 @@ export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
         <div className="field"><label htmlFor="nick">Prénom ou pseudo</label><input id="nick" className="input" value={nick} onChange={e => setNick(e.target.value)} maxLength={20} autoFocus /></div>
         <div className="field"><label>Classe</label>
           <div className="wrap gap8">{(['ce1', 'ce2', 'cm1', 'cm2'] as LevelId[]).map(g => <button type="button" key={g} className={`btn sm ${grade === g ? '' : 'ghost'}`} onClick={() => setGrade(g)}>{g.toUpperCase()}</button>)}</div>
+        </div>
+        <div className="field"><label>C’est… <span className="muted" style={{ fontWeight: 600 }}>(facultatif)</span></label>
+          <div className="wrap gap8">{([['f', 'Une fille'], ['m', 'Un garçon'], ['', 'Je préfère ne pas préciser']] as const).map(([g, l]) => <button type="button" key={g} className={`btn sm ${gender === g ? '' : 'ghost'}`} aria-pressed={gender === g} onClick={() => setGender(g)}>{l}</button>)}</div>
+          <span className="tiny muted">Seulement pour écrire « votre fille » ou « votre fils » dans les messages.</span>
         </div>
         <div className="field"><label>Avatar</label>
           <div className="wrap gap8">{BASE_AVATARS.map(a => <button type="button" key={a} className={`avpick ${a === av ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === av} onClick={() => setAv(a)}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}</div>
@@ -120,7 +127,7 @@ export function SchoolNotes({ kids, only }: { kids: Child[]; only?: string }) {
           <span className={`p-ic ${done ? '' : 'gold'}`}>{done ? <Check size={18} /> : <School size={18} />}</span>
           <div className="grow small">
             {done ? <><b>{k.nickname}</b> a fait la révision demandée par {t.teacher} : « {l.title} ».</>
-              : <><b>{t.teacher}</b> invite votre enfant <b>{k.nickname}</b> à réviser la notion suivante : <b>« {l.title} »</b> ({meta(l.subject).name}).</>}
+              : <><b>{t.teacher}</b> invite {yourKid(k)} <b>{k.nickname}</b> à réviser la notion suivante : <b>« {l.title} »</b> ({meta(l.subject).name}).</>}
             <div className="tiny muted">{t.className} · {relDay(t.at.slice(0, 10), dayKey())}{t.message ? ` · « ${t.message} »` : ''}</div>
           </div>
           {done ? <span className="pill green">Faite</span> : <span className="pill gold">À faire</span>}
@@ -189,6 +196,7 @@ export default function Dashboard() {
       </div>
       {kids.length > 0 && <FamilyWeek kids={kids} today={today} />}
       {kids.length > 0 && <SchoolNotes kids={kids} />}
+      <InstallApp />
 
       {kids.length === 0 ? (
         <div className="card"><Empty emoji="👧" title="Ajoutez votre premier enfant">Créez un profil avec un prénom, une classe et un avatar. Le suivi apparaît dès la première leçon.</Empty>
