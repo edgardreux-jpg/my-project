@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, Plus, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
+import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronDown, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, Plus, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, Logo, Modal } from '../../components/common'
 import { Ico } from '../../components/Icon'
@@ -226,6 +226,7 @@ export function ClassView() {
   const [del, setDel] = useState(false)
   const [filter, setFilter] = useState<'all' | 'help' | 'idle'>('all')
   const [msgCopied, setMsgCopied] = useState(false)
+  const [openStu, setOpenStu] = useState<string | null>(null)
   const [tasks, setTasks] = useState<TaskRow[]>([])
   const [propose, setPropose] = useState<null | { lessonId?: string; ids?: string[] }>(null)
 
@@ -336,8 +337,10 @@ export function ClassView() {
             <div className="stu-head" aria-hidden="true"><span>Élève</span><span>Cette semaine</span><span>Réussite</span><span>Acquises</span><span>À consolider</span><span /></div>
             {shown.length === 0 && <p className="small muted">Aucun élève dans cette catégorie. Bonne nouvelle !</p>}
             {shown.map(x => (
-              <div key={x.id} className={`stu ${x.idleDays == null || x.idleDays >= 7 ? 'idle' : ''}`}>
-                <div className="stu-name"><Avatar emoji={x.avatar} size={36} /><div><b>{x.nickname}</b><div className="tiny muted">{x.grade.toUpperCase()} · {x.last ? relDay(x.last) : 'jamais connecté'}</div></div></div>
+              <div key={x.id} className={`stu ${x.idleDays == null || x.idleDays >= 7 ? 'idle' : ''} ${openStu === x.id ? 'open' : ''}`}>
+                <div className="stu-name"><Avatar emoji={x.avatar} size={36} /><div className="grow"><b>{x.nickname}</b><div className="tiny muted">{x.grade.toUpperCase()} · {x.last ? relDay(x.last) : 'jamais connecté'}</div></div>
+                  <span className="stu-quick">{x.acc == null ? '–' : `${Math.round(x.acc * 100)} %`}</span>
+                  <button className="stu-toggle" aria-expanded={openStu === x.id} aria-label={`Détails de ${x.nickname}`} onClick={() => setOpenStu(v => v === x.id ? null : x.id)}><ChevronDown size={18} /></button></div>
                 <div><span className="lbl-m">Cette semaine</span><b>{fmtMin(x.weekMs)}</b> <span className="tiny muted">{x.weekLessons} leçon{x.weekLessons > 1 ? 's' : ''}</span></div>
                 <div><span className="lbl-m">Réussite</span><b>{x.acc == null ? '–' : `${Math.round(x.acc * 100)} %`}</b> <Trend now={x.acc} before={x.prevAcc} /></div>
                 <div><span className="lbl-m">Acquises</span><b>{x.acquired}</b><span className="tiny muted"> / {x.started}</span><div className="p-lvl" style={{ maxWidth: 90 }}><i style={{ width: `${x.started ? (x.acquired / x.started) * 100 : 0}%` }} /></div></div>

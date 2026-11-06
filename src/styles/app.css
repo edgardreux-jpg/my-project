@@ -1061,3 +1061,45 @@ html:is([data-theme=cm1],[data-theme=cm2]) :is(.k-wave,.k-fox,.k-me-av){animatio
   .k-quest{padding:14px;gap:10px 12px}
   .k-quest .k-btn3d{margin-left:58px}
 }
+/* Barre d'action collante (mobile) et retour en haut */
+.ctabar{display:none}
+.totop{position:fixed;left:18px;bottom:18px;z-index:55;width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--teal-d);display:grid;place-items:center;box-shadow:0 6px 18px rgba(17,24,39,.15);cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}
+.totop.on{opacity:1;transform:none;pointer-events:auto}
+@media (max-width:900px){
+  .ctabar{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:58;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .25s ease}
+  .ctabar.on{transform:none}
+  .ctabar .btn{flex:1;justify-content:center}
+  .ctabar .btn.ghost{flex:0 0 auto}
+  body.has-ctabar .guide{bottom:84px}
+  body.has-ctabar .totop{bottom:84px}
+  .totop{width:44px;height:44px;left:14px}
+  .footer{padding-bottom:90px}
+}
+@media (prefers-reduced-motion:reduce){.ctabar,.totop{transition:none}}
+/* Cartes enfants repliables (mobile) */
+.kid-toggle,.kid-sum{display:none}
+@media (max-width:900px){
+  .kid-toggle{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink2);flex:none;cursor:pointer}
+  .kid-toggle svg{transition:transform .2s}
+  .kid.open .kid-toggle svg{transform:rotate(180deg)}
+  .kid:not(.open) .kid-more{display:none}
+  .kid:not(.open) .kid-sum{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:.85rem;font-weight:700;color:var(--ink2)}
+  .kid-sum span{display:inline-flex;align-items:center;gap:5px}
+  .kid-sum-ins{flex-basis:100%;font-weight:600;color:var(--ink3)}
+  .kid-sum-ins.green{color:#1F6B44}.kid-sum-ins.gold{color:#8A5B00}
+  .kid:not(.open){padding-bottom:14px}
+}
+/* Liste d'élèves compacte (mobile) */
+.stu-quick,.stu-toggle{display:none}
+@media (max-width:760px){
+  .stu{grid-template-columns:1fr!important;padding:10px 4px!important;row-gap:8px}
+  .stu-name{padding-right:0!important;display:flex;align-items:center;gap:10px}
+  .stu-quick{display:inline-block;font-weight:800;font-size:.95rem;color:var(--ink)}
+  .stu.idle .stu-quick{color:var(--ink3)}
+  .stu-toggle{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink2);flex:none}
+  .stu-toggle svg{transition:transform .2s}.stu.open .stu-toggle svg{transform:rotate(180deg)}
+  .stu:not(.open)>*:not(.stu-name){display:none!important}
+  .stu.open{background:var(--bg2);border-radius:12px;padding:12px!important}
+  .stu.open>button.iconbtn{position:static!important;justify-self:start}
+}
+@media (max-width:900px){.top .hdr-cta{display:none}}

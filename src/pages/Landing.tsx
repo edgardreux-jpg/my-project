@@ -7,7 +7,7 @@ import { LEVELS, SOURCES, levelStats, levelData, meta } from '../lib/curriculum'
 import type { LevelId } from '../types'
 import { useStore } from '../state/store'
 import { avatarSrc } from '../lib/avatars'
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 /** Carte d'illustration qui se retourne au survol (souris) ou au clic / toucher. */
 function FlipCard({ front, back, className, label }: { front: ReactNode; back: ReactNode; className: string; label: string }) {
@@ -221,13 +221,26 @@ export default function Landing() {
   const cta = account ? (mode === 'parent' ? '/parent' : '/profils') : '/inscription'
   const ce1 = levelStats('ce1')
   const ce2 = levelStats('ce2')
+  const [y, setY] = useState(0)
+  useEffect(() => {
+    const on = () => setY(window.scrollY)
+    on(); window.addEventListener('scroll', on, { passive: true })
+    return () => window.removeEventListener('scroll', on)
+  }, [])
+  const showBar = y > 700, showTop = y > 1600
+  useEffect(() => { document.body.classList.toggle('has-ctabar', showBar); return () => document.body.classList.remove('has-ctabar') }, [showBar])
   return (
     <div>
+      <div className={`ctabar ${showBar ? 'on' : ''}`} aria-hidden={!showBar}>
+        <Link className="btn" to={cta} tabIndex={showBar ? 0 : -1}>{account ? 'Mon espace' : 'Créer un compte'}</Link>
+        {!account && <button className="btn ghost" tabIndex={showBar ? 0 : -1} onClick={async () => { await loginDemo(); nav('/parent') }}>Démo</button>}
+      </div>
+      <button className={`totop ${showTop ? 'on' : ''}`} aria-label="Revenir en haut de la page" tabIndex={showTop ? 0 : -1} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><ArrowUp size={22} /></button>
       <header className="top"><div className="in">
         <Logo />
         <nav aria-label="Sections"><a href="#parents" onClick={go("parents")}>Parents</a><a href="#enfants" onClick={go("enfants")}>Enfants</a><a href="#niveaux" onClick={go("niveaux")}>Niveaux</a><a href="#enseignants" onClick={go("enseignants")}>Enseignants</a><a href="#faq" onClick={go("faq")}>Questions</a></nav>
         <div className="grow" />
-        {account ? <Link className="btn sm" to={cta}>Mon espace</Link> : <><Link className="btn quiet sm" to="/connexion">Connexion</Link><Link className="btn sm" to="/inscription">Créer un compte</Link></>}
+        {account ? <Link className="btn sm" to={cta}>Mon espace</Link> : <><Link className="btn quiet sm" to="/connexion">Connexion</Link><Link className="btn sm hdr-cta" to="/inscription">Créer un compte</Link></>}
       </div></header>
 
       <section className="hero"><div className="in">

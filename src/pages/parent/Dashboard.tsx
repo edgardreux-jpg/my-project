@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw, School, Check } from 'lucide-react'
+import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw, School, Check, ChevronDown } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
 import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay } from '../../lib/dates'
@@ -165,6 +165,7 @@ export default function Dashboard() {
   const [add, setAdd] = useState(false)
   const today = dayKey()
   const kids = account?.children ?? []
+  const [openKids, setOpenKids] = useState<string[]>(() => kids.slice(0, 1).map(k => k.id))
 
   const family = useMemo(() => {
     const per = kids.map(k => weeksSeries(k, 8, today))
@@ -201,7 +202,7 @@ export default function Dashboard() {
               const ins = insight(k, today)
               const t = mastersTotals(k)
               return (
-                <div key={k.id} className="card kid" onClick={() => nav(`/parent/enfant/${k.id}`)} role="link" tabIndex={0} aria-label={`Voir le suivi de ${k.nickname}`} onKeyDown={e => { if (e.key === 'Enter') nav(`/parent/enfant/${k.id}`) }}>
+                <div key={k.id} className={`card kid ${openKids.includes(k.id) ? 'open' : ''}`} onClick={() => nav(`/parent/enfant/${k.id}`)} role="link" tabIndex={0} aria-label={`Voir le suivi de ${k.nickname}`} onKeyDown={e => { if (e.key === 'Enter') nav(`/parent/enfant/${k.id}`) }}>
                   <div className="kid-head">
                     <Avatar emoji={k.avatar} frame={k.frame} size={52} />
                     <div className="grow">
@@ -210,7 +211,11 @@ export default function Dashboard() {
                       <div className="p-lvl" title={`Progression vers le niveau suivant`}><i style={{ width: `${levelOf(k.xp).pct}%` }} /></div>
                     </div>
                     <span className="kid-streak" title="Jours d’affilée avec au moins une leçon"><Flame size={16} /> {liveStreak(k)} j</span>
+                    <button className="kid-toggle" aria-expanded={openKids.includes(k.id)} aria-label={`${openKids.includes(k.id) ? 'Replier' : 'Déplier'} la carte de ${k.nickname}`}
+                      onClick={e => { e.stopPropagation(); setOpenKids(v => v.includes(k.id) ? v.filter(x => x !== k.id) : [...v, k.id]) }}><ChevronDown size={20} /></button>
                   </div>
+                  <div className="kid-sum"><span><Clock size={14} /> {fmtMin(cur.ms)}</span><span><Target size={14} /> {cur.acc == null ? '–' : `${Math.round(cur.acc * 100)} %`}</span><span className={`kid-sum-ins ${ins.tone}`}>{ins.text}</span></div>
+                  <div className="kid-more">
 
                   <div className="kid-tiles">
                     <div className="tile-stat">
@@ -239,6 +244,7 @@ export default function Dashboard() {
                     <span className="tiny muted grow">{k.streak.last ? `Dernière séance ${relDay(k.streak.last, today)}` : 'Aucune séance'}</span>
                     <Link className="btn ghost sm" to={`/parent/enfant/${k.id}`}>Détails</Link>
                     <button className="btn sm" onClick={() => openChild(k.id)}><Play size={16} /> Son espace</button>
+                  </div>
                   </div>
                 </div>
               )
