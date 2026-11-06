@@ -14,6 +14,7 @@ import LessonPlayer from './pages/child/LessonPlayer'
 import Rewards from './pages/child/Rewards'
 import Me from './pages/child/Me'
 import ThemeSync from './components/ThemeSync'
+import RecoveryModal from './components/RecoveryModal'
 import { ClassView, TeacherHome, TeacherShell } from './pages/teacher/Teacher'
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
     <StoreProvider>
       <HashRouter>
         <ThemeSync />
+        <RecoveryModal />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/connexion" element={<Auth />} />

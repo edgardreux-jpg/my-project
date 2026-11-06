@@ -20,6 +20,10 @@ interface Store {
   loginDemo(): Promise<void>
   loginDemoTeacher(): void
   logout(): void
+  /** Mot de passe oublié : envoi du lien, puis choix d'un nouveau mot de passe. */
+  recovery: boolean
+  sendReset(email: string): Promise<Result>
+  setNewPassword(password: string): Promise<Result>
   enterChild(id: string, pin?: string): Promise<Result>
   /** Retour enfant vers parent : code parent (ou mot de passe pour un compte local). */
   leaveChild(secret: string): Promise<Result>
@@ -39,6 +43,7 @@ const NOT_CONFIGURED = 'Connexion impossible pour le moment. Vérifiez votre ré
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [db, setDb] = useState<Db>(() => loadDb())
   const [loading, setLoading] = useState(true)
+  const [recovery, setRecovery] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const ref = useRef(db)
   ref.current = db
@@ -70,6 +75,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     let alive = true
     const { data: sub } = sb.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') { setLoading(false); return }
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true)
       if (session?.user && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'USER_UPDATED')) {
         setTimeout(async () => {
           try { const acc = await loadAccount(session.user); if (alive) adopt(acc) } catch { /* hors ligne */ }
@@ -113,7 +119,22 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const api = useMemo<Store>(() => ({
-    db, account, mode, child, loading, syncing,
+    db, account, mode, child, loading, syncing, recovery,
+
+    async sendReset(email) {
+      if (!validEmail(email)) return { ok: false, error: 'Indiquez d’abord votre adresse e-mail ci-dessus.' }
+      const { error } = await sb.auth.resetPasswordForEmail(email.trim().toLowerCase(), { redirectTo: window.location.href.split('#')[0] })
+      if (error) return { ok: false, error: /not authorized/i.test(error.message) ? 'L’envoi d’e-mails n’est pas encore activé sur EDUFUN. Réessayez plus tard.' : /rate|seconds/i.test(error.message) ? 'Trop de demandes. Patientez quelques minutes avant de réessayer.' : 'Envoi impossible pour le moment. Réessayez.' }
+      return { ok: true }
+    },
+
+    async setNewPassword(password) {
+      if (!validPassword(password)) return { ok: false, error: 'Le mot de passe doit contenir au moins 8 caractères.' }
+      const { error } = await sb.auth.updateUser({ password })
+      if (error) return { ok: false, error: /different|same/i.test(error.message) ? 'Choisissez un mot de passe différent de l’ancien.' : 'Modification impossible. Redemandez un lien.' }
+      setRecovery(false)
+      return { ok: true }
+    },
 
     async signup(name, email, password, code, role = 'parent') {
       email = email.trim().toLowerCase()
@@ -128,7 +149,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         email, password,
         options: { data: role === 'parent' ? { name: name.trim(), code_salt: salt, code_hash: hash } : { name: name.trim(), role: 'teacher' }, emailRedirectTo: window.location.href.split('#')[0] },
       })
-      if (error) { wantParent.current = false; return { ok: false, error: /fetch|network/i.test(error.message) ? NOT_CONFIGURED : /registered|exists/i.test(error.message) ? 'Un compte existe déjà avec cet e-mail.' : error.message } }
+      if (error) { wantParent.current = false; return { ok: false, error: /fetch|network/i.test(error.message) ? NOT_CONFIGURED : /registered|exists/i.test(error.message) ? 'Un compte existe déjà avec cet e-mail.' : /not authorized/i.test(error.message) ? 'L’envoi d’e-mails n’est pas encore activé sur EDUFUN. Essayez « Continuer avec Google ».' : /rate|seconds/i.test(error.message) ? 'Trop de tentatives. Patientez quelques minutes.' : /password/i.test(error.message) ? 'Mot de passe trop faible : 8 caractères minimum.' : 'Inscription impossible pour le moment. Réessayez.' } }
       if (!data.session) { wantParent.current = false; return { ok: true, pending: true } }
       return { ok: true }
     },
@@ -223,7 +244,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const acc = ref.current.session && ref.current.accounts.find(a => a.id === ref.current.session!.accountId)
       return !!acc && secretOk(acc, secret)
     },
-  }), [db, account, mode, child, loading, syncing, edit, commit, secretOk])
+  }), [db, account, mode, child, loading, syncing, recovery, edit, commit, secretOk])
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>
 }

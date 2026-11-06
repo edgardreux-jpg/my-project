@@ -4,7 +4,7 @@ import { useStore } from '../state/store'
 import { Logo } from '../components/common'
 
 export default function Auth({ signup = false, teacher = false }: { signup?: boolean; teacher?: boolean }) {
-  const { signup: doSignup, login, loginGoogle, loginDemo, loginDemoTeacher, logout, mode, account, loading } = useStore()
+  const { signup: doSignup, login, loginGoogle, loginDemo, loginDemoTeacher, logout, sendReset, mode, account, loading } = useStore()
   const nav = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -45,7 +45,8 @@ export default function Auth({ signup = false, teacher = false }: { signup?: boo
         {signup && <div className="field"><label htmlFor="n">Votre prénom</label><input id="n" className="input" value={name} onChange={e => setName(e.target.value)} autoComplete="given-name" /></div>}
         <div className="field"><label htmlFor="e">Adresse e-mail</label><input id="e" className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" /></div>
         <div className="field"><label htmlFor="p">Mot de passe</label><input id="p" className="input" type="password" value={pw} onChange={e => setPw(e.target.value)} autoComplete={signup ? 'new-password' : 'current-password'} />
-          {signup && <span className="tiny muted">8 caractères minimum.</span>}</div>
+          {signup && <span className="tiny muted">8 caractères minimum.</span>}
+          {!signup && <button type="button" className="linkbtn tiny" onClick={async () => { setErr(''); setInfo(''); const r = await sendReset(email); if (r.ok) setInfo('Si un compte existe pour cette adresse, un lien pour choisir un nouveau mot de passe vient d’être envoyé. Pensez à regarder dans les spams.'); else setErr(r.error) }}>Mot de passe oublié ?</button>}</div>
         {signup && !teacher && <div className="field"><label htmlFor="c">Code parent (4 chiffres)</label><input id="c" className="input" inputMode="numeric" maxLength={4} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} />
           <span className="tiny muted">Il protège l’espace parent quand votre enfant utilise l’appareil.</span></div>}
         {err && <div className="err" role="alert">{err}</div>}
