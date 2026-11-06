@@ -6,6 +6,7 @@ import { useStore } from '../../state/store'
 import { Logo, Modal, Toast } from '../../components/common'
 import { readyChests } from '../../lib/progress'
 import { Hud } from './kidui'
+import KidTour from './KidTour'
 
 export default function ChildShell() {
   const { child, mode, leaveChild, account, switchProfile, loading } = useStore()
@@ -74,6 +75,7 @@ export default function ChildShell() {
         </Modal>
       )}
       {toast && <Toast text={toast} onDone={() => setToast('')} />}
+      <KidTour childId={child.id} />
     </div>
   )
 }

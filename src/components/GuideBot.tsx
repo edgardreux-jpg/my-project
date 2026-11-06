@@ -34,6 +34,12 @@ export default function GuideBot() {
   }, [key])
 
   useEffect(() => {
+    const close = () => setOpen(false)
+    window.addEventListener('edufun-guide-close', close)
+    return () => window.removeEventListener('edufun-guide-close', close)
+  }, [])
+
+  useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
     window.addEventListener('keydown', onKey)

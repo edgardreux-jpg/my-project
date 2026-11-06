@@ -13,6 +13,37 @@ import { Ico, Stars, avatarColor } from '../../components/Icon'
 
 type Phase = 'intro' | 'play' | 'done'
 
+/** Écran de victoire : les étoiles tombent une à une, les points montent, Foxy félicite. */
+function Celebrate({ stars, sound, name, firstOk, total, xp, title, big }: { stars: number; sound: boolean; name: string; firstOk: number; total: number; xp: number; title: string; big: boolean }) {
+  const [pts, setPts] = useState(0)
+  const [lit, setLit] = useState(0)
+  useEffect(() => {
+    const timers: number[] = []
+    for (let i = 1; i <= stars; i++) timers.push(window.setTimeout(() => { setLit(i); sfx('star', sound) }, 350 + i * 420))
+    const t0 = performance.now() + 300, dur = 900 + stars * 300
+    let raf = 0
+    const tick = (t: number) => { const k = Math.min(1, Math.max(0, (t - t0) / dur)); setPts(Math.round(xp * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(tick) }
+    raf = requestAnimationFrame(tick)
+    timers.push(window.setTimeout(() => sfx('done', sound), 400 + stars * 420 + 200))
+    return () => { timers.forEach(clearTimeout); cancelAnimationFrame(raf) }
+  }, [stars, xp, sound])
+  const say = stars === 3 ? (big ? `Waouh ${name}, tout juste du premier coup ou presque ! Tu es un as !` : `Remarquable, ${name}. Tu maîtrises cette notion.`)
+    : stars === 2 ? (big ? `Super ${name} ! Encore un petit effort et c’est 3 étoiles !` : `Très bon travail, ${name}. Rejoue-la plus tard pour viser 3 étoiles.`)
+    : stars === 1 ? (big ? `Bravo d’être allé jusqu’au bout, ${name} ! On la rejouera ensemble.` : `Leçon terminée, ${name}. Elle reviendra bientôt pour s’ancrer.`)
+    : `Merci ${name} ! Je sais maintenant par où commencer.`
+  return (
+    <div className="cele">
+      <div className="cele-fox"><img src={`${import.meta.env.BASE_URL}logo.png`} alt="" /><div className="cele-say" role="status">{say}</div></div>
+      <h1 className="h-lg">{title}</h1>
+      {stars > 0 && <div className="cele-stars" aria-label={`${stars} étoile${stars > 1 ? 's' : ''} sur 3`}>
+        {[1, 2, 3].map(i => <span key={i} className={`cele-star ${i <= lit ? 'on' : ''} ${i > stars ? 'off' : ''}`}><svg viewBox="0 0 24 24" width="64" height="64"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" /></svg></span>)}
+      </div>}
+      <div className="cele-pts"><span>+{pts}</span> points</div>
+      <p className="small muted" style={{ margin: 0 }}>{firstOk} réussite{firstOk > 1 ? 's' : ''} du premier coup sur {total}.</p>
+    </div>
+  )
+}
+
 export default function LessonPlayer({ diagnostic = false }: { diagnostic?: boolean }) {
   const { id } = useParams()
   return <Player key={`${diagnostic}-${id}`} diagnostic={diagnostic} />
@@ -226,11 +257,9 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
       <div className="player">
         {stars === 3 && <Confetti />}
         <div className="reward">
-          <h1 className="h-lg">{diagnostic ? 'Parcours terminé' : stars === 3 ? 'Excellent !' : stars === 2 ? 'Très bien !' : 'Bien joué, tu as terminé !'}</h1>
-          {!diagnostic && <div className="stars mt16"><Stars n={stars} size={56} /></div>}
-          <p className="lead mt16" style={{ margin: '16px auto' }}>{reward.firstOk} réussites du premier coup sur {reward.total}.</p>
-          <div className="wrap" style={{ justifyContent: 'center' }}>
-            <span className="chip"><Ico e="✨" /> +{reward.xp} points</span>
+          <Celebrate stars={diagnostic ? 0 : stars} sound={sound} name={child.nickname} firstOk={reward.firstOk} total={reward.total} xp={reward.xp} big={child.grade === 'ce1' || child.grade === 'ce2'}
+            title={diagnostic ? 'Parcours terminé' : stars === 3 ? 'Excellent !' : stars === 2 ? 'Très bien !' : 'Bien joué, tu as terminé !'} />
+          <div className="wrap mt16" style={{ justifyContent: 'center' }}>
             <span className="chip"><Ico e="🔥" /> {reward.streak} jour{reward.streak > 1 ? 's' : ''}</span>
             <span className="chip">{lv.name}</span>
           </div>

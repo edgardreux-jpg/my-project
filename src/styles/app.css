@@ -1103,3 +1103,38 @@ html:is([data-theme=cm1],[data-theme=cm2]) :is(.k-wave,.k-fox,.k-me-av){animatio
   .stu.open>button.iconbtn{position:static!important;justify-self:start}
 }
 @media (max-width:900px){.top .hdr-cta{display:none}}
+/* Écran de victoire */
+.cele{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.cele-fox{display:flex;align-items:flex-end;gap:10px;margin-bottom:4px}
+.cele-fox img{width:84px;height:84px;animation:celeHop 1.2s ease-in-out .3s 2;filter:drop-shadow(0 6px 10px rgba(0,0,0,.15))}
+.cele-say{position:relative;max-width:260px;text-align:left;background:#fff;border:2px solid var(--line2);border-radius:16px 16px 16px 4px;padding:10px 14px;font-weight:700;font-size:.92rem;box-shadow:var(--shadow);animation:celeIn .4s ease-out .2s both}
+.cele-stars{display:flex;gap:10px;align-items:flex-end;margin-top:6px}
+.cele-star svg{fill:#E6E1D6;stroke:#D6CFC0;stroke-width:1;transition:fill .2s}
+.cele-star:nth-child(2) svg{width:84px;height:84px}
+.cele-star.on svg{fill:#F5C65D;stroke:#D9A23A;animation:celeStar .55s cubic-bezier(.2,1.6,.4,1)}
+.cele-star.on{filter:drop-shadow(0 0 10px rgba(245,198,93,.6))}
+.cele-pts{font-family:Fredoka,var(--font);font-weight:700;font-size:1.4rem;color:var(--teal-d)}
+.cele-pts span{font-size:2.2rem;color:#E0A526;font-variant-numeric:tabular-nums}
+@keyframes celeStar{0%{transform:scale(0) rotate(-40deg)}60%{transform:scale(1.35) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes celeHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px) rotate(-6deg)}}
+@keyframes celeIn{from{opacity:0;transform:translateY(8px) scale(.95)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.cele-fox img,.cele-say,.cele-star.on svg{animation:none}}
+.k-greet{display:flex;flex-direction:column;gap:12px}
+.k-foxsay{display:flex;align-items:center;gap:10px}
+.k-foxsay img{width:52px;height:52px;flex:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.12))}
+.k-foxsay p{position:relative;margin:0;background:#fff;border:2px solid var(--line2);border-radius:16px 16px 16px 4px;padding:10px 14px;font-weight:800;font-size:.95rem;box-shadow:0 3px 0 var(--line2);animation:celeIn .4s ease-out both}
+.k-foxsay.warn p{background:#FFF1E8;border-color:#F6C9AF;color:#9E3D1C}
+.k-foxsay.go p{background:#E3F4EE;border-color:#BFE3D6;color:var(--teal-d)}
+.k-foxsay.gold p{background:#FFF3D1;border-color:#F2D27C;color:#6E4B00}
+.k-foxsay.ok p{background:#E7F5EC;border-color:#BFE0CB;color:#1F6B44}
+/* Parcours de découverte */
+.tour{position:fixed;inset:0;z-index:120}
+.tour-dim{position:absolute;inset:0;background:rgba(20,30,45,.6)}
+.tour-hole{position:fixed;border-radius:18px;box-shadow:0 0 0 9999px rgba(20,30,45,.6),0 0 0 4px #F5C65D;transition:all .3s ease;pointer-events:none}
+.tour-bubble{position:fixed;background:#fff;border-radius:18px;padding:14px;box-shadow:0 18px 40px rgba(0,0,0,.25);animation:celeIn .3s ease-out both;transition:top .3s,left .3s}
+.tour-bubble img{width:48px;height:48px;flex:none}
+.tour-bubble b{font-family:Fredoka,var(--font);font-size:1.1rem}
+.tour-bubble p{margin:2px 0 0;font-size:.92rem;color:var(--ink2);font-weight:600}
+.tour-nav{display:flex;align-items:center;gap:8px;margin-top:12px}
+.tour-dots{display:flex;gap:5px;margin-right:auto}.tour-dots i{width:7px;height:7px;border-radius:99px;background:var(--line)}.tour-dots i.on{width:18px;background:var(--teal)}
+body.touring .guide{display:none}

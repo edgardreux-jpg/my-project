@@ -29,7 +29,7 @@ function tone(freq: number, start: number, dur: number, vol = 0.05, type: Oscill
   o.stop(t + dur + 0.03)
 }
 
-export type Sfx = 'tap' | 'good' | 'oops' | 'done' | 'chest'
+export type Sfx = 'tap' | 'good' | 'oops' | 'done' | 'chest' | 'star'
 
 export function sfx(kind: Sfx, enabled: boolean) {
   if (!enabled) return
@@ -39,7 +39,18 @@ export function sfx(kind: Sfx, enabled: boolean) {
     case 'oops': tone(330, 0, 0.18, 0.04, 'triangle'); tone(277, 0.12, 0.22, 0.035, 'triangle'); break
     case 'done': [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.11, 0.3, 0.05)); break
     case 'chest': [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.28, 0.05)); break
+    case 'star': tone(880, 0, 0.12, 0.045); tone(1320, 0.07, 0.2, 0.035); break
   }
+  buzz(kind)
+}
+
+/** Petite vibration sur téléphone (ignorée si l'appareil ne sait pas vibrer). */
+export function buzz(kind: Sfx) {
+  try {
+    if (typeof navigator === 'undefined' || !('vibrate' in navigator)) return
+    const p: Record<string, number | number[]> = { good: 25, oops: [35, 60, 35], star: 15, done: [20, 40, 20, 40, 60], chest: [30, 50, 80] }
+    if (p[kind]) navigator.vibrate(p[kind])
+  } catch { /* ignoré */ }
 }
 
 export function canSpeak(): boolean {

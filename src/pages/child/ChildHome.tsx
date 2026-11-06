@@ -30,10 +30,23 @@ export default function ChildHome() {
   const m = reco ? meta(reco.lesson.subject) : meta('ma')
   const goalDone = n >= goal
   const tasks = useTeacherTasks().filter(t => t.childId === child.id && !taskDone(child, t))
+  const today_ = learned.has(today)
+  const foxSay = (() => {
+    if (!child.sessions.length) return { t: 'Bienvenue ! Je suis Foxy. Appuie sur « Jouer » pour ta toute première leçon.', tone: '' }
+    if (streak > 0 && !today_) return { t: `Ta série de ${streak} jour${streak > 1 ? 's' : ''} est en danger ! Une leçon aujourd’hui et elle est sauvée.`, tone: 'warn' }
+    if (goal - n === 1) return { t: 'Plus qu’une leçon pour ton objectif du jour !', tone: 'go' }
+    if (tasks.length) return { t: `${tasks[0].teacher} t’a préparé une mission. Tu la relèves ?`, tone: 'go' }
+    if (chests.length) return { t: `Psst… ${chests.length > 1 ? 'des coffres t’attendent' : 'un coffre t’attend'} dans tes trésors !`, tone: 'gold' }
+    if (n >= goal) return { t: 'Objectif du jour réussi, bravo ! Tu peux continuer ou faire une pause.', tone: 'ok' }
+    return { t: 'Prêt pour une nouvelle aventure ?', tone: '' }
+  })()
 
   return (
     <div className="col gap20 k-page">
-      <h1 className="k-hi">{big ? `Salut ${child.nickname} !` : `Bonjour ${child.nickname}`} <span className="k-wave" aria-hidden="true"><Hand size={30} color="#E07A4B" strokeWidth={2.4} /></span></h1>
+      <div className="k-greet">
+        <h1 className="k-hi">{big ? `Salut ${child.nickname} !` : `Bonjour ${child.nickname}`} <span className="k-wave" aria-hidden="true"><Hand size={30} color="#E07A4B" strokeWidth={2.4} /></span></h1>
+        <div className={`k-foxsay ${foxSay.tone}`} role="status"><img src={`${import.meta.env.BASE_URL}logo.png`} alt="Foxy" /><p>{foxSay.t}</p></div>
+      </div>
 
       {!child.diagnosticDone && (
         <Link to="/enfant/diagnostic" className="k-quest">
