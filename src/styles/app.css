@@ -560,3 +560,5 @@ html:is([data-theme=cm2],[data-theme=pro]) .wordmark{font-size:1.35rem}
 .chest-av{width:56px;height:56px;border-radius:50%}
 .kid-av{width:48px;height:48px;border-radius:50%;flex:none;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--line2)}
 .linkbtn{background:none;border:0;padding:6px 0;color:var(--teal-d);font-weight:800;cursor:pointer;text-decoration:underline;align-self:flex-start;font-family:inherit}
+.avpick.locked{cursor:default;opacity:.55;filter:grayscale(.85)}
+.avpick.locked img{border:2px dashed var(--line)}

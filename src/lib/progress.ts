@@ -25,17 +25,20 @@ export function levelOf(xp: number) {
 }
 
 /* ---------- avatars, cadres, coffres ---------- */
-export const BASE_AVATARS = ['princesse', 'chevalier', 'dragon', 'scientifique', 'footballeur']
+export const BASE_AVATARS = ['princesse', 'prince', 'chevalier', 'chevaliere', 'scientifique', 'scientifique-garcon', 'footballeur', 'footballeuse', 'professeur', 'professeure', 'chanteur', 'chanteuse', 'danseur', 'danseuse']
 export const FRAMES = ['none', 'gold', 'mint', 'violet', 'sunset', 'rainbow']
 
 export interface Chest { id: string; xp: number; title: string; kind: 'avatar' | 'frame'; value: string; label: string }
 export const CHESTS: Chest[] = [
   { id: 'c1', xp: 60, title: 'Coffre de la forêt', kind: 'avatar', value: 'fantome', label: 'Avatar fantôme' },
   { id: 'c2', xp: 150, title: 'Coffre doré', kind: 'frame', value: 'gold', label: 'Cadre doré' },
-  { id: 'c3', xp: 300, title: 'Coffre des neiges', kind: 'avatar', value: 'professeur', label: 'Avatar professeur' },
-  { id: 'c4', xp: 500, title: 'Coffre de la savane', kind: 'avatar', value: 'chanteur', label: 'Avatar chanteur' },
+  { id: 'c3', xp: 300, title: 'Coffre des étoiles', kind: 'avatar', value: 'astronaute', label: 'Avatar astronaute' },
+  { id: 'c4', xp: 500, title: 'Coffre du volcan', kind: 'avatar', value: 'dragon', label: 'Avatar dragon' },
   { id: 'c5', xp: 800, title: 'Coffre violet', kind: 'frame', value: 'violet', label: 'Cadre violet' },
-  { id: 'c6', xp: 1200, title: 'Coffre magique', kind: 'avatar', value: 'danseur', label: 'Avatar danseur' },
+  { id: 'c6', xp: 1200, title: 'Coffre du dojo', kind: 'avatar', value: 'judoka', label: 'Avatar judoka' },
+  { id: 'c7', xp: 1600, title: 'Coffre des héros', kind: 'avatar', value: 'pompier', label: 'Avatar pompier' },
+  { id: 'c8', xp: 2100, title: 'Coffre de la rampe', kind: 'avatar', value: 'skater', label: 'Avatar skater' },
+  { id: 'c9', xp: 2700, title: 'Coffre des vidéos', kind: 'avatar', value: 'youtubeuse', label: 'Avatar youtubeuse' },
 ]
 
 export const readyChests = (c: Child) => CHESTS.filter(x => c.xp >= x.xp && !c.chestsOpened.includes(x.id))

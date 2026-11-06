@@ -1,7 +1,10 @@
 /** Avatars illustrés (images dans public/avatars). Les anciens identifiants emoji sont convertis. */
 export const AVATARS: Record<string, string> = {
-  princesse: 'Princesse', chevalier: 'Chevalier', dragon: 'Dragon', scientifique: 'Scientifique', footballeur: 'Footballeur',
-  fantome: 'Fantôme', professeur: 'Professeur', chanteur: 'Chanteur', danseur: 'Danseur',
+  princesse: 'Princesse', prince: 'Prince', chevalier: 'Chevalier', chevaliere: 'Chevalière',
+  scientifique: 'Scientifique', 'scientifique-garcon': 'Scientifique', footballeur: 'Footballeur', footballeuse: 'Footballeuse',
+  professeur: 'Professeur', professeure: 'Professeure', chanteur: 'Chanteur', chanteuse: 'Chanteuse',
+  danseur: 'Danseur', danseuse: 'Danseuse',
+  dragon: 'Dragon', fantome: 'Fantôme', judoka: 'Judoka', astronaute: 'Astronaute', pompier: 'Pompier', youtubeuse: 'Youtubeuse', skater: 'Skater',
 }
 const LEGACY: Record<string, string> = {
   '🐰': 'princesse', '🐱': 'chevalier', '🐶': 'footballeur', '🐦': 'scientifique',

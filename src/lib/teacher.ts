@@ -6,7 +6,7 @@ import { addDays, dayKey, diffDays } from './dates'
 import { mastersTotals, periodTotals, weakSpots } from './progress'
 
 /* ---------- Démonstration locale (aucune donnée réelle) ---------- */
-const AV = ['princesse', 'chevalier', 'dragon', 'scientifique', 'footballeur', 'fantome', 'professeur', 'chanteur', 'danseur']
+const AV = ['princesse', 'prince', 'chevaliere', 'scientifique-garcon', 'footballeuse', 'judoka', 'danseur', 'chanteuse', 'astronaute', 'skater']
 const NAMES = ['Inès', 'Lucas', 'Jade', 'Nathan', 'Lina', 'Hugo', 'Chloé', 'Adam', 'Zoé', 'Malo', 'Léa', 'Sacha']
 let demo: { classes: ClassRow[]; students: Map<string, ClassStudent[]> } | null = null
 function demoState() {

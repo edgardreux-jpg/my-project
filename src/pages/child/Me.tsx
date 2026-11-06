@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../../state/store'
 import { applyVoicePrefs, effectiveVoice, listVoices, speak, canSpeak, voiceScore } from '../../lib/audio'
-import { BASE_AVATARS, FRAMES } from '../../lib/progress'
+import { BASE_AVATARS, CHESTS, FRAMES } from '../../lib/progress'
 import { Avatar, Switch } from '../../components/common'
 import { avatarId, avatarLabel, avatarSrc, isAvatar } from '../../lib/avatars'
 
@@ -20,7 +20,8 @@ export default function Me() {
     return () => { if (canSpeak()) window.speechSynthesis.onvoiceschanged = null }
   }, [])
   if (!child) return null
-  const avatars = [...new Set([...BASE_AVATARS, ...child.unlocked.filter(u => !FRAMES.includes(u) && isAvatar(u)).map(avatarId)])]
+  const avatars = [...new Set([avatarId(child.avatar), ...BASE_AVATARS, ...child.unlocked.filter(u => !FRAMES.includes(u) && isAvatar(u)).map(avatarId)])]
+  const locked = CHESTS.filter(c => c.kind === 'avatar' && !avatars.includes(c.value))
   const frames = ['none', ...child.unlocked.filter(u => FRAMES.includes(u))]
   const set = (fn: (c: Child) => void) => mutateChild(child.id, fn)
   return (
@@ -29,7 +30,9 @@ export default function Me() {
       <section className="card">
         <div className="row"><Avatar emoji={child.avatar} frame={child.frame} size={80} /><div><h2>{child.nickname}</h2><div className="muted small">{child.grade.toUpperCase()}</div></div></div>
         <h3 className="mt24">Mon avatar</h3>
-        <div className="wrap">{avatars.map(a => <button key={a} className={`avpick ${a === avatarId(child.avatar) ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === avatarId(child.avatar)} onClick={() => set(c => { c.avatar = a })}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}</div>
+        <div className="wrap">{avatars.map(a => <button key={a} className={`avpick ${a === avatarId(child.avatar) ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === avatarId(child.avatar)} onClick={() => set(c => { c.avatar = a })}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}
+          {locked.map(c => <span key={c.id} className="avpick locked" title={`Dans le « ${c.title} » (${c.xp} points)`}><img src={avatarSrc(c.value)} alt="" /><span>{c.xp} pts</span></span>)}</div>
+        {locked.length > 0 && <p className="tiny muted mt8">Les avatars grisés se gagnent dans les coffres de la page Récompenses.</p>}
         {frames.length > 1 && <>
           <h3 className="mt16">Mon cadre</h3>
           <div className="wrap">{frames.map(f => <button key={f} className="iconbtn" style={{ width: 56, height: 56, border: f === child.frame ? '3px solid var(--teal)' : '3px solid transparent' }} aria-label={`Cadre ${f}`} onClick={() => set(c => { c.frame = f })}><Avatar emoji={child.avatar} frame={f} size={40} /></button>)}</div>
