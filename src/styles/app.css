@@ -527,3 +527,25 @@ html:is([data-theme=cm1],[data-theme=cm2]) .today .btn{box-shadow:none}
 .wordmark{font-family:'Fredoka','Nunito',system-ui,sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:.04em;line-height:1}
 .wordmark .w1{color:#0B3554}.wordmark .w2{color:#E8600A}
 html:is([data-theme=cm2],[data-theme=pro]) .wordmark{font-size:1.35rem}
+
+/* Cartes d'illustration qui se retournent */
+.hero-art .a.flip{padding:0;border:0;background:none;box-shadow:none;font:inherit;color:inherit;text-align:left;cursor:pointer;perspective:1000px;display:block;-webkit-tap-highlight-color:transparent}
+.flip-in{display:grid;transition:transform .55s cubic-bezier(.2,.7,.2,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{grid-area:1/1;display:block;background:#fff;border:2px solid var(--line2);border-radius:20px;box-shadow:var(--shadow);padding:16px 16px 14px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.back{transform:rotateY(180deg)}
+.flip:focus-visible{outline:none}.flip:focus-visible .face{outline:3px solid var(--teal);outline-offset:3px}
+.face .opts{display:grid}
+.hero-art .hint.good{background:#E3F2E8;color:#1F5E3A}
+.week{display:flex;align-items:flex-end;justify-content:space-between;height:64px;gap:4px}
+.week div{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.week i{display:block;width:100%;max-width:18px;border-radius:5px 5px 2px 2px;background:#CFE7E1}
+.week i.on{background:var(--teal)}
+.week small{font-size:.68rem;font-weight:800;color:var(--ink2)}
+.studs{display:flex;flex-direction:column;gap:6px}
+.studs div{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.9rem}
+.studs .ini{width:24px;height:24px;border-radius:50%;background:var(--teal-s);color:var(--teal-d);display:grid;place-items:center;font-size:.72rem}
+.studs em{margin-left:auto;font-style:normal;font-size:.78rem;font-weight:800;color:var(--ink2)}
+.studs em.up{color:#236140}.studs em.idle{color:#7A5300;background:var(--gold-s);border-radius:99px;padding:1px 8px}
+.flip-tip{margin-top:14px}
+@media (prefers-reduced-motion:reduce){.flip-in{transition:none}}

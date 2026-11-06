@@ -1,10 +1,29 @@
 import type React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb } from 'lucide-react'
+import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb, Volume2 } from 'lucide-react'
 import { Logo, Spark } from '../components/common'
 import { Ico, Stars } from '../components/Icon'
 import { LEVELS, SOURCES, levelStats } from '../lib/curriculum'
 import { useStore } from '../state/store'
+import { useRef, useState, type ReactNode } from 'react'
+
+/** Carte d'illustration qui se retourne au survol (souris) ou au clic / toucher. */
+function FlipCard({ front, back, className, label }: { front: ReactNode; back: ReactNode; className: string; label: string }) {
+  const [on, setOn] = useState(false)
+  const mouse = useRef(false)
+  return (
+    <button type="button" className={`a flip ${className} ${on ? 'on' : ''}`} aria-pressed={on} aria-label={`Exemple ${label} : retourner la carte`}
+      onPointerEnter={e => { if (e.pointerType === 'mouse') { mouse.current = true; setOn(true) } }}
+      onPointerLeave={e => { if (e.pointerType === 'mouse') { mouse.current = false; setOn(false) } }}
+      onPointerDown={e => { mouse.current = e.pointerType === 'mouse' }}
+      onClick={() => { if (!mouse.current) setOn(v => !v) }}>
+      <span className="flip-in" aria-hidden="true">
+        <span className="face front">{front}</span>
+        <span className="face back">{back}</span>
+      </span>
+    </button>
+  )
+}
 
 export default function Landing() {
   // Le site navigue avec « # » : on fait défiler vers la section au lieu de changer de page
@@ -43,33 +62,62 @@ export default function Landing() {
           <Link to="/enseignant/inscription" className="small mt16" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Vous êtes enseignant ? Créer votre classe <ArrowRight size={16} /></Link>
         </div>
 
-        <div className="hero-art" aria-hidden="true">
-          <div className="a a-kid">
-            <span className="role kid">Côté enfant</span>
-            <div className="row mt8"><span className="pill teal">Mathématiques</span><span className="grow" /><Stars n={2} size={16} /></div>
-            <h3 style={{ margin: '10px 0 8px' }}>Combien font 240 + 130 ?</h3>
-            <div className="opts">
-              <div className="opt ko" style={{ opacity: .6, textDecoration: 'line-through' }}>380</div>
-              <div className="opt ok">370</div>
-            </div>
-            <div className="hint mt8"><Lightbulb size={16} /> Indice : 240 + 100, puis encore + 30.</div>
+        <div className="hero-art-wrap">
+          <div className="hero-art">
+            <FlipCard className="a-kid" label="côté enfant" front={<>
+              <span className="role kid">Côté enfant</span>
+              <div className="row mt8"><span className="pill teal">Mathématiques</span><span className="grow" /><Stars n={2} size={16} /></div>
+              <h3 style={{ margin: '10px 0 8px' }}>Combien font 240 + 130 ?</h3>
+              <div className="opts">
+                <div className="opt ko" style={{ opacity: .6, textDecoration: 'line-through' }}>380</div>
+                <div className="opt ok">370</div>
+              </div>
+              <div className="hint mt8"><Lightbulb size={16} /> Indice : 240 + 100, puis encore + 30.</div>
+            </>} back={<>
+              <span className="role kid">Côté enfant</span>
+              <div className="row mt8"><span className="pill" style={{ background: '#E4EEFB', color: '#1F4F95' }}>Anglais</span><span className="grow" /><Stars n={3} size={16} /></div>
+              <h3 style={{ margin: '10px 0 8px' }}>Comment dit-on « un chat » ?</h3>
+              <div className="opts">
+                <div className="opt">a dog</div>
+                <div className="opt ok">a cat</div>
+              </div>
+              <div className="hint mt8 good"><Volume2 size={16} /> Bravo ! Écoute : « a cat ».</div>
+            </>} />
+            <FlipCard className="a-par" label="côté parent" front={<>
+              <span className="role par">Côté parent</span>
+              <div className="row mt8" style={{ gap: 8 }}><b style={{ whiteSpace: 'nowrap' }}>Mila · CE1</b><span className="grow" /><span className="pill green" style={{ whiteSpace: 'nowrap' }}><ArrowUp size={12} /> 12 pts</span></div>
+              <div className="mini3 mt8">
+                <div><small>Temps</small><b>28 min</b></div>
+                <div><small>Réussite</small><b>89 %</b></div>
+              </div>
+              <Spark values={[52, 58, 55, 66, 70, 74, 81, 88]} w={250} h={44} />
+              <div className="tiny muted">À revoir : la soustraction posée</div>
+            </>} back={<>
+              <span className="role par">Côté parent</span>
+              <div className="row mt8" style={{ gap: 8 }}><b style={{ whiteSpace: 'nowrap' }}>Mila · sa semaine</b><span className="grow" /><span className="pill gold" style={{ whiteSpace: 'nowrap' }}><Ico e="🔥" /> 6 j</span></div>
+              <div className="week mt8">
+                {[['L', 12], ['M', 8], ['M', 15], ['J', 0], ['V', 10], ['S', 20], ['D', 6]].map(([d, m], i) => (
+                  <div key={i}><i style={{ height: `${(m as number) * 2.4 + 3}px` }} className={i === 5 ? 'on' : ''} /><small>{d}</small></div>
+                ))}
+              </div>
+              <div className="tiny muted mt8">Point fort : <b style={{ color: 'var(--ink)' }}>la table de 3</b></div>
+            </>} />
+            <FlipCard className="a-tea" label="côté enseignant" front={<>
+              <span className="role tea">Côté enseignant</span>
+              <div className="row mt8"><b>CE1 A</b><span className="grow" /><span className="code">TIL3CE</span></div>
+              <div className="small mt8"><b>7 / 10</b> élèves actifs cette semaine</div>
+              <div className="tiny muted mt8">Notion à retravailler en classe :<br /><b style={{ color: 'var(--ink)' }}>Poser une addition</b> · 4 élèves</div>
+            </>} back={<>
+              <span className="role tea">Côté enseignant</span>
+              <div className="row mt8"><b>CE1 A · élèves</b></div>
+              <div className="studs mt8">
+                <div><span className="ini">I</span>Inès<em className="up">92 %</em></div>
+                <div><span className="ini">L</span>Lucas<em>78 %</em></div>
+                <div><span className="ini">N</span>Nathan<em className="idle">inactif 9 j</em></div>
+              </div>
+            </>} />
           </div>
-          <div className="a a-par">
-            <span className="role par">Côté parent</span>
-            <div className="row mt8" style={{ gap: 8 }}><b style={{ whiteSpace: 'nowrap' }}>Mila · CE1</b><span className="grow" /><span className="pill green" style={{ whiteSpace: 'nowrap' }}><ArrowUp size={12} /> 12 pts</span></div>
-            <div className="mini3 mt8">
-              <div><small>Temps</small><b>28 min</b></div>
-              <div><small>Réussite</small><b>89 %</b></div>
-            </div>
-            <Spark values={[52, 58, 55, 66, 70, 74, 81, 88]} w={250} h={44} />
-            <div className="tiny muted">À revoir : la soustraction posée</div>
-          </div>
-          <div className="a a-tea">
-            <span className="role tea">Côté enseignant</span>
-            <div className="row mt8"><b>CE1 A</b><span className="grow" /><span className="code">TIL3CE</span></div>
-            <div className="small mt8"><b>7 / 10</b> élèves actifs cette semaine</div>
-            <div className="tiny muted mt8">Notion à retravailler en classe :<br /><b style={{ color: 'var(--ink)' }}>Poser une addition</b> · 4 élèves</div>
-          </div>
+          <p className="tiny muted center mt8 flip-tip">Survolez ou touchez une carte pour la retourner</p>
         </div>
       </div></section>
 
