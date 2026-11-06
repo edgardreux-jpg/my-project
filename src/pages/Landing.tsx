@@ -75,7 +75,7 @@ export default function Landing() {
               </div>
               <div className="hint mt8"><Lightbulb size={16} /> Indice : 240 + 100, puis encore + 30.</div>
             </>} back={<>
-              <div className="row" style={{ gap: 10 }}><img className="kid-av" src={avatarSrc('princesse')} alt="" /><div className="col" style={{ gap: 2 }}><span className="role kid" style={{ alignSelf: 'flex-start' }}>Côté enfant</span><b className="small">Mila, 7 ans</b></div></div>
+              <div className="row" style={{ gap: 10 }}><img className="kid-av" src={avatarSrc('dragon')} alt="" /><div className="col" style={{ gap: 2 }}><span className="role kid" style={{ alignSelf: 'flex-start' }}>Côté enfant</span><b className="small">Hugo, 9 ans</b></div></div>
               <div className="row mt8"><span className="pill" style={{ background: '#E4EEFB', color: '#1F4F95' }}>Anglais</span><span className="grow" /><Stars n={3} size={16} /></div>
               <h3 style={{ margin: '10px 0 8px' }}>Comment dit-on « un chat » ?</h3>
               <div className="opts">
