@@ -249,9 +249,11 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
             <option value={0}>Aucun</option><option value={15}>15 min</option><option value={20}>20 min</option><option value={30}>30 min</option></select></div>
         <div className="toggle"><div><b>Sons</b></div><Switch label="Sons" on={child.sound} onChange={v => set(c => { c.sound = v })} /></div>
         <div className="toggle"><div><b>Police facile à lire</b></div><Switch label="Police facile à lire" on={child.font === 'dys'} onChange={v => set(c => { c.font = v ? 'dys' : 'default' })} /></div>
-        <h3 className="mt16">Code secret</h3>
-        <div className="row"><input className="input" inputMode="numeric" maxLength={4} placeholder="Nouveau code" value={pin} onChange={e => { setPin(e.target.value.replace(/\D/g, '')); setMsg('') }} aria-label="Nouveau code secret" />
-          <button className="btn" onClick={() => { if (validPin(pin)) { set(c => { c.pin = pin }); setPin(''); setMsg('Code modifié.') } else setMsg('4 chiffres exactement.') }}>Changer</button></div>
+        <h3 className="mt16">Code secret de l’enfant</h3>
+        <p className="small muted" style={{ margin: '0 0 8px' }}>{child.pin ? `${child.nickname} doit taper son code à 4 chiffres pour ouvrir son profil.` : `${child.nickname} ouvre son profil en touchant son avatar. Un code est utile si plusieurs enfants partagent l’appareil.`}</p>
+        <div className="row wrap gap8"><input className="input" style={{ maxWidth: 160 }} inputMode="numeric" maxLength={4} placeholder={child.pin ? 'Nouveau code' : 'Code à 4 chiffres'} value={pin} onChange={e => { setPin(e.target.value.replace(/\D/g, '')); setMsg('') }} aria-label="Code secret à 4 chiffres" />
+          <button className="btn" onClick={() => { if (validPin(pin)) { set(c => { c.pin = pin }); setPin(''); setMsg(child.pin ? 'Code modifié.' : 'Code activé.') } else setMsg('4 chiffres exactement.') }}>{child.pin ? 'Changer' : 'Activer un code'}</button>
+          {child.pin && <button className="btn ghost" onClick={() => { set(c => { c.pin = '' }); setPin(''); setMsg('Code retiré : le profil s’ouvre d’un simple toucher.') }}>Retirer le code</button>}</div>
         {msg && <p className="small muted mt8">{msg}</p>}
       </section>
       <section className="card"><h3>Matières visibles</h3>

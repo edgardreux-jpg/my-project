@@ -51,9 +51,8 @@ export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
   const [nick, setNick] = useState('')
   const [grade, setGrade] = useState<LevelId>('ce1')
   const [av, setAv] = useState(BASE_AVATARS[0])
-  const [pin, setPin] = useState('')
   const [err, setErr] = useState('')
-  const submit = () => { const r = addChild(nick, grade, av, pin); if (r.ok) onClose(r.id); else setErr(r.error) }
+  const submit = () => { const r = addChild(nick, grade, av, ''); if (r.ok) onClose(r.id); else setErr(r.error) }
   return (
     <Modal label="Ajouter un enfant" onClose={() => onClose()}>
       <h2>Ajouter un enfant</h2>
@@ -65,8 +64,7 @@ export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
         <div className="field"><label>Avatar</label>
           <div className="wrap gap8">{BASE_AVATARS.map(a => <button type="button" key={a} className={`avpick ${a === av ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === av} onClick={() => setAv(a)}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}</div>
         </div>
-        <div className="field"><label htmlFor="pin">Code secret à 4 chiffres</label><input id="pin" className="input" inputMode="numeric" maxLength={4} value={pin} onChange={e => setPin(e.target.value.replace(/\D/g, ''))} />
-          <span className="tiny muted">Il sert à ouvrir le profil de l’enfant quand vous n’êtes pas connecté.</span></div>
+        <p className="tiny muted" style={{ margin: 0 }}>L’enfant entrera dans son espace en touchant son avatar. Vous pourrez ajouter un code secret dans ses Réglages si plusieurs enfants partagent l’appareil.</p>
         {err && <div className="err">{err}</div>}
         <button className="btn block" type="submit">Créer le profil</button>
       </form>

@@ -40,7 +40,7 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Le code de la classe', 'Cliquez sur le code pour le copier et le coller dans un message aux familles.'),
   ]
   if (path === '/profils') return [
-    P('Qui apprend aujourd’hui ?', 'Touche ton avatar pour entrer dans ton espace. Ton code secret à 4 chiffres te sera demandé.'),
+    P('Qui apprend aujourd’hui ?', 'Touche ton avatar pour entrer dans ton espace. Si tes parents ont mis un code secret, tape-le.'),
     P('Pour les parents', 'Le bouton « Espace parent » ouvre votre tableau de bord, protégé par votre code parent.'),
   ]
   if (path === '/parent') return hasKids ? [
@@ -48,16 +48,16 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('La carte de chaque enfant', 'Trois chiffres : le temps passé cette semaine, la réussite au premier essai et les leçons acquises. Les petits graphiques montrent les 8 dernières semaines.'),
     P('Le message coloré', 'En vert, tout va bien. En jaune, une notion mérite un coup de pouce : vous la retrouvez dans « Détails ».'),
     P('Son espace', 'Le bouton « Son espace » ouvre directement les leçons de l’enfant sur cet appareil.'),
-    P('Ajouter un enfant', 'Le bouton en haut à droite crée un nouveau profil : prénom, classe, avatar et code secret.'),
+    P('Ajouter un enfant', 'Le bouton en haut à droite crée un nouveau profil : prénom, classe et avatar.'),
   ] : [
     P('Bienvenue !', 'Ici, vous pourrez créer le profil de vos enfants puis suivre leur évolution. Commencez par « Ajouter un enfant ».'),
-    P('Un profil, c’est quoi ?', 'Un prénom ou pseudo, une classe, un avatar et un code secret à 4 chiffres que l’enfant utilisera pour entrer.'),
+    P('Un profil, c’est quoi ?', 'Un prénom ou pseudo, une classe et un avatar. L’enfant entre en touchant son avatar ; un code secret peut être ajouté dans ses Réglages.'),
   ]
   if (path.startsWith('/parent/enfant/')) return [
     P('La fiche de l’enfant', 'Quatre onglets : Aperçu, Progression, Activité et Réglages.'),
     P('Progression', 'La maîtrise de chaque matière, les notions à consolider et les réussites récentes.'),
     P('Activité', 'Les dernières séances, et la possibilité de proposer une leçon à votre enfant.'),
-    P('Réglages', 'Les habitudes (objectif, pauses), les matières visibles, et la rubrique « Classe » pour entrer le code donné par l’enseignant.'),
+    P('Réglages', 'Les habitudes (objectif, pauses), le code secret facultatif, les matières visibles, et la rubrique « Classe » pour entrer le code donné par l’enseignant.'),
   ]
   if (path === '/enfant') return [
     P('Salut, c’est Foxy !', 'Ici, c’est ton espace. Appuie sur le gros bouton pour continuer ta leçon.'),

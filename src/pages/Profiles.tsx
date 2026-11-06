@@ -20,7 +20,8 @@ export default function Profiles() {
   if (account.role === 'teacher') return <Navigate to="/enseignant" replace />
 
   const pick = async (c: Child) => {
-    if (mode === 'parent') { await enterChild(c.id); nav('/enfant') } else { setPinFor(c); setErr('') }
+    // Sans code secret (le cas par défaut), l'enfant entre d'un seul toucher
+    if (mode === 'parent' || !c.pin) { const r = await enterChild(c.id); if (r.ok) nav('/enfant') } else { setPinFor(c); setErr('') }
   }
   const tryPin = async (pin: string) => {
     if (!pinFor) return

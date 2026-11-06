@@ -193,7 +193,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const ch = acc?.children.find(c => c.id === id)
       if (!acc || !ch) return { ok: false, error: 'Profil introuvable.' }
       const direct = ref.current.session!.mode === 'parent'
-      if (!direct && ch.pin !== pin) return { ok: false, error: 'Code incorrect.' }
+      if (!direct && ch.pin && ch.pin !== pin) return { ok: false, error: 'Code incorrect.' }
       edit(d => { d.session = { accountId: acc.id, mode: 'child', childId: id } })
       return { ok: true }
     },
@@ -220,7 +220,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     addChild(nickname, grade, avatar, pin) {
       if (!nickname.trim()) return { ok: false, error: 'Indiquez un prénom ou un pseudo.' }
-      if (!validPin(pin)) return { ok: false, error: 'Le code doit contenir 4 chiffres.' }
+      if (pin && !validPin(pin)) return { ok: false, error: 'Le code doit contenir 4 chiffres.' }
       const c = newChild(nickname.trim(), grade, avatar, pin)
       edit(d => { d.accounts.find(a => a.id === d.session?.accountId)?.children.push(c) })
       return { ok: true, id: c.id }

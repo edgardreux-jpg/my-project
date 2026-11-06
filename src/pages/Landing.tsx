@@ -133,7 +133,7 @@ export default function Landing() {
         <span className="eyebrow">Comment ça marche</span>
         <h2 className="h-lg mb16">Trois étapes, cinq minutes</h2>
         <div className="grid3">
-          <div className="step"><div className="n">1</div><h3>Le parent crée un compte</h3><p className="muted">Puis ajoute un profil par enfant : prénom, classe, code secret à 4 chiffres.</p></div>
+          <div className="step"><div className="n">1</div><h3>Le parent crée un compte</h3><p className="muted">Puis ajoute un profil par enfant : un prénom, une classe et un avatar. C’est tout.</p></div>
           <div className="step"><div className="n">2</div><h3>L’enfant joue et apprend</h3><p className="muted">Des leçons de quelques minutes, des indices avant la correction, des étoiles et des récompenses.</p></div>
           <div className="step"><div className="n">3</div><h3>Le parent suit l’évolution</h3><p className="muted">Temps passé, réussite, notions acquises et points à consolider, dans un tableau de bord lisible.</p></div>
         </div>
@@ -201,7 +201,7 @@ export default function Landing() {
       <section className="section" id="faq"><div className="in faq" style={{ maxWidth: 760 }}>
         <h2 className="h-lg mb16">Questions fréquentes</h2>
         <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons, rien de plus. Ces données sont enregistrées sur un serveur sécurisé et ne sont visibles que par le compte parent, et par l’enseignant si le parent a saisi son code de classe.</p></details>
-        <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non sans le mot de passe du compte. Le profil enfant s’ouvre avec un code secret à 4 chiffres.</p></details>
+        <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non : l’espace parent est protégé par votre code parent à 4 chiffres. L’enfant ouvre son propre profil en touchant son avatar, ou avec un code secret si vous en activez un.</p></details>
         <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EDUFUN est un complément et ne remplace pas l’école ni une évaluation.</p></details>
         <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et l’exercice revient plus tard.</p></details>
         <details><summary>Peut-on suivre plusieurs enfants ?</summary><p>Oui, avec un profil par enfant et une vue d’ensemble pour la famille.</p></details>
