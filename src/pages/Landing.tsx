@@ -1,6 +1,6 @@
 import type React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldCheck, BookOpenCheck, EyeOff, HardDrive, LineChart as LC } from 'lucide-react'
+import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb } from 'lucide-react'
 import { Logo, Spark } from '../components/common'
 import { Ico, Stars } from '../components/Icon'
 import { LEVELS, SOURCES, levelStats } from '../lib/curriculum'
@@ -28,34 +28,47 @@ export default function Landing() {
 
       <section className="hero"><div className="in">
         <div>
-          <span className="eyebrow">Du CE1 au CM2</span>
-          <h1 className="h-xl">Apprendre en jouant, avec un suivi clair pour les parents.</h1>
-          <p className="lead mt16">Des leçons courtes et motivantes, alignées sur les programmes de l’école élémentaire. Les enfants avancent à leur rythme, les parents voient leurs progrès semaine après semaine.</p>
+          <span className="eyebrow">Du CE1 au CM2 · programmes officiels</span>
+          <h1 className="h-xl">Apprendre en s’amusant, progresser en confiance.</h1>
+          <p className="lead mt16">Des leçons de quelques minutes, alignées sur les programmes de l’école. L’enfant joue et avance à son rythme ; ses parents, et son enseignant s’ils le souhaitent, suivent ses progrès.</p>
+          <ul className="who mt24">
+            <li><span className="who-ic kid"><Sparkles size={20} /></span><div><b>Pour l’enfant</b><span>De petites aventures, des étoiles à gagner et un indice quand il se trompe. Jamais de punition.</span></div></li>
+            <li><span className="who-ic par"><HeartHandshake size={20} /></span><div><b>Pour les parents</b><span>Un suivi clair chaque semaine : temps passé, réussite, notions à revoir.</span></div></li>
+            <li><span className="who-ic tea"><School size={20} /></span><div><b>Pour l’enseignant</b><span>Un code de classe pour suivre les élèves dont la famille a donné son accord.</span></div></li>
+          </ul>
           <div className="wrap mt24">
-            <Link className="btn lg" to={cta}>Commencer gratuitement</Link>
+            <Link className="btn lg" to={cta}>Créer un compte parent</Link>
             <button className="btn lg ghost" onClick={async () => { await loginDemo(); nav('/parent') }}>Voir une démonstration</button>
           </div>
-          <p className="small muted mt16">Sans publicité. Sans collecte inutile. Un prénom, une classe, un code secret.</p>
+          <Link to="/enseignant/inscription" className="small mt16" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Vous êtes enseignant ? Créer votre classe <ArrowRight size={16} /></Link>
         </div>
+
         <div className="hero-art" aria-hidden="true">
-          <div className="a" style={{ left: 0, top: 10, width: 300, transform: 'rotate(-3deg)' }}>
-            <div className="row"><span className="pill teal">Mathématiques</span><span className="grow" /><Stars n={3} size={18} /></div>
-            <h3 style={{ margin: '12px 0 8px' }}>Combien font 240 + 130 ?</h3>
+          <div className="a a-kid">
+            <span className="role kid">Côté enfant</span>
+            <div className="row mt8"><span className="pill teal">Mathématiques</span><span className="grow" /><Stars n={2} size={16} /></div>
+            <h3 style={{ margin: '10px 0 8px' }}>Combien font 240 + 130 ?</h3>
             <div className="opts">
-              <div className="opt">380</div><div className="opt ok">370</div>
+              <div className="opt ko" style={{ opacity: .6, textDecoration: 'line-through' }}>380</div>
+              <div className="opt ok">370</div>
             </div>
-            <div className="bar mt16"><i style={{ width: '60%', background: 'var(--green)' }} /></div>
+            <div className="hint mt8"><Lightbulb size={16} /> Indice : 240 + 100, puis encore + 30.</div>
           </div>
-          <div className="a" style={{ right: 0, top: 150, width: 290, transform: 'rotate(2deg)' }}>
-            <div className="row"><b>Mila · CE1</b><span className="grow" /><span className="pill green">▲ 12 pts</span></div>
-            <div className="small muted mt8">Réussite au premier essai</div>
-            <Spark values={[52, 58, 55, 66, 70, 74, 81, 88]} w={250} h={60} />
-            <div className="row mt8"><span className="pill gold"><Ico e="🔥" /> 6 jours</span><span className="pill">1 h 20 cette semaine</span></div>
+          <div className="a a-par">
+            <span className="role par">Côté parent</span>
+            <div className="row mt8" style={{ gap: 8 }}><b style={{ whiteSpace: 'nowrap' }}>Mila · CE1</b><span className="grow" /><span className="pill green" style={{ whiteSpace: 'nowrap' }}><ArrowUp size={12} /> 12 pts</span></div>
+            <div className="mini3 mt8">
+              <div><small>Temps</small><b>28 min</b></div>
+              <div><small>Réussite</small><b>89 %</b></div>
+            </div>
+            <Spark values={[52, 58, 55, 66, 70, 74, 81, 88]} w={250} h={44} />
+            <div className="tiny muted">À revoir : la soustraction posée</div>
           </div>
-          <div className="a" style={{ left: 40, bottom: 0, width: 240 }}>
-            <div className="small muted">Maîtrise</div>
-            <div className="stack-bar mt8"><i style={{ width: '45%', background: '#2E8B57' }} /><i style={{ width: '25%', background: '#7CC79A' }} /><i style={{ width: '15%', background: '#F5C65D' }} /></div>
-            <div className="tiny muted mt8">Nombres et calculs</div>
+          <div className="a a-tea">
+            <span className="role tea">Côté enseignant</span>
+            <div className="row mt8"><b>CE1 A</b><span className="grow" /><span className="code">TIL3CE</span></div>
+            <div className="small mt8"><b>7 / 10</b> élèves actifs cette semaine</div>
+            <div className="tiny muted mt8">Notion à retravailler en classe :<br /><b style={{ color: 'var(--ink)' }}>Poser une addition</b> · 4 élèves</div>
           </div>
         </div>
       </div></section>
@@ -63,8 +76,8 @@ export default function Landing() {
       <div className="trust">
         <span><BookOpenCheck size={20} /> Programmes officiels</span>
         <span><EyeOff size={20} /> Aucune publicité</span>
-        <span><ShieldCheck size={20} /> Données minimales</span>
-        <span><HardDrive size={20} /> Données conservées sur l’appareil</span>
+        <span><ShieldCheck size={20} /> Données réservées à la famille</span>
+        <span><Coffee size={20} /> Pauses proposées, pas d’achat intégré</span>
       </div>
 
       <section className="section" id="comment"><div className="in">
@@ -138,12 +151,12 @@ export default function Landing() {
 
       <section className="section" id="faq"><div className="in faq" style={{ maxWidth: 760 }}>
         <h2 className="h-lg mb16">Questions fréquentes</h2>
-        <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons. Dans cette version, tout est conservé sur l’appareil, rien n’est transmis.</p></details>
+        <details><summary>Quelles données sont collectées ?</summary><p>Un prénom ou pseudo, une classe et la progression dans les leçons, rien de plus. Ces données sont enregistrées sur un serveur sécurisé et ne sont visibles que par le compte parent, et par l’enseignant si le parent a saisi son code de classe.</p></details>
         <details><summary>Mon enfant peut-il accéder à l’espace parent ?</summary><p>Non sans le mot de passe du compte. Le profil enfant s’ouvre avec un code secret à 4 chiffres.</p></details>
         <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EduFun est un complément et ne remplace pas l’école ni une évaluation.</p></details>
         <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et l’exercice revient plus tard.</p></details>
         <details><summary>Peut-on suivre plusieurs enfants ?</summary><p>Oui, avec un profil par enfant et une vue d’ensemble pour la famille.</p></details>
-        <details><summary>Les données sont-elles synchronisées entre appareils ?</summary><p>Pas encore. Elles restent sur l’appareil utilisé. Vous pouvez exporter la progression d’un enfant.</p></details>
+        <details><summary>Les données sont-elles synchronisées entre appareils ?</summary><p>Oui. En vous connectant avec le même compte, vous retrouvez la progression sur tous vos appareils. Vous pouvez aussi exporter la progression d’un enfant.</p></details>
       </div></section>
 
       <footer className="footer"><div className="in">
