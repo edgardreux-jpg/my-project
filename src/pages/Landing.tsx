@@ -37,7 +37,6 @@ function ParentShots() {
   const [cur, setCur] = useState(0)
   const [angle, setAngle] = useState(0)
   const [faces, setFaces] = useState<[number, number]>([0, 1])
-  const mouse = useRef(false)
   const go = (to: number) => {
     if (to === cur) return
     const frontVisible = (angle / 180) % 2 === 0
@@ -50,7 +49,8 @@ function ParentShots() {
     <>
       <div className="col">
         {SHOTS.map((s, i) => (
-          <button key={s.file} type="button" className={`feat featbtn ${cur === i ? 'on' : ''}`} aria-pressed={cur === i} onClick={() => go(i)}>
+          <button key={s.file} type="button" className={`feat featbtn ${cur === i ? 'on' : ''}`} aria-pressed={cur === i}
+            onPointerEnter={e => { if (e.pointerType === 'mouse') go(i) }} onFocus={() => go(i)} onClick={() => go(i)}>
             <div className="ic">{s.icon === 'chart' ? <LC size={24} /> : <Ico e={s.icon} color="currentColor" />}</div>
             <h3>{s.title}</h3><p className="muted">{s.text}</p>
           </button>
@@ -58,9 +58,7 @@ function ParentShots() {
       </div>
       <div className="shotwrap">
         <button type="button" className="shotflip" aria-label={`Capture : ${SHOTS[cur].cap}. Voir la suivante`}
-          onPointerEnter={e => { if (e.pointerType === 'mouse') { mouse.current = true; next() } }}
-          onPointerDown={e => { mouse.current = e.pointerType === 'mouse' }}
-          onClick={() => { if (!mouse.current) next(); mouse.current = false }}>
+          onClick={next}>
           <span className="shot-in" style={{ transform: `rotateY(${angle}deg)` }}>
             {faces.map((f, k) => (
               <span key={k} className={`shot-face ${k ? 'back' : ''}`}>
@@ -71,7 +69,7 @@ function ParentShots() {
           </span>
         </button>
         <div className="shot-dots" aria-hidden="true">{SHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). Survolez ou touchez pour passer à la suivante.</p>
+        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</p>
       </div>
     </>
   )
