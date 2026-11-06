@@ -406,3 +406,71 @@ button{font:inherit;color:inherit;cursor:pointer}
   .stu .small:last-of-type{grid-column:1/-1}
   .lbl-m{display:block;font-size:.7rem;font-weight:800;text-transform:uppercase;color:var(--ink2)}
 }
+
+/* =====================================================================
+   Chartes par espace. CE1 = valeurs par défaut ci-dessus.
+   ===================================================================== */
+html[data-theme=ce2]{--r:16px;--r-sm:11px;--bg:#FBF7F1;--line:#E6DECF;--line2:#EEE7DA;--ink:#22324A;font-size:15.5px}
+html[data-theme=ce2] .btn{box-shadow:0 3px 0 var(--teal-d);border-radius:12px}
+html[data-theme=ce2] .subj,html[data-theme=ce2] .opt,html[data-theme=ce2] .tile{box-shadow:0 2px 0 var(--line);border-radius:14px}
+html[data-theme=ce2] h1{font-size:1.85rem}
+
+/* CM1, CM2 et espaces adultes : police plus nette, reliefs remplacés par des ombres douces */
+html[data-theme=cm1],html[data-theme=cm2],html[data-theme=pro]{
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --line:#DDE3EA;--line2:#E6EAF0;--bg2:#EEF1F5;--card:#FFFFFF;
+  --shadow:0 1px 2px rgba(17,24,39,.05),0 4px 14px rgba(17,24,39,.05)}
+html[data-theme=cm1]{--teal:#11616B;--teal-d:#0A434A;--teal-s:#DDEDEE;--bg:#F4F6F8;--ink:#1C2737;--ink2:#4B5768;--ink3:#6B7686;--r:14px;--r-sm:10px}
+html[data-theme=cm2]{--teal:#1E3A5F;--teal-d:#0F2238;--teal-s:#E2E8F1;--bg:#F2F4F7;--ink:#111827;--ink2:#4B5563;--ink3:#6B7280;--r:10px;--r-sm:8px;font-size:15px}
+html[data-theme=pro]{--teal:#0F5C63;--teal-d:#0A3F44;--teal-s:#E3EEEF;--bg:#F5F7FA;--ink:#111827;--ink2:#4B5563;--ink3:#6B7280;--r:12px;--r-sm:8px;font-size:15px}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) body{font-weight:500}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) :is(h1,h2,h3,h4){font-weight:800;letter-spacing:-.01em}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) h1{font-size:1.65rem}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .btn{font-weight:700;border-radius:var(--r-sm);box-shadow:0 1px 2px rgba(17,24,39,.12)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .btn:active{transform:translateY(1px);box-shadow:none}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .btn.ghost{box-shadow:none;border:1px solid var(--line);color:var(--ink)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .btn.quiet{border:1px solid var(--line)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .btn.gold{box-shadow:none}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) :is(.btn.sm,.btn.lg){border-radius:var(--r-sm)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .card{border:1px solid var(--line2)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) :is(.chip,.pill){font-weight:700}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .chip{border:1px solid var(--line)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .input{border:1px solid var(--line);border-radius:var(--r-sm);font-weight:500}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .note{border:1px solid #EBDDB0;border-radius:var(--r-sm)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .side{border-right:1px solid var(--line)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .side .nav{font-weight:700;border-radius:var(--r-sm);border:0}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .side .nav.on{background:var(--teal-s);color:var(--teal-d);box-shadow:inset 3px 0 0 var(--teal)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .subj{border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .subj .em{border-radius:var(--r-sm);width:40px;height:40px;font-size:1.3rem}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) :is(.opt,.tile){border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:none;font-weight:600}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .opt.sel{border-color:#2F62AE;box-shadow:0 0 0 2px #2F62AE33}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) :is(.opt.ok,.opt.ko){box-shadow:none}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .fb{border-top:1px solid var(--line)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .badge{border:1px solid var(--line);border-radius:var(--r)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .tile-stat{border-radius:var(--r-sm)}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .kid-insight{border-radius:var(--r-sm);font-weight:600}
+html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .classcode{border-width:1px;border-radius:var(--r-sm)}
+html:is([data-theme=cm1],[data-theme=cm2]) .tabbar{border-top:1px solid var(--line)}
+html:is([data-theme=cm1],[data-theme=cm2]) .tabbar a{font-weight:700;border-radius:0;box-shadow:inset 0 2px 0 transparent}
+html:is([data-theme=cm1],[data-theme=cm2]) .tabbar a.on{background:transparent;color:var(--teal);box-shadow:inset 0 2px 0 var(--teal)}
+
+/* Carte du parcours : moins « bonbon » en grandissant */
+html:is([data-theme=cm1],[data-theme=cm2]) .stop-node{box-shadow:0 3px 8px rgba(17,24,39,.15);border-width:3px}
+html:is([data-theme=cm1],[data-theme=cm2]) .s-here .stop-node{box-shadow:0 0 0 4px var(--c),0 6px 14px rgba(17,24,39,.2)}
+html:is([data-theme=cm1],[data-theme=cm2]) .stop-label{border-radius:8px;box-shadow:0 1px 3px rgba(17,24,39,.1)}
+html:is([data-theme=cm1],[data-theme=cm2]) .world{border-radius:8px;box-shadow:none;font-weight:700}
+html:is([data-theme=cm1],[data-theme=cm2]) .map{background:none}
+html[data-theme=cm2] .me,html[data-theme=cm2] .s-here .stop-node{animation:none}
+html[data-theme=cm2] .stop-node{width:64px;height:64px}
+html[data-theme=cm2] .s-here .stop-node{width:74px;height:74px}
+
+/* Espaces adultes : en-tête sobre */
+html[data-theme=pro] .ptop{background:#fff;border-bottom:1px solid var(--line);box-shadow:none}
+html[data-theme=pro] .pill.teal{background:var(--teal-s);color:var(--teal-d)}
+html[data-theme=pro] .kid:hover{transform:none;border-color:var(--teal)}
+html[data-theme=pro] .kid-streak{font-weight:700}
+html[data-theme=pro] .stu.idle .stu-name b::after{font-weight:700}
+html:is([data-theme=cm2],[data-theme=pro]) body{font-size:calc(15px * var(--scale))}
+html[data-theme=ce2] .today{border-radius:20px;box-shadow:0 4px 0 var(--teal-d)}
+html:is([data-theme=cm1],[data-theme=cm2]) .today{background:var(--teal);border-radius:var(--r);box-shadow:0 6px 18px rgba(17,24,39,.18)}
+html:is([data-theme=cm1],[data-theme=cm2]) .today .btn{box-shadow:none}

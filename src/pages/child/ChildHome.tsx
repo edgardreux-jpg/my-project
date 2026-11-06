@@ -28,7 +28,7 @@ export default function ChildHome() {
       <div className="hello">
         <Avatar emoji={child.avatar} frame={child.frame} size={64} />
         <div className="grow">
-          <h1 className="h-lg">Salut {child.nickname} !</h1>
+          <h1 className="h-lg">{child.grade === 'cm1' || child.grade === 'cm2' ? `Bonjour ${child.nickname}` : `Salut ${child.nickname} !`}</h1>
           <div className="stats mt8">
             <span className="chip"><Flame size={18} color="#F28D62" /> {liveStreak(child)} jour{liveStreak(child) > 1 ? 's' : ''}</span>
             <span className="chip"><Ico e="✨" /> {child.xp} points</span>

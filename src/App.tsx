@@ -13,12 +13,14 @@ import SubjectPath, { SubjectList } from './pages/child/SubjectPath'
 import LessonPlayer from './pages/child/LessonPlayer'
 import Rewards from './pages/child/Rewards'
 import Me from './pages/child/Me'
+import ThemeSync from './components/ThemeSync'
 import { ClassView, TeacherHome, TeacherShell } from './pages/teacher/Teacher'
 
 export default function App() {
   return (
     <StoreProvider>
       <HashRouter>
+        <ThemeSync />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/connexion" element={<Auth />} />
