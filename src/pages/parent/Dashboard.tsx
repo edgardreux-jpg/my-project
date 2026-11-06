@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown } from 'lucide-react'
+import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
 import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay } from '../../lib/dates'
 import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotals } from '../../lib/progress'
-import { BASE_AVATARS } from '../../lib/progress'
+import { BASE_AVATARS, uid } from '../../lib/progress'
 import { meta } from '../../lib/curriculum'
 import type { Child, LevelId } from '../../types'
 import { avatarLabel, avatarSrc } from '../../lib/avatars'
@@ -64,7 +64,7 @@ export function AddChildModal({ onClose }: { onClose: (id?: string) => void }) {
         <div className="field"><label>Avatar</label>
           <div className="wrap gap8">{BASE_AVATARS.map(a => <button type="button" key={a} className={`avpick ${a === av ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === av} onClick={() => setAv(a)}><img src={avatarSrc(a)} alt="" /><span>{avatarLabel(a)}</span></button>)}</div>
         </div>
-        <p className="tiny muted" style={{ margin: 0 }}>L’enfant entrera dans son espace en touchant son avatar. Vous pourrez ajouter un code secret dans ses Réglages si plusieurs enfants partagent l’appareil.</p>
+        <p className="tiny muted" style={{ margin: 0 }}>L’enfant entrera dans son espace en touchant son avatar. Votre code parent protège l’espace parent.</p>
         {err && <div className="err">{err}</div>}
         <button className="btn block" type="submit">Créer le profil</button>
       </form>
@@ -81,6 +81,58 @@ function insight(c: Child, today: string): { tone: 'green' | 'gold' | 'red' | 't
   const w = weakSpots(c)[0]
   if (w) return { tone: 'gold', text: `À consolider : ${w.title}.` }
   return { tone: 'green', text: 'Rythme régulier, continuez ainsi.' }
+}
+
+/** Bandeau « cette semaine en famille ». */
+function FamilyWeek({ kids, today }: { kids: Child[]; today: string }) {
+  const from = addDays(today, -6)
+  const tot = kids.map(k => periodTotals(k, from, today))
+  const ms = tot.reduce((a, t) => a + t.ms, 0), lessons = tot.reduce((a, t) => a + t.lessons, 0)
+  const accs = tot.filter(t => t.acc != null).map(t => t.acc as number)
+  const acc = accs.length ? accs.reduce((a, b) => a + b, 0) / accs.length : null
+  const active = tot.filter(t => t.days > 0).length
+  const items = [
+    { ic: <Clock size={18} />, l: 'Temps d’apprentissage', v: fmtMin(ms) },
+    { ic: <BookOpenCheck size={18} />, l: 'Leçons terminées', v: String(lessons) },
+    { ic: <Target size={18} />, l: 'Réussite au 1er essai', v: acc == null ? '–' : `${Math.round(acc * 100)} %` },
+    { ic: <CalendarCheck size={18} />, l: 'Enfants actifs', v: `${active} / ${kids.length}` },
+  ]
+  return (
+    <section className="p-week" aria-label="Cette semaine en famille">
+      <span className="p-week-t">7 derniers jours</span>
+      {items.map(i => <div key={i.l} className="p-wk"><span className="p-ic">{i.ic}</span><div><b>{i.v}</b><small>{i.l}</small></div></div>)}
+    </section>
+  )
+}
+
+/** Suggestions concrètes, une ligne par action utile. */
+function Suggestions({ kids, today }: { kids: Child[]; today: string }) {
+  const { mutateChild } = useStore()
+  const [done, setDone] = useState<string[]>([])
+  const rows: { key: string; kid: Child; icon: JSX.Element; tone: string; text: JSX.Element; action?: JSX.Element }[] = []
+  kids.forEach(k => {
+    const last = k.streak.last, idle = last ? diffDays(today, last) : null
+    if (!k.sessions.length) rows.push({ key: k.id + 'start', kid: k, icon: <Play size={18} />, tone: 'teal', text: <><b>{k.nickname}</b> n’a pas encore commencé. Une première leçon ensemble ?</> })
+    else if (idle != null && idle >= 3) rows.push({ key: k.id + 'idle', kid: k, icon: <CalendarCheck size={18} />, tone: 'gold', text: <><b>{k.nickname}</b> n’a pas appris depuis {idle} jours. Cinq minutes suffisent pour reprendre.</> })
+    const w = weakSpots(k)[0]
+    const assigned = w && k.assignments.some(a => a.lessonId === w.lessonId && !a.doneAt)
+    if (w) rows.push({ key: k.id + 'weak', kid: k, icon: <RotateCcw size={18} />, tone: 'gold', text: <><b>{k.nickname}</b> peut consolider « {w.title} » ({meta(w.subject).name}, {Math.round(w.acc * 100)} % de réussite).</>,
+      action: assigned || done.includes(k.id + 'weak') ? <span className="pill green">Proposée</span> : <button className="btn ghost sm" onClick={() => { mutateChild(k.id, c => { c.assignments.push({ id: uid(), lessonId: w.lessonId, at: new Date().toISOString() }) }); setDone(d => [...d, k.id + 'weak']) }}>Proposer la leçon</button> })
+    const st = liveStreak(k)
+    if (st >= 3) rows.push({ key: k.id + 'streak', kid: k, icon: <Flame size={18} />, tone: 'coral', text: <><b>{k.nickname}</b> a appris {st} jours de suite. Un mot d’encouragement fait toujours plaisir.</> })
+  })
+  return (
+    <section className="card">
+      <h3>Suggestions</h3>
+      {rows.length === 0 ? <p className="small muted">Rien à signaler pour le moment.</p> : rows.map(r => (
+        <div key={r.key} className="p-sug">
+          <span className={`p-ic ${r.tone}`}>{r.icon}</span>
+          <div className="grow small">{r.text}</div>
+          {r.action ?? <Link className="btn quiet sm" to={`/parent/enfant/${r.kid.id}`}>Voir</Link>}
+        </div>
+      ))}
+    </section>
+  )
 }
 
 export default function Dashboard() {
@@ -102,16 +154,18 @@ export default function Dashboard() {
 
   return (
     <div className="col gap20">
-      <div className="row wrap">
+      <div className="row wrap p-head">
         <div className="grow" style={{ minWidth: 260 }}>
+          <div className="p-date">{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
           <h1>Bonjour {account.name}</h1>
-          <p className="muted">Voici où en sont vos enfants. Les chiffres se calculent sur les séances terminées.</p>
+          <p className="muted">Voici où en sont vos enfants cette semaine.</p>
         </div>
         <button className="btn" onClick={() => setAdd(true)}><Plus size={18} /> Ajouter un enfant</button>
       </div>
+      {kids.length > 0 && <FamilyWeek kids={kids} today={today} />}
 
       {kids.length === 0 ? (
-        <div className="card"><Empty emoji="👧" title="Ajoutez votre premier enfant">Créez un profil avec un prénom, une classe et un code à 4 chiffres. Le suivi apparaît dès la première leçon.</Empty>
+        <div className="card"><Empty emoji="👧" title="Ajoutez votre premier enfant">Créez un profil avec un prénom, une classe et un avatar. Le suivi apparaît dès la première leçon.</Empty>
           <div className="center"><button className="btn" onClick={() => setAdd(true)}>Créer un profil</button></div></div>
       ) : (
         <>
@@ -128,6 +182,7 @@ export default function Dashboard() {
                     <div className="grow">
                       <h3 className="kid-name">{k.nickname}</h3>
                       <div className="small muted">{k.grade.toUpperCase()} · {levelOf(k.xp).name}</div>
+                      <div className="p-lvl" title={`Progression vers le niveau suivant`}><i style={{ width: `${levelOf(k.xp).pct}%` }} /></div>
                     </div>
                     <span className="kid-streak" title="Jours d’affilée avec au moins une leçon"><Flame size={16} /> {liveStreak(k)} j</span>
                   </div>
@@ -178,20 +233,7 @@ export default function Dashboard() {
             </section>
           </div>
 
-          <section className="card">
-            <h3>À retenir</h3>
-            {kids.map(k => {
-              const ws = weakSpots(k).slice(0, 2)
-              return (
-                <div key={k.id} className="weak">
-                  <Avatar emoji={k.avatar} frame={k.frame} size={36} />
-                  <div className="grow"><b>{k.nickname}</b>
-                    <div className="small muted">{ws.length ? `À consolider : ${ws.map(w => `${w.title} (${meta(w.subject).name})`).join(', ')}` : 'Aucune notion en difficulté repérée pour le moment.'}</div></div>
-                  <Link className="btn ghost sm" to={`/parent/enfant/${k.id}?tab=progression`}>Voir</Link>
-                </div>
-              )
-            })}
-          </section>
+          <Suggestions kids={kids} today={today} />
         </>
       )}
       <p className="tiny muted">EDUFUN suit la progression de l’enfant dans les leçons. Il ne s’agit ni d’une évaluation officielle ni d’une note scolaire.</p>

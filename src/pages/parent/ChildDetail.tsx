@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ChevronLeft, Download, Trash2, Play } from 'lucide-react'
+import { ChevronLeft, Download, Flame, History, LayoutDashboard, MessageSquareText, Play, Settings2, Sparkles, Star, Trash2, TrendingUp, Trophy } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, BarChart, Delta, Empty, LineChart, Modal, Switch } from '../../components/common'
 import { addDays, dayKey, fmtDayLong, fmtMin, fmtShort, relDay } from '../../lib/dates'
@@ -53,7 +53,7 @@ function ClassJoin({ child }: { child: Child }) {
   )
 }
 
-const TABS = [['apercu', 'Aperçu'], ['progression', 'Progression'], ['activite', 'Activité'], ['reglages', 'Réglages']] as const
+const TABS = [['apercu', 'Aperçu', LayoutDashboard], ['progression', 'Progression', TrendingUp], ['activite', 'Activité', History], ['reglages', 'Réglages', Settings2]] as const
 
 export default function ChildDetail() {
   const { id = '' } = useParams()
@@ -71,16 +71,22 @@ export default function ChildDetail() {
   return (
     <div className="col gap20">
       <Link to="/parent" className="row small"><ChevronLeft size={18} /> Tableau de bord</Link>
-      <div className="row wrap">
-        <Avatar emoji={child.avatar} frame={child.frame} size={72} />
-        <div className="grow">
-          <h1>{child.nickname}</h1>
-          <div className="muted">{child.grade.toUpperCase()} · niveau {lv.name} · {child.xp} points · {totalStars(child)} étoiles · série de {liveStreak(child)} jour{liveStreak(child) > 1 ? 's' : ''}</div>
+      <section className="card p-id">
+        <Avatar emoji={child.avatar} frame={child.frame} size={76} />
+        <div className="grow" style={{ minWidth: 0 }}>
+          <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}><h1>{child.nickname}</h1><span className="pill teal">{child.grade.toUpperCase()}</span></div>
+          <div className="p-id-lvl"><span className="small"><b>{lv.name}</b>{lv.nextName ? <span className="muted"> · {lv.next! - child.xp} points avant « {lv.nextName} »</span> : null}</span><div className="p-lvl big"><i style={{ width: `${lv.pct}%` }} /></div></div>
+          <div className="p-id-chips">
+            <span><Flame size={15} /> Série de {liveStreak(child)} jour{liveStreak(child) > 1 ? 's' : ''}</span>
+            <span><Star size={15} /> {totalStars(child)} étoiles</span>
+            <span><Trophy size={15} /> {child.badges.length} badges</span>
+            <span><Sparkles size={15} /> {child.xp} points</span>
+          </div>
         </div>
         <button className="btn" onClick={async () => { await enterChild(child.id); nav('/enfant') }}><Play size={18} /> Ouvrir son espace</button>
-      </div>
-      <div className="tabs" role="tablist">
-        {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setSp({ tab: k })}>{l}</button>)}
+      </section>
+      <div className="p-tabs" role="tablist">
+        {TABS.map(([k, l, I]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setSp({ tab: k })}><I size={17} /> {l}</button>)}
       </div>
       {tab === 'apercu' && <Overview child={child} today={today} />}
       {tab === 'progression' && <Progression child={child} />}
@@ -113,7 +119,7 @@ function Overview({ child, today }: { child: Child; today: string }) {
     : `Sur les 7 derniers jours, ${child.nickname} a passé ${fmtMin(cur.ms)} à apprendre sur ${cur.days} jour${cur.days > 1 ? 's' : ''}, avec ${cur.acc == null ? 'aucune réponse enregistrée' : `${Math.round(cur.acc * 100)} % de réussite au premier essai`}.`
   return (
     <div className="col gap20">
-      <div className="note">{summary}</div>
+      <div className="p-summary"><span className="p-ic teal"><MessageSquareText size={18} /></span><p>{summary}</p></div>
       <div className="kpis">
         <div className="card kpi"><div className="l">Temps cette semaine</div><div className="v">{fmtMin(cur.ms)}</div><Delta now={cur.ms / 60000} before={prev.ms ? prev.ms / 60000 : null} unit=" min" /></div>
         <div className="card kpi"><div className="l">Leçons terminées</div><div className="v">{cur.lessons}</div><Delta now={cur.lessons} before={prev.lessons || null} /></div>
@@ -252,7 +258,7 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
         {subs.map(s => <div key={s} className="toggle"><span className="row gap8"><span style={{ color: SUBJECT_META[s].color }}><Ico e={SUBJECT_META[s].emoji} color="currentColor" /></span>{SUBJECT_META[s].name}</span>
           <Switch label={SUBJECT_META[s].name} on={!child.hiddenSubjects.includes(s)} onChange={v => set(c => { c.hiddenSubjects = v ? c.hiddenSubjects.filter(x => x !== s) : [...c.hiddenSubjects, s] })} /></div>)}
         <h3 className="mt24">Données</h3>
-        <p className="small muted mb8">Les données restent sur cet appareil. Vous pouvez les exporter ou les supprimer à tout moment.</p>
+        <p className="small muted mb8">Vous pouvez exporter ou supprimer les données de cet enfant à tout moment.</p>
         <div className="wrap"><button className="btn ghost sm" onClick={exportJson}><Download size={16} /> Exporter (JSON)</button>
           <button className="btn red sm" onClick={onDelete}><Trash2 size={16} /> Supprimer le profil</button></div>
       </section>
