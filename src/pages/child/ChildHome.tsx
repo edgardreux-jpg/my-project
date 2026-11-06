@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Flame, Play, Compass, Brain, Gift, Zap, Check, Snowflake, Hand } from 'lucide-react'
+import { Flame, Play, Compass, Brain, Gift, Zap, Check, Snowflake, Hand, School } from 'lucide-react'
 import { useStore } from '../../state/store'
-import { lessonsOf, meta, subjectsOf } from '../../lib/curriculum'
+import { lessonById, lessonsOf, meta, subjectsOf } from '../../lib/curriculum'
+import { taskDone, useTeacherTasks } from '../../lib/tasks'
 import { dayKey, WEEKDAY_INITIALS, addDays, weekStart, parseDay } from '../../lib/dates'
 import { CHESTS, dueForReview, liveStreak, readyChests, recommend, todayCount, visibleSubjects } from '../../lib/progress'
 import { Ico } from '../../components/Icon'
@@ -28,6 +29,7 @@ export default function ChildHome() {
   const why = { assigned: 'Mission de ton parent', continue: 'On continue', start: 'Nouvelle aventure', review: 'Petite révision' }
   const m = reco ? meta(reco.lesson.subject) : meta('ma')
   const goalDone = n >= goal
+  const tasks = useTeacherTasks().filter(t => t.childId === child.id && !taskDone(child, t))
 
   return (
     <div className="col gap20 k-page">
@@ -40,6 +42,13 @@ export default function ChildHome() {
           <span className="k-btn3d sm">C’est parti</span>
         </Link>
       )}
+
+      {tasks.map(t => { const l = lessonById.get(t.lessonId)!; const tm = meta(l.subject); return (
+        <Link key={t.id} to={`/enfant/lecon/${t.lessonId}`} className="k-banner teacher">
+          <span className="k-banner-ic"><School size={28} /></span>
+          <span className="grow"><span className="k-up tiny">Mission de {t.teacher}</span><b>Révise « {l.title} »</b><span className="small">{tm.name}{t.message ? ` · ${t.message}` : ''}</span></span>
+          <span className="k-btn3d sm teal"><Play size={16} fill="currentColor" /> Jouer</span>
+        </Link>) })}
 
       <section className="k-hero" style={{ ['--c' as string]: m.color, ['--cd' as string]: m.dark }}>
         <div className="k-hero-bg" aria-hidden="true"><i /><i /><i /></div>

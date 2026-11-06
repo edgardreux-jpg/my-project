@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Download, Flame, History, LayoutDashboard, MessageSquareText, Play, Settings2, Sparkles, Star, Trash2, TrendingUp, Trophy } from 'lucide-react'
 import { useStore } from '../../state/store'
+import { SchoolNotes } from './Dashboard'
 import { Avatar, BarChart, Delta, Empty, LineChart, Modal, Switch } from '../../components/common'
 import { addDays, dayKey, fmtDayLong, fmtMin, fmtShort, relDay } from '../../lib/dates'
 import {
@@ -119,6 +120,7 @@ function Overview({ child, today }: { child: Child; today: string }) {
     : `Sur les 7 derniers jours, ${child.nickname} a passé ${fmtMin(cur.ms)} à apprendre sur ${cur.days} jour${cur.days > 1 ? 's' : ''}, avec ${cur.acc == null ? 'aucune réponse enregistrée' : `${Math.round(cur.acc * 100)} % de réussite au premier essai`}.`
   return (
     <div className="col gap20">
+      <SchoolNotes kids={[child]} only={child.id} />
       <div className="p-summary"><span className="p-ic teal"><MessageSquareText size={18} /></span><p>{summary}</p></div>
       <div className="kpis">
         <div className="card kpi"><div className="l">Temps cette semaine</div><div className="v">{fmtMin(cur.ms)}</div><Delta now={cur.ms / 60000} before={prev.ms ? prev.ms / 60000 : null} unit=" min" /></div>

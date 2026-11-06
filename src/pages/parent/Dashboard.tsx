@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw } from 'lucide-react'
+import { Plus, Play, Flame, Clock, Target, BookOpenCheck, TrendingUp, AlertCircle, Info, ArrowUp, ArrowDown, CalendarCheck, RotateCcw, School, Check } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, BarChart, Empty, LineChart, Modal } from '../../components/common'
 import { dayKey, addDays, fmtMin, fmtShort, diffDays, relDay } from '../../lib/dates'
 import { liveStreak, levelOf, periodTotals, weakSpots, weeksSeries, mastersTotals } from '../../lib/progress'
 import { BASE_AVATARS, uid } from '../../lib/progress'
-import { meta } from '../../lib/curriculum'
+import { lessonById, meta } from '../../lib/curriculum'
+import { taskDone, useTeacherTasks } from '../../lib/tasks'
 import type { Child, LevelId } from '../../types'
 import { avatarLabel, avatarSrc } from '../../lib/avatars'
 
@@ -105,6 +106,29 @@ function FamilyWeek({ kids, today }: { kids: Child[]; today: string }) {
   )
 }
 
+/** Invitations à réviser envoyées par l'enseignant. */
+export function SchoolNotes({ kids, only }: { kids: Child[]; only?: string }) {
+  const tasks = useTeacherTasks().filter(t => !only || t.childId === only)
+  const rows = tasks.map(t => ({ t, k: kids.find(k => k.id === t.childId)! })).filter(r => r.k)
+    .map(r => ({ ...r, done: taskDone(r.k, r.t) })).filter(r => !r.done || Date.now() - new Date(r.t.at).getTime() < 7 * 864e5)
+  if (!rows.length) return null
+  return (
+    <section className="card p-school">
+      <h3><School size={19} /> Messages de l’école</h3>
+      {rows.map(({ t, k, done }) => { const l = lessonById.get(t.lessonId)!; return (
+        <div key={t.id} className="p-sug">
+          <span className={`p-ic ${done ? '' : 'gold'}`}>{done ? <Check size={18} /> : <School size={18} />}</span>
+          <div className="grow small">
+            {done ? <><b>{k.nickname}</b> a fait la révision demandée par {t.teacher} : « {l.title} ».</>
+              : <><b>{t.teacher}</b> invite votre enfant <b>{k.nickname}</b> à réviser la notion suivante : <b>« {l.title} »</b> ({meta(l.subject).name}).</>}
+            <div className="tiny muted">{t.className} · {relDay(t.at.slice(0, 10), dayKey())}{t.message ? ` · « ${t.message} »` : ''}</div>
+          </div>
+          {done ? <span className="pill green">Faite</span> : <span className="pill gold">À faire</span>}
+        </div>) })}
+    </section>
+  )
+}
+
 /** Suggestions concrètes, une ligne par action utile. */
 function Suggestions({ kids, today }: { kids: Child[]; today: string }) {
   const { mutateChild } = useStore()
@@ -163,6 +187,7 @@ export default function Dashboard() {
         <button className="btn" onClick={() => setAdd(true)}><Plus size={18} /> Ajouter un enfant</button>
       </div>
       {kids.length > 0 && <FamilyWeek kids={kids} today={today} />}
+      {kids.length > 0 && <SchoolNotes kids={kids} />}
 
       {kids.length === 0 ? (
         <div className="card"><Empty emoji="👧" title="Ajoutez votre premier enfant">Créez un profil avec un prénom, une classe et un avatar. Le suivi apparaît dès la première leçon.</Empty>

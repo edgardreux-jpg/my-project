@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, Plus, School, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
+import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, Plus, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Avatar, Logo, Modal } from '../../components/common'
 import { Ico } from '../../components/Icon'
-import { LEVELS, meta } from '../../lib/curriculum'
+import { LESSONS, LEVELS, lessonById, meta } from '../../lib/curriculum'
+import type { TaskRow } from '../../lib/cloud'
 import { fmtMin, relDay } from '../../lib/dates'
 import type { ClassRow } from '../../lib/cloud'
 import { classWeakSpots, studentStats, teacherApi, type StudentStat } from '../../lib/teacher'
@@ -167,6 +168,45 @@ function ClassStrip({ s, title }: { s: StudentStat[]; title: string }) {
   )
 }
 
+/** Fenêtre « Proposer une révision » : une leçon, toute la classe ou quelques élèves, un mot facultatif. */
+function ProposeTask({ students, grade, init, onClose, onSend }: { students: StudentStat[]; grade: string; init: { lessonId?: string; ids?: string[] }; onClose: () => void; onSend: (lessonId: string, msg: string | null, target: string[] | null) => Promise<string | null> }) {
+  const levels = new Set([grade, ...students.map(x => x.grade)].filter(g => g && g !== 'multi'))
+  const lessons = LESSONS.filter(l => levels.has(l.level))
+  const subjects = [...new Set(lessons.map(l => l.subject))]
+  const [lessonId, setLessonId] = useState(init.lessonId ?? '')
+  const [some, setSome] = useState(!!init.ids?.length)
+  const [ids, setIds] = useState<string[]>(init.ids ?? [])
+  const [msg, setMsg] = useState('')
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+  return (
+    <Modal label="Proposer une révision" onClose={onClose}>
+      <form className="col gap12" onSubmit={async e => {
+        e.preventDefault()
+        if (!lessonId) { setErr('Choisissez une leçon.'); return }
+        if (some && !ids.length) { setErr('Choisissez au moins un élève.'); return }
+        setBusy(true); const r = await onSend(lessonId, msg.trim() || null, some ? ids : null); setBusy(false); if (r) setErr(r)
+      }}>
+        <h2>Proposer une révision</h2>
+        <div className="field"><label htmlFor="tl">Notion à réviser</label>
+          <select id="tl" className="input" value={lessonId} onChange={e => setLessonId(e.target.value)}>
+            <option value="">Choisir une leçon</option>
+            {subjects.map(sid => <optgroup key={sid} label={meta(sid).name}>{lessons.filter(l => l.subject === sid).map(l => <option key={l.id} value={l.id}>{levels.size > 1 ? `${l.level.toUpperCase()} · ` : ''}{l.title}</option>)}</optgroup>)}
+          </select></div>
+        <div className="field"><label>Pour qui ?</label>
+          <div className="t-filter" style={{ width: 'max-content' }}><button type="button" className={!some ? 'on' : ''} onClick={() => setSome(false)}>Toute la classe</button><button type="button" className={some ? 'on' : ''} onClick={() => setSome(true)}>Certains élèves</button></div>
+          {some && <div className="t-pick">{students.map(x => <label key={x.id}><input type="checkbox" checked={ids.includes(x.id)} onChange={e => setIds(v => e.target.checked ? [...v, x.id] : v.filter(y => y !== x.id))} /> {x.nickname}</label>)}</div>}
+        </div>
+        <div className="field"><label htmlFor="tm">Un mot pour les élèves (facultatif)</label>
+          <input id="tm" className="input" maxLength={140} placeholder="On en reparle en classe lundi !" value={msg} onChange={e => setMsg(e.target.value)} /></div>
+        <p className="tiny muted" style={{ margin: 0 }}>L’élève voit la révision en tête de son espace. Ses parents reçoivent l’invitation dans leur tableau de bord.</p>
+        {err && <div className="err" role="alert">{err}</div>}
+        <button className="btn block" disabled={busy}><Send size={17} /> Envoyer la révision</button>
+      </form>
+    </Modal>
+  )
+}
+
 function Trend({ now, before }: { now: number | null; before: number | null }) {
   if (now == null || before == null) return null
   const d = Math.round((now - before) * 100)
@@ -186,11 +226,14 @@ export function ClassView() {
   const [del, setDel] = useState(false)
   const [filter, setFilter] = useState<'all' | 'help' | 'idle'>('all')
   const [msgCopied, setMsgCopied] = useState(false)
+  const [tasks, setTasks] = useState<TaskRow[]>([])
+  const [propose, setPropose] = useState<null | { lessonId?: string; ids?: string[] }>(null)
 
   const reload = useCallback(async () => {
     const list = await api.list()
     setCls(list.find(c => c.id === id) ?? null)
     try { setStats(studentStats(await api.overview(id))) } catch (e) { setErr((e as Error).message) }
+    try { setTasks(await api.tasks(id)) } catch { /* rien */ }
   }, [api, id])
   useEffect(() => { reload() }, [reload])
 
@@ -250,10 +293,34 @@ export function ClassView() {
                   <div className="grow"><b>{w.title}</b><div className="tiny muted">{w.names.join(', ')}</div>
                     <div className="p-lvl" style={{ maxWidth: 260 }}><i style={{ width: `${(w.names.length / s.length) * 100}%`, background: '#D9A23A' }} /></div></div>
                   <span className="pill gold">{w.names.length} / {s.length} élèves</span>
+                  <button className="btn ghost sm" onClick={() => setPropose({ lessonId: w.lessonId, ids: w.ids })}><Send size={15} /> Proposer</button>
                 </div>
               ))}
             </div>
           )}
+
+          <div className="card col gap8">
+            <div className="row wrap gap8">
+              <div className="grow"><h2 style={{ fontSize: '1.15rem' }}>Révisions proposées</h2>
+                <p className="small muted" style={{ margin: '2px 0 0' }}>Les élèves la voient en tête de leur espace, et leurs parents reçoivent l’invitation.</p></div>
+              <button className="btn" onClick={() => setPropose({})}><Send size={17} /> Proposer une révision</button>
+            </div>
+            {tasks.length === 0 ? <p className="small muted" style={{ margin: '6px 0 0' }}>Aucune révision proposée pour l’instant. Astuce : utilisez « Proposer » sur une notion à retravailler.</p> : tasks.map(t => {
+              const l = lessonById.get(t.lesson_id)
+              const who = s.filter(x => !t.target || t.target.includes(x.id))
+              const done = who.filter(x => x.child.sessions.some(se => se.lessonId === t.lesson_id && se.at >= t.created_at)).length
+              return (
+                <div key={t.id} className="weakrow">
+                  <span style={{ color: meta(l?.subject ?? 'ma').color }}><Ico e={meta(l?.subject ?? 'ma').emoji} color="currentColor" size={20} /></span>
+                  <div className="grow"><b>{l?.title ?? 'Leçon'}</b>
+                    <div className="tiny muted">{relDay(t.created_at.slice(0, 10))} · {t.target ? `${who.length} élève${who.length > 1 ? 's' : ''} : ${who.map(x => x.nickname).join(', ')}` : 'toute la classe'}{t.message ? ` · « ${t.message} »` : ''}</div>
+                    <div className="p-lvl" style={{ maxWidth: 260 }}><i style={{ width: `${who.length ? (done / who.length) * 100 : 0}%` }} /></div></div>
+                  <span className={`pill ${done === who.length && who.length ? 'green' : ''}`}>{done} / {who.length} faite{done > 1 ? 's' : ''}</span>
+                  <button className="iconbtn" aria-label="Retirer cette révision" title="Retirer" onClick={async () => { await api.delTask(t.id); reload() }}><Trash2 size={17} /></button>
+                </div>
+              )
+            })}
+          </div>
 
           <div className="card col gap12">
             <div className="row wrap gap8">
@@ -287,6 +354,10 @@ export function ClassView() {
       </div>
       <p className="tiny muted">Vous voyez le pseudo et la progression des élèves inscrits par leur famille, rien d’autre. Les familles peuvent quitter la classe à tout moment.</p>
 
+      {propose && <ProposeTask students={s} grade={cls.grade} init={propose} onClose={() => setPropose(null)} onSend={async (lessonId, msg, target) => {
+        const e = await api.addTask(id, lessonId, msg, target); if (e) return e
+        setPropose(null); reload(); return null
+      }} />}
       {kick && <Modal label="Retirer un élève" onClose={() => setKick(null)}>
         <h2>Retirer {kick.nickname} ?</h2>
         <p className="muted">L’élève ne sera plus suivi dans cette classe. Sa progression n’est pas effacée ; sa famille pourra rejoindre la classe à nouveau avec le code.</p>

@@ -1,6 +1,6 @@
 import type { Child, LevelId } from '../types'
 import * as cloud from './cloud'
-import type { ClassRow, ClassStudent } from './cloud'
+import type { ClassRow, ClassStudent, TaskRow } from './cloud'
 import { newChild, play } from './seed'
 import { addDays, dayKey, diffDays } from './dates'
 import { mastersTotals, periodTotals, weakSpots } from './progress'
@@ -8,7 +8,7 @@ import { mastersTotals, periodTotals, weakSpots } from './progress'
 /* ---------- Démonstration locale (aucune donnée réelle) ---------- */
 const AV = ['princesse', 'prince', 'chevaliere', 'scientifique-garcon', 'footballeuse', 'judoka', 'danseur', 'chanteuse', 'astronaute', 'skater']
 const NAMES = ['Inès', 'Lucas', 'Jade', 'Nathan', 'Lina', 'Hugo', 'Chloé', 'Adam', 'Zoé', 'Malo', 'Léa', 'Sacha']
-let demo: { classes: ClassRow[]; students: Map<string, ClassStudent[]> } | null = null
+let demo: { classes: ClassRow[]; students: Map<string, ClassStudent[]>; tasks: TaskRow[] } | null = null
 function demoState() {
   if (demo) return demo
   const mk = (id: string, name: string, grade: LevelId, code: string, n: number, seed: number): [ClassRow, ClassStudent[]] => {
@@ -24,7 +24,7 @@ function demoState() {
   }
   const a = mk('demo-c1', 'CE1 A, école des Tilleuls', 'ce1', 'TIL3CE', 10, 1)
   const b = mk('demo-c2', 'Soutien CE2', 'ce2', 'SOU7K2', 5, 4)
-  demo = { classes: [a[0], b[0]], students: new Map([[a[0].id, a[1]], [b[0].id, b[1]]]) }
+  demo = { classes: [a[0], b[0]], students: new Map([[a[0].id, a[1]], [b[0].id, b[1]]]), tasks: [] }
   return demo
 }
 
@@ -38,6 +38,9 @@ export const teacherApi = (isDemo: boolean) => isDemo ? {
   remove: async (id: string) => { const s = demoState(); s.classes = s.classes.filter(c => c.id !== id) },
   overview: async (id: string) => demoState().students.get(id) ?? [],
   removeMember: async (cid: string, kid: string) => { const s = demoState(); s.students.set(cid, (s.students.get(cid) ?? []).filter(x => x.child_id !== kid)) },
+  tasks: async (cid: string) => demoState().tasks.filter(t => t.class_id === cid),
+  addTask: async (cid: string, lessonId: string, message: string | null, target: string[] | null) => { demoState().tasks.unshift({ id: 'demo-t-' + Date.now(), class_id: cid, lesson_id: lessonId, message, target, created_at: new Date().toISOString() }); return null as string | null },
+  delTask: async (id: string) => { const s = demoState(); s.tasks = s.tasks.filter(t => t.id !== id) },
 } : {
   list: cloud.listClasses,
   create: cloud.createClass,
@@ -45,6 +48,9 @@ export const teacherApi = (isDemo: boolean) => isDemo ? {
   remove: async (id: string) => { await cloud.deleteClass(id) },
   overview: cloud.classOverview,
   removeMember: async (cid: string, kid: string) => { await cloud.removeMember(cid, kid) },
+  tasks: cloud.listTasks,
+  addTask: cloud.addTask,
+  delTask: cloud.deleteTask,
 }
 
 /* ---------- Statistiques d'un élève ---------- */
@@ -73,11 +79,11 @@ export function studentStats(rows: ClassStudent[], today = dayKey()): StudentSta
 
 /** Notions qui posent problème au plus grand nombre d'élèves. */
 export function classWeakSpots(stats: StudentStat[]) {
-  const m = new Map<string, { title: string; subject: string; names: string[] }>()
+  const m = new Map<string, { title: string; subject: string; lessonId: string; names: string[]; ids: string[] }>()
   for (const s of stats) for (const w of weakSpots(s.child)) {
     const k = w.themeId
-    if (!m.has(k)) m.set(k, { title: w.title, subject: w.subject, names: [] })
-    m.get(k)!.names.push(s.nickname)
+    if (!m.has(k)) m.set(k, { title: w.title, subject: w.subject, lessonId: w.lessonId, names: [], ids: [] })
+    m.get(k)!.names.push(s.nickname); m.get(k)!.ids.push(s.id)
   }
   return [...m.values()].sort((a, b) => b.names.length - a.names.length).slice(0, 5)
 }
