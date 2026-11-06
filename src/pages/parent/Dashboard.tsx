@@ -195,7 +195,7 @@ export default function Dashboard() {
           </section>
         </>
       )}
-      <p className="tiny muted">EduFun suit la progression de l’enfant dans les leçons. Il ne s’agit ni d’une évaluation officielle ni d’une note scolaire.</p>
+      <p className="tiny muted">EDUFUN suit la progression de l’enfant dans les leçons. Il ne s’agit ni d’une évaluation officielle ni d’une note scolaire.</p>
       {add && <AddChildModal onClose={() => setAdd(false)} />}
     </div>
   )

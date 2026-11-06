@@ -7,13 +7,9 @@ export function Logo({ to }: { to?: string }) {
   const { mode, account } = useStore()
   const dest = to ?? (account?.role === 'teacher' ? '/enseignant' : mode === 'parent' ? '/parent' : mode === 'child' ? '/enfant' : mode === 'locked' ? '/profils' : '/')
   return (
-    <Link to={dest} className="logo" aria-label="EduFun, accueil">
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16 2 28 10 24 28H8L4 10Z" fill="#F5C65D" stroke="#D9A23A" strokeWidth="2" strokeLinejoin="round" />
-        <path d="M16 2 12 12 16 28 20 12Z" fill="#FFE59A" />
-        <path d="M4 10h24" stroke="#D9A23A" strokeWidth="2" />
-      </svg>
-      EduFun
+    <Link to={dest} className="logo" aria-label="EDUFUN, accueil">
+      <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" width={40} height={40} />
+      <span className="wordmark"><span className="w1">EDU</span><span className="w2">FUN</span></span>
     </Link>
   )
 }

@@ -521,3 +521,9 @@ html:is([data-theme=cm1],[data-theme=cm2]) .today .btn{box-shadow:none}
 .mini3{grid-template-columns:repeat(2,minmax(0,1fr))}.mini3 b{white-space:nowrap}
 .a-par svg.spark,.a-par svg{max-width:100%}
 .a-par svg{height:auto}
+/* Logo EDUFUN : renard + mot-symbole en Fredoka (arrondie, comme le dessin) */
+.logo{gap:10px}
+.logo img{width:40px;height:40px;flex:none;display:block}
+.wordmark{font-family:'Fredoka','Nunito',system-ui,sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:.04em;line-height:1}
+.wordmark .w1{color:#0B3554}.wordmark .w2{color:#E8600A}
+html:is([data-theme=cm2],[data-theme=pro]) .wordmark{font-size:1.35rem}

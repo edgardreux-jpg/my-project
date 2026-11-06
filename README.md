@@ -1,4 +1,4 @@
-# EduFun
+# EDUFUN
 
 Plateforme éducative CE1 à CM2 (Vite, React, TypeScript).
 
