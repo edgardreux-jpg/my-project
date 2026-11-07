@@ -25,7 +25,9 @@ export default function GuideBot() {
     setI(0)
     if (hiddenOn(pathname)) { setOpen(false); return }
     const seen = new Set((read(SEEN) ?? '').split('|').filter(Boolean))
-    if (auto && !seen.has(key)) {
+    // Sur téléphone, la page d'accueil reste dégagée : Foxy attend qu'on le touche
+    const phoneHome = pathname === '/' && window.innerWidth < 700
+    if (auto && !seen.has(key) && !phoneHome) {
       seen.add(key); write(SEEN, [...seen].join('|'))
       const t = setTimeout(() => setOpen(true), 700)
       return () => clearTimeout(t)

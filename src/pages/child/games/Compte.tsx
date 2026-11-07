@@ -79,7 +79,7 @@ export default function Compte({ tier, sound, onWin }: GameProps) {
       </div>
       <p className="small center muted" style={{ minHeight: 22 }}>{msg || (a === null ? 'Choisis un nombre.' : op === null ? 'Choisis une opération.' : 'Choisis le deuxième nombre.')}</p>
       {hist.length > 0 && <div className="ce-hist">{hist.map((h, i) => <span key={i}>{h.line}</span>)}</div>}
-      <div className="row gap8 mt8" style={{ justifyContent: 'center' }}>
+      <div className="row wrap gap8 mt8" style={{ justifyContent: 'center' }}>
         <button className="btn quiet sm" onClick={undo} disabled={!hist.length}><Undo2 size={16} /> Annuler</button>
         <button className="btn quiet sm" onClick={reset}><RotateCcw size={16} /> Recommencer</button>
         <button className="btn quiet sm" onClick={() => setShowSol(s => !s)}>{showSol ? 'Cacher' : 'Une solution'}</button>
