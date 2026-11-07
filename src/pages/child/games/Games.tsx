@@ -2,7 +2,8 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Ticket, Clock, Lock, Trophy } from 'lucide-react'
 import { useStore } from '../../../state/store'
-import { FAMILIES, GAMES, gameAccess, gameFor, type Family } from '../../../lib/games'
+import { DIFFS, FAMILIES, GAMES, gameAccess, gameFor, type Family } from '../../../lib/games'
+import { relDay, dayKey } from '../../../lib/dates'
 import { GameIcon } from './GameIcon'
 
 export default function Games() {
@@ -12,6 +13,7 @@ export default function Games() {
   const acc = gameAccess(child)
   const g = child.games ?? {}
   const list = GAMES.filter(x => gameFor(x, child.grade))
+  const recent = (g.log ?? []).slice(0, 4)
   return (
     <div className="col gap20 k-page">
       <h1 className="k-hi">Ludothèque</h1>
@@ -29,6 +31,19 @@ export default function Games() {
           {acc.minutesLeft != null && acc.blocked !== 'time' && <span className="lu-time"><Clock size={16} /> {acc.minutesLeft} min</span>}
           {acc.blocked === 'tickets' && <Link className="btn sm" to="/enfant">Faire une leçon</Link>}
         </div>
+      )}
+      {recent.length > 0 && (
+        <section>
+          <h3 className="k-h3">Mes dernières parties</h3>
+          <div className="lu-recent">
+            {recent.map((e, i) => { const d = GAMES.find(x => x.id === e.g); if (!d) return null; return (
+              <Link key={e.at + i} to={`/enfant/jeux/${d.id}`} className={`lu-rc ${e.win ? 'w' : 'l'}`} style={{ ['--gc' as string]: d.color }}>
+                <span className="lu-rc-ic"><GameIcon id={d.id} size={18} /></span>
+                <span className="grow"><b>{d.title}</b><small>{e.win ? 'Gagné' : 'Perdu'} · {DIFFS[e.d as 0 | 1 | 2].name} · {relDay(dayKey(new Date(e.at)))}</small></span>
+              </Link>
+            ) })}
+          </div>
+        </section>
       )}
       {(Object.keys(FAMILIES) as Family[]).map(f => {
         const games = list.filter(x => x.family === f)

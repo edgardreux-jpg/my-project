@@ -116,6 +116,17 @@ export interface GamesState {
   wins?: Record<string, number>
   /** Dernière difficulté choisie par jeu (0 facile, 1 moyen, 2 difficile) */
   diff?: Record<string, number>
+  /** Historique des dernières parties (les plus récentes en premier) */
+  log?: GameLog[]
+}
+
+export interface GameLog {
+  g: string       // jeu
+  d: number       // difficulté
+  win: boolean
+  s?: number      // score (coups, secondes, essais…)
+  at: string      // ISO
+  ms: number      // durée
 }
 
 export interface Account {

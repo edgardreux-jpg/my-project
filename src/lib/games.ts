@@ -1,4 +1,4 @@
-import type { Child, GamesState, LevelId } from '../types'
+import type { Child, GameLog, GamesState, LevelId } from '../types'
 import { dayKey } from './dates'
 
 export type Family = 'logique' | 'nombres' | 'mots' | 'espace'
@@ -70,6 +70,12 @@ export function gameAccess(c: Child): GameAccess {
 
 /** Lance une partie : décompte un ticket. */
 export const fmtScore = (unit: string | undefined, v: number) => (unit === 's' ? fmtTime(v) : `${v} ${unit ?? ''}`.trim())
+
+/** Ajoute une partie à l'historique du profil (60 dernières gardées). */
+export function logGame(c: Child, e: GameLog) {
+  const g = gamesToday(c)
+  c.games = { ...g, log: [e, ...(g.log ?? [])].slice(0, 60) }
+}
 
 export function spendTicket(c: Child) {
   const g = gamesToday(c)

@@ -1,8 +1,10 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, type ComponentType } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, HelpCircle, Play, RotateCcw, Ticket, Trophy } from 'lucide-react'
+import { ArrowLeft, HelpCircle, History, Play, RotateCcw, Ticket, Trophy } from 'lucide-react'
+import type { Child } from '../../../types'
+import { dayKey, fmtMin, relDay } from '../../../lib/dates'
 import { useStore } from '../../../state/store'
-import { addPlayTime, bestKey, DIFFS, FAMILIES, fmtScore, GAMES, gameAccess, gameFor, recordWin, setDiff, spendTicket, tierOf, type Diff } from '../../../lib/games'
+import { addPlayTime, logGame, bestKey, DIFFS, FAMILIES, fmtScore, GAMES, gameAccess, gameFor, recordWin, setDiff, spendTicket, tierOf, type Diff } from '../../../lib/games'
 import { sfx } from '../../../lib/audio'
 import { Confetti, Modal } from '../../../components/common'
 import { GameIcon } from './GameIcon'
@@ -45,6 +47,43 @@ const TIPS: Record<string, string[]> = {
   carte: ['L’Europe est au-dessus de l’Afrique.', 'Le plus grand océan est le Pacifique.'],
 }
 
+function when(iso: string) {
+  const d = new Date(iso), k = dayKey(d), r = relDay(k)
+  return `${r.charAt(0).toUpperCase()}${r.slice(1)} à ${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`
+}
+const dur = (ms: number) => { const s = Math.max(1, Math.round(ms / 1000)); return s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')}` }
+
+/** Historique du jeu pour ce profil : chiffres clés et dernières parties. */
+function GameHistory({ child, gameId, unit }: { child: Child; gameId: string; unit?: string }) {
+  const [all, setAll] = useState(false)
+  const log = (child.games?.log ?? []).filter(e => e.g === gameId)
+  if (!log.length) return <p className="gh-empty">Ta toute première partie ? Ton historique apparaîtra ici.</p>
+  const wins = log.filter(e => e.win).length
+  const time = log.reduce((a, e) => a + e.ms, 0)
+  const shown = all ? log : log.slice(0, 5)
+  return (
+    <section className="gh">
+      <h3 className="gi-h"><History size={18} /> Ton historique</h3>
+      <div className="gh-stats">
+        <span><b>{log.length}</b><small>partie{log.length > 1 ? 's' : ''}</small></span>
+        <span><b>{wins}</b><small>victoire{wins > 1 ? 's' : ''}</small></span>
+        <span><b>{Math.round((wins / log.length) * 100)} %</b><small>de réussite</small></span>
+        <span><b>{time < 60000 ? dur(time) : fmtMin(time)}</b><small>de jeu</small></span>
+      </div>
+      <ul className="gh-list">
+        {shown.map((e, i) => (
+          <li key={e.at + i} className={e.win ? 'w' : 'l'}>
+            <i className="gh-dot" aria-hidden="true" />
+            <div className="grow"><b>{e.win ? 'Gagné' : 'Perdu'}</b>{e.s != null && unit ? <span> · {fmtScore(unit, e.s)}</span> : null}<small>{when(e.at)} · {dur(e.ms)}</small></div>
+            <span className={`gdiff d${e.d}`}>{DIFFS[e.d as Diff].name}</span>
+          </li>
+        ))}
+      </ul>
+      {log.length > 5 && <button className="btn quiet sm block mt8" onClick={() => setAll(a => !a)}>{all ? 'Voir moins' : `Voir les ${log.length} parties`}</button>}
+    </section>
+  )
+}
+
 export default function GamePage() {
   const { gid } = useParams()
   return <GameScreen key={gid} />
@@ -62,6 +101,7 @@ function GameScreen() {
   const [how, setHow] = useState(false)
   const [tip, setTip] = useState(0)
   const t0 = useRef(Date.now())
+  const roundAt = useRef(Date.now())
 
   useEffect(() => { window.scrollTo(0, 0) }, [phase])
   useEffect(() => { if (phase !== 'play') return; const t = setInterval(() => setTip(x => x + 1), 12000); return () => clearInterval(t) }, [phase])
@@ -78,16 +118,19 @@ function GameScreen() {
     if (!child || !def) return
     if (gameAccess(child).blocked) return
     mutateChild(child.id, c => { spendTicket(c); setDiff(c, def.id, d) })
-    setEnd(null); setPhase('play'); setRound(r => r + 1); t0.current = Date.now()
+    setEnd(null); setPhase('play'); setRound(r => r + 1); t0.current = Date.now(); roundAt.current = Date.now()
   }, [child, def, mutateChild])
 
   const onWin = useCallback((score?: number, msg?: string) => {
     if (!child || !def) return
     let rec = false
-    mutateChild(child.id, c => { rec = recordWin(c, def.id, score, diff) })
+    mutateChild(child.id, c => { rec = recordWin(c, def.id, score, diff); logGame(c, { g: def.id, d: diff, win: true, s: score, at: new Date().toISOString(), ms: Date.now() - roundAt.current }) })
     setEnd({ win: true, msg: msg ?? 'Bravo, partie gagnée !', record: rec, score })
   }, [child, def, mutateChild, diff])
-  const onLose = useCallback((msg: string) => setEnd({ win: false, msg, record: false }), [])
+  const onLose = useCallback((msg: string) => {
+    if (child && def) mutateChild(child.id, c => logGame(c, { g: def.id, d: diff, win: false, at: new Date().toISOString(), ms: Date.now() - roundAt.current }))
+    setEnd({ win: false, msg, record: false })
+  }, [child, def, mutateChild, diff])
 
   if (!child) return <Navigate to="/profils" replace />
   if (!def || !gameFor(def, child.grade)) return <Navigate to="/enfant/jeux" replace />
@@ -147,6 +190,7 @@ function GameScreen() {
               {acc.mode !== 'free' && <p className="tiny muted center mt8">Lancer une partie utilise 1 ticket.</p>}
             </>
           )}
+          <GameHistory child={child} gameId={def.id} unit={def.unit} />
         </main>
       ) : (
         <main className="gplay">

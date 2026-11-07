@@ -1,10 +1,11 @@
+import { GAMES } from '../../lib/games'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Download, Flame, History, LayoutDashboard, MessageSquareText, Play, Settings2, Sparkles, Star, Trash2, TrendingUp, Trophy } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { SchoolNotes } from './Dashboard'
 import { Avatar, BarChart, Delta, Empty, LineChart, Modal, Switch } from '../../components/common'
-import { addDays, dayKey, fmtDayLong, fmtMin, fmtShort, relDay } from '../../lib/dates'
+import { addDays, dayKey, diffDays, fmtDayLong, fmtMin, fmtShort, relDay } from '../../lib/dates'
 import {
   BADGES, MASTERY_LABEL, daysSeries, levelOf, liveStreak, masteryOf, periodTotals, recentWins, subjectBreakdown,
   topMissed, totalStars, uid, weakSpots, weeksSeries, mastersTotals,
@@ -195,6 +196,29 @@ function Progression({ child }: { child: Child }) {
   )
 }
 
+/** Ludothèque vue par le parent : temps de jeu de la semaine et jeux préférés. */
+function GamesCard({ child, today }: { child: Child; today: string }) {
+  const log = child.games?.log ?? []
+  if (!log.length) return null
+  const week = log.filter(e => diffDays(today, dayKey(new Date(e.at))) < 7)
+  const ms = week.reduce((a, e) => a + e.ms, 0)
+  const count: Record<string, number> = {}
+  week.forEach(e => { count[e.g] = (count[e.g] ?? 0) + 1 })
+  const top = Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 3)
+  const mode = child.games?.mode ?? 'tickets'
+  return (
+    <section className="card"><h3>Ludothèque</h3>
+      <p className="small muted mb8">{mode === 'off' ? 'Désactivée' : mode === 'free' ? 'Accès libre' : 'Accès après les leçons'}{child.games?.maxMin ? ` · ${child.games.maxMin} min par jour au maximum` : ''} (modifiable dans Réglages).</p>
+      <div className="gh-stats p">
+        <span><b>{week.length}</b><small>parties sur 7 jours</small></span>
+        <span><b>{week.filter(e => e.win).length}</b><small>victoires</small></span>
+        <span><b>{fmtMin(ms)}</b><small>de jeu</small></span>
+      </div>
+      {top.length > 0 && <p className="small mt8">Jeux préférés : {top.map(([g, n]) => `${GAMES.find(x => x.id === g)?.title ?? g} (${n})`).join(', ')}.</p>}
+    </section>
+  )
+}
+
 function Activity({ child, set, today }: { child: Child; set: (fn: (c: Child) => void) => void; today: string }) {
   const [lessonId, setLessonId] = useState('')
   const available = LESSONS.filter(l => l.level === child.grade)
@@ -202,6 +226,7 @@ function Activity({ child, set, today }: { child: Child; set: (fn: (c: Child) =>
   const adults = Object.entries(child.lessons).filter(([id]) => lessonById.get(id)?.adult)
   return (
     <div className="col gap20">
+      <GamesCard child={child} today={today} />
       <section className="card"><h3>Dernières séances</h3>
         {sessions.length === 0 ? <Empty title="Aucune séance">Les séances terminées apparaissent ici.</Empty> : (
           <div style={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label="Dernières séances"><table className="table"><thead><tr><th>Date</th><th>Leçon</th><th>Durée</th><th>1er essai</th><th>Étoiles</th></tr></thead><tbody>
