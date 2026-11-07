@@ -40,11 +40,19 @@ export default function ExerciseView({ ex, answer, setAnswer, locked, status, re
   )
 }
 
+/** Réponses courtes (1/2, 25, oui…) : grosses tuiles en 2 ou 3 colonnes plutôt qu'une liste. */
+function optCols(ex: Exercise) {
+  const c = ex.choices ?? []
+  if (!c.length || !c.every(x => x.label.length <= 8)) return ''
+  if (c.length === 3) return 'cols3'
+  return c.length % 2 === 0 ? 'cols2' : ''
+}
+
 function Body({ ex, answer, setAnswer, locked, status, reveal, onEnter, eliminated }: Props) {
   switch (ex.type) {
     case 'qcm':
       return (
-        <div className="opts" role="radiogroup" aria-label="Réponses">
+        <div className={`opts ${optCols(ex)}`} role="radiogroup" aria-label="Réponses">
           {ex.choices!.map((c, i) => {
             const sel = answer === c.id
             let cls = sel ? 'sel' : ''

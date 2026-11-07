@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BookOpen, Volume2, X } from 'lucide-react'
 import { useStore } from '../../state/store'
@@ -12,6 +12,10 @@ import { Confetti, Modal } from '../../components/common'
 import { Ico, Stars, avatarColor } from '../../components/Icon'
 
 type Phase = 'intro' | 'play' | 'done'
+
+const PRAISE = ['Bien vu !', 'Exact !', 'Trop fort !', 'Bravo !', 'Parfait !', 'Super !', 'C’est ça !', 'Génial !']
+const CHEER = ['À toi de jouer !', 'Prends ton temps.', 'Tu vas trouver !', 'Allez, on continue !', 'Lis bien la question.', 'Je suis avec toi !']
+const FOX = `${import.meta.env.BASE_URL}logo.png`
 
 /** Écran de victoire : les étoiles tombent une à une, les points montent, Foxy félicite. */
 function Celebrate({ stars, sound, name, firstOk, total, xp, title, big }: { stars: number; sound: boolean; name: string; firstOk: number; total: number; xp: number; title: string; big: boolean }) {
@@ -77,6 +81,10 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   const [review, setReview] = useState(false)
   const [handled, setHandled] = useState(0)
   const [shake, setShake] = useState(false)
+  // Ambiance de jeu : série de réussites du premier coup, étoiles gagnées pendant la leçon
+  const [combo, setCombo] = useState(0)
+  const [gems, setGems] = useState(0)
+  const [hop, setHop] = useState(0)
   const start = useRef(Date.now())
   const saved = useRef(false)
 
@@ -142,10 +150,17 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     const ok = isCorrect(cur, given)
     if (ok) {
       sfx('good', sound)
-      if (attempt === 0) setFirstOk(n => n + 1)
+      setGems(g => g + 1); setHop(h => h + 1)
+      if (attempt === 0) {
+        setFirstOk(n => n + 1)
+        const c = combo + 1
+        setCombo(c)
+        if (c === 3 || c === 5 || c === 8) setTimeout(() => sfx('star', sound), 260)
+      }
       setChecked({ ok: true, hintOnly: false })
     } else {
       sfx('oops', sound)
+      setCombo(0)
       setShake(true); setTimeout(() => setShake(false), 400)
       if (attempt === 0) {
         // Premier essai raté : indice en bandeau et on corrige directement, sans bouton « Réessayer »
@@ -198,7 +213,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     if (checked.ok) {
       return (
         <div className="fb ok" role="status"><div className="in">
-          <div className="grow"><b>Bravo !</b>{cur.explanation && <div className="small">{cur.explanation}</div>}</div>
+          <div className="grow"><b>{PRAISE[(handled + gems) % PRAISE.length]}</b>{cur.explanation && <div className="small">{cur.explanation}</div>}</div>
           <button className="btn" onClick={next} autoFocus>Continuer</button>
         </div></div>
       )
@@ -220,17 +235,21 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
           {cur.explanation && <div className="small">{cur.explanation}</div>}
           <div className="tiny">Cet exercice reviendra tout à l’heure.</div>
         </div>
-        <button className="btn red" onClick={next} autoFocus>Continuer</button>
+        <button className="btn" onClick={next} autoFocus>Continuer</button>
       </div></div>
     )
   }
+
+  const tint = (diagnostic
+    ? { '--sc': '#17766E', '--sd': '#0D514C', '--ss': '#E3F4EE' }
+    : { '--sc': m.color, '--sd': m.dark, '--ss': m.soft }) as CSSProperties
 
   if (phase === 'intro') {
     const intro = diagnostic
       ? 'Ce petit parcours permet de voir où tu en es. Il n’y a pas de note, tu peux demander de l’aide à un adulte.'
       : lesson!.intro
     return (
-      <div className="player">
+      <div className="player play" style={tint}>
         <div className="ptoolbar"><button className="iconbtn" aria-label="Quitter" onClick={() => nav(-1)}><X /></button></div>
         <div className="pbody center" style={{ paddingTop: 30 }}>
           <div style={{ fontSize: '3.4rem', color: diagnostic ? 'var(--teal)' : m.color }}><Ico e={diagnostic ? '🧭' : m.emoji} color="currentColor" /></div>
@@ -311,20 +330,43 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   }
 
   const pct = Math.min(100, (handled / (total + requeued.length)) * 100)
+  const left = queue.length
+  const qNum = Math.min(handled + 1, total + requeued.length)
+  const big = child.grade === 'ce1' || child.grade === 'ce2'
+  const foxSay = checked?.ok
+    ? (combo >= 3 ? `${combo} d’affilée ! Tu es en feu !` : left <= 1 ? 'Et voilà la dernière !' : 'Continue comme ça !')
+    : checked ? 'Pas grave, on regarde ensemble.'
+    : tip ? 'On réessaie ensemble, regarde l’indice.'
+    : handled === 0 ? `À toi de jouer, ${child.nickname} !`
+    : left <= 3 ? `Plus que ${left} !`
+    : CHEER[handled % CHEER.length]
+  const mood = checked?.ok ? 'happy' : checked || tip ? 'soft' : ''
   return (
-    <div className="player">
+    <div className={`player play ${big ? 'big' : ''}`} style={tint}>
       <div className="ptoolbar">
         <button className="iconbtn" aria-label="Quitter la leçon" onClick={() => setQuit(true)}><X /></button>
-        <div className="bar" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${pct}%` }} /></div>
+        <div className={`bar pbar ${pct >= 50 ? 'half' : ''}`} role="progressbar" aria-label={`Question ${qNum} sur ${total + requeued.length}`} aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${Math.max(pct, 4)}%` }} /><b className="pmile" aria-hidden="true" /></div>
+        {combo >= 3 && <span key={`c${combo}`} className={`combo ${combo >= 5 ? 'hot' : ''}`} title={`${combo} réussites d’affilée`}><Ico e="🔥" size={combo >= 5 ? 22 : 18} />{combo}</span>}
+        <span className="gems" title="Bonnes réponses dans cette leçon" aria-label={`${gems} bonne${gems > 1 ? 's' : ''} réponse${gems > 1 ? 's' : ''}`}>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" /></svg>
+          <span key={`g${gems}`} className="gems-n">{gems}</span>
+          {hop > 0 && checked?.ok && <span key={`h${hop}`} className="gems-fly" aria-hidden="true">+1</span>}
+        </span>
         {!diagnostic && lesson && <button className="iconbtn" aria-label="Revoir la leçon" title="Revoir la leçon" onClick={() => { stopSpeaking(); setReview(true) }}><BookOpen /></button>}
-        <span className="tiny muted">{Math.min(handled + 1, total)}/{total}</span>
       </div>
       <div className={`pbody ${shake ? 'shake' : ''}`}>
-        {cur && (
-          <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={pick} eliminated={eliminated}
-            locked={!!checked && (checked.ok || attempt > 0)} status={checked ? checked.ok : null}
-            reveal={!!checked && !checked.ok && attempt > 0} onEnter={() => check()} />
-        )}
+        <div className="pstage">
+          <div className={`pfox ${mood}`} key={`f${hop}-${mood}`}>
+            <img src={FOX} alt="" />
+            <div className="pfox-say" aria-live="polite">{foxSay}</div>
+          </div>
+          <div className="qchip"><Ico e={diagnostic ? '🧭' : m.emoji} size={16} /> Question {qNum}{left <= 3 && left > 0 && !checked ? <em>{left === 1 ? 'dernière !' : `plus que ${left}`}</em> : null}</div>
+          {cur && (
+            <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={pick} eliminated={eliminated}
+              locked={!!checked && (checked.ok || attempt > 0)} status={checked ? checked.ok : null}
+              reveal={!!checked && !checked.ok && attempt > 0} onEnter={() => check()} />
+          )}
+        </div>
       </div>
       {tip && !checked && cur?.type === 'qcm' && <div className="note" role="status" style={{ margin: '0 auto', maxWidth: 560 }}><b>Pas tout à fait, essaie encore.</b> <span className="small">Indice : {tip}</span></div>}
       {checked ? feedbackNode() : cur?.type === 'qcm' ? null : (
