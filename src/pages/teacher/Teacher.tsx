@@ -1,3 +1,4 @@
+import { COMPS, compScores, hasReperes, masteryOf, reperesOf, type Phase } from '../../lib/reperes'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronDown, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, FileSpreadsheet, Plus, Printer, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
@@ -164,6 +165,43 @@ function exportCsv(name: string, s: StudentStat[], tasks: TaskRow[]) {
 }
 
 /** Bandeau de synthèse sobre (même style que l'espace parent). */
+/** Bilans Repères (CE1, CE2) : moyenne de la classe par compétence, sur le dernier bilan de chaque élève. */
+function ClassReperes({ s }: { s: StudentStat[] }) {
+  const kids = s.filter(x => hasReperes(x.child.grade) && Object.keys(reperesOf(x.child)).length)
+  if (!kids.length) return null
+  const grades = [...new Set(kids.map(k => k.child.grade))]
+  return (
+    <section className="card">
+      <h3>Bilans Repères de la classe</h3>
+      <p className="small muted mb8">{kids.length} élève{kids.length > 1 ? 's' : ''} sur {s.length} ont passé au moins une séquence. Moyenne sur leur dernier bilan, compétences les plus fragiles en premier.</p>
+      {grades.map(g => {
+        const ks = kids.filter(k => k.child.grade === g)
+        const rows = (COMPS[g] ?? []).map(c => {
+          const vals = ks.map(k => { const last = ([2, 1, 0] as Phase[]).find(p => Object.keys(reperesOf(k.child)[p] ?? {}).length); return last == null ? null : compScores(k.child, last)[c.id] }).filter((v): v is number => v != null)
+          const avg = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null
+          const low = ks.filter(k => { const last = ([2, 1, 0] as Phase[]).find(p => Object.keys(reperesOf(k.child)[p] ?? {}).length); const v = last == null ? null : compScores(k.child, last)[c.id]; return v != null && v < 50 }).map(k => k.nickname)
+          return { c, avg, low }
+        }).filter(x => x.avg != null).sort((a, b) => a.avg! - b.avg!)
+        return (
+          <div key={g} className="mt8">
+            {grades.length > 1 && <b className="small">{g.toUpperCase()}</b>}
+            <div className="t-rep">
+              {rows.map(({ c, avg, low }) => (
+                <div key={c.id} className="t-rep-row">
+                  <span className="t-rep-l">{c.label}</span>
+                  <span className="t-rep-bar"><i className={masteryOf(avg!)} style={{ width: `${avg}%` }} /></span>
+                  <b>{avg} %</b>
+                  {low.length > 0 && <small className="t-rep-low">À renforcer : {low.join(', ')}</small>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })}
+    </section>
+  )
+}
+
 function ClassStrip({ s, title }: { s: StudentStat[]; title: string }) {
   const active = s.filter(x => x.weekLessons > 0).length
   const accs = s.filter(x => x.acc != null)
@@ -308,6 +346,7 @@ export function ClassView() {
       ) : stats && (
         <>
           <ClassStrip s={s} title="7 derniers jours" />
+          <ClassReperes s={s} />
 
           {weak.length > 0 && (
             <div className="card col gap8">

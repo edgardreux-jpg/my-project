@@ -94,7 +94,7 @@ const LV_LOOK: Record<string, { color: string; dark: string; soft: string; cycle
   ce1: { color: '#E07A4B', dark: '#B4552B', soft: '#FFEADF', cycle: 'Cycle 2', subj: 'fr', q: 'Quel mot contient le son « ou » ?', opts: ['loup', 'lion', 'chat'], ok: 0 },
   ce2: { color: '#17766E', dark: '#0D514C', soft: '#E3F4EE', cycle: 'Cycle 2', subj: 'ma', q: 'Quel outil sert à tracer un cercle ?', opts: ['L’équerre', 'Le compas', 'La règle'], ok: 1 },
   cm1: { color: '#11616B', dark: '#0A434A', soft: '#DDEDEE', cycle: 'Cycle 3', subj: 'ma', q: 'Combien font 2 400 + 1 300 ?', opts: ['3 700', '3 600', '4 700'], ok: 0 },
-  cm2: { color: '#1E3A5F', dark: '#0F2238', soft: '#E2E8F1', cycle: 'Cycle 3', subj: 'ma', q: 'Combien font 24 000 + 13 000 ?', opts: ['36 000', '37 000', '38 000'], ok: 1 },
+  cm2: { color: '#1E3A5F', dark: '#0F2238', soft: '#E2E8F1', cycle: 'Cycle 3', subj: 'en', q: 'En anglais, comment demande-t-on l’heure ?', opts: ['How old are you?', 'What time is it?', 'Where do you live?'], ok: 1 },
 }
 
 /** Carte de niveau : recto = chiffres clés, verso = une vraie question du niveau et les matières. */

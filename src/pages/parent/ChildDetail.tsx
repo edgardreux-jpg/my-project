@@ -1,4 +1,6 @@
 import { GAMES } from '../../lib/games'
+import { hasReperes, PHASES, reperesOf } from '../../lib/reperes'
+import { ReperesWeb } from '../child/reperes/Reperes'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Download, Flame, History, LayoutDashboard, MessageSquareText, Play, Settings2, Sparkles, Star, Trash2, TrendingUp, Trophy } from 'lucide-react'
@@ -156,6 +158,12 @@ function Progression({ child }: { child: Child }) {
   const col = { mastered: '#2E8B57', acquired: '#7CC79A', learning: '#F5C65D', none: '#EDE6D6' }
   return (
     <div className="col gap20">
+      {hasReperes(child.grade) && (
+        <section className="card"><h3>Bilan Repères</h3>
+          <p className="small muted mb8">Entraînement sur le modèle des évaluations nationales de début d’année : mêmes compétences, mêmes types d’exercices. Trois bilans dans l’année ({PHASES.map(p => p.short.toLowerCase()).join(', ')}), qui s’ouvrent au fil du programme.</p>
+          {Object.keys(reperesOf(child)).length ? <ReperesWeb child={child} adult /> : <p className="small">{child.nickname} n’a pas encore commencé son bilan de rentrée. Il est disponible dans son espace, sur l’accueil.</p>}
+        </section>
+      )}
       <section className="card">
         <h3>Maîtrise par matière</h3>
         <div className="legend mb8">{(['mastered', 'acquired', 'learning', 'none'] as const).map(k => <span key={k}><i style={{ background: col[k] }} />{MASTERY_LABEL[k]}</span>)}</div>

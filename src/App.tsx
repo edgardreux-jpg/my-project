@@ -12,6 +12,8 @@ import ChildHome from './pages/child/ChildHome'
 import SubjectPath, { SubjectList } from './pages/child/SubjectPath'
 import LessonPlayer from './pages/child/LessonPlayer'
 import Games from './pages/child/games/Games'
+import Reperes from './pages/child/reperes/Reperes'
+import ReperesPlayer from './pages/child/reperes/ReperesPlayer'
 import GamePage from './pages/child/games/GamePage'
 import Rewards from './pages/child/Rewards'
 import Me from './pages/child/Me'
@@ -51,10 +53,12 @@ export default function App() {
             <Route path="recompenses" element={<Rewards />} />
             <Route path="moi" element={<Me />} />
             <Route path="jeux" element={<Games />} />
+            <Route path="reperes" element={<Reperes />} />
           </Route>
           <Route path="/enfant/lecon/:id" element={<LessonPlayer />} />
           <Route path="/enfant/diagnostic" element={<LessonPlayer diagnostic />} />
           <Route path="/enfant/jeux/:gid" element={<GamePage />} />
+          <Route path="/enfant/reperes/:phase/:seq" element={<ReperesPlayer />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>

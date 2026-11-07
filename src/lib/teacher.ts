@@ -1,3 +1,4 @@
+import { demoReperes } from './reperes'
 import type { Child, LevelId } from '../types'
 import * as cloud from './cloud'
 import type { ClassRow, ClassStudent, TaskRow } from './cloud'
@@ -18,6 +19,7 @@ function demoState() {
       const lazy = i % 5 === 3
       if (!(i % 7 === 6)) play(c, i % 2 ? ['ma', 'fr'] : ['fr', 'ma', 'qlm'], lazy ? 12 : 28, 1, 0.45 + (i % 4) * 0.08, 0.7 + (i % 3) * 0.1, seed * 31 + i)
       if (lazy) { c.sessions = c.sessions.filter(s => s.day < addDays(dayKey(), -9)) }
+      if (!lazy) demoReperes(c, seed * 17 + i, 0.5 + (i % 5) * 0.09)
       return { child_id: c.id, joined_at: row.created_at, data: { ...c, sessions: undefined }, sessions: c.sessions }
     })
     return [row, st]

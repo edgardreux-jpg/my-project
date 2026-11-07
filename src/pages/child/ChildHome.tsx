@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Flame, Play, Compass, Brain, Gift, Zap, Check, Snowflake, Hand, School } from 'lucide-react'
+import { Flame, Play, Compass, Brain, Gift, Zap, Check, Snowflake, Hand, School, Target } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { lessonById, lessonsOf, meta, subjectsOf } from '../../lib/curriculum'
 import { taskDone, useTeacherTasks } from '../../lib/tasks'
@@ -8,6 +8,7 @@ import { CHESTS, dueForReview, liveStreak, readyChests, recommend, todayCount, v
 import { Ico } from '../../components/Icon'
 import { avatarSrc } from '../../lib/avatars'
 import { ChestArt, Ring, SubjectTile } from './kidui'
+import { hasReperes, PHASES, phaseState, phaseStarted, type Phase } from '../../lib/reperes'
 
 export default function ChildHome() {
   const { child } = useStore()
@@ -122,6 +123,18 @@ export default function ChildHome() {
           <span className="k-btn3d sm violet">Relever</span>
         </Link>
       )}
+
+      {hasReperes(child.grade) && (() => {
+        const open = ([0, 1, 2] as Phase[]).find(p => phaseState(child, p) === 'open')
+        const allDone = phaseState(child, 2) === 'done'
+        return (
+          <Link to="/enfant/reperes" className="k-banner reperes">
+            <span className="k-banner-ic"><Target size={28} /></span>
+            <span className="grow"><b>Mon bilan Repères</b><span className="small">{allDone ? 'Tous tes bilans sont faits : regarde ta toile de compétences !' : open != null ? `${PHASES[open].name} ${phaseStarted(child, open) ? 'en cours' : 'disponible'} · comme les évaluations nationales` : 'Continue tes leçons pour débloquer le prochain bilan.'}</span></span>
+            <span className="k-btn3d sm">{open != null ? (phaseStarted(child, open) ? 'Continuer' : 'Commencer') : 'Voir'}</span>
+          </Link>
+        )
+      })()}
 
       <section>
         <h3 className="k-h3">Mes mondes</h3>
