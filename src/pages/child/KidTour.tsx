@@ -5,12 +5,13 @@ import { ChevronRight } from 'lucide-react'
 const STEPS = [
   { sel: '.k-hero .k-btn3d', title: 'Ta leçon du jour', text: 'Appuie sur « Jouer » : je te prépare la bonne leçon au bon moment.' },
   { sel: '.k-tab.t-teal', title: 'Tes mondes', text: 'Chaque matière est un monde, avec un chemin d’aventure à suivre.' },
+  { sel: '.k-tab.t-violet', title: 'La ludothèque', text: 'Des jeux pour t’entraîner en t’amusant. Chaque leçon terminée te fait gagner une partie !' },
   { sel: '.k-tab.t-gold', title: 'Tes trésors', text: 'Chaque leçon rapporte des points : ouvre des coffres et gagne de nouveaux avatars !' },
 ]
 const key = (id: string) => `edufun.tour.${id}`
 const visible = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].find(e => e.offsetParent !== null && e.getBoundingClientRect().width > 0)
 
-/** Parcours de découverte : 3 bulles de Foxy à la toute première visite de l'enfant. */
+/** Parcours de découverte : 4 bulles de Foxy à la toute première visite de l'enfant. */
 export default function KidTour({ childId }: { childId: string }) {
   const { pathname } = useLocation()
   const [step, setStep] = useState(-1)

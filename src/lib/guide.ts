@@ -79,6 +79,11 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Les coffres', 'Ils cachent de nouveaux avatars et des cadres. Quand un coffre brille, appuie sur « Ouvrir ».'),
     P('Les badges', 'Les badges récompensent tes efforts : première leçon, série de jours, leçon sans faute…'),
   ]
+  if (path === '/enfant/jeux') return [
+    P('La ludothèque', 'Des jeux pour réfléchir, calculer, jouer avec les mots et se repérer. Choisis-en un !'),
+    P('Les parties', 'Tu as quelques parties chaque jour, et chaque leçon terminée t’en fait gagner une de plus.'),
+    P('Les records', 'Quand tu gagnes, ton meilleur score s’affiche sur la carte du jeu. Essaie de le battre !'),
+  ]
   if (path === '/enfant/moi') return [
     P('C’est toi !', 'Ici, tu choisis ton avatar. Ceux avec un cadenas se gagnent dans les coffres.'),
     P('Mes réglages', 'Ouvre « Mes réglages » pour choisir la voix, couper les sons ou agrandir le texte.'),
@@ -90,4 +95,4 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
 }
 
 /** Pages où Foxy se fait discret (pendant une leçon, il ne doit pas distraire). */
-export const hiddenOn = (path: string) => path.startsWith('/enfant/lecon') || path.startsWith('/enfant/diagnostic')
+export const hiddenOn = (path: string) => path.startsWith('/enfant/lecon') || path.startsWith('/enfant/diagnostic') || path.startsWith('/enfant/jeux/')

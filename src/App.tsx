@@ -11,6 +11,8 @@ import ChildShell from './pages/child/ChildShell'
 import ChildHome from './pages/child/ChildHome'
 import SubjectPath, { SubjectList } from './pages/child/SubjectPath'
 import LessonPlayer from './pages/child/LessonPlayer'
+import Games from './pages/child/games/Games'
+import GamePage from './pages/child/games/GamePage'
 import Rewards from './pages/child/Rewards'
 import Me from './pages/child/Me'
 import ThemeSync from './components/ThemeSync'
@@ -48,9 +50,11 @@ export default function App() {
             <Route path="matiere/:sid" element={<SubjectPath />} />
             <Route path="recompenses" element={<Rewards />} />
             <Route path="moi" element={<Me />} />
+            <Route path="jeux" element={<Games />} />
           </Route>
           <Route path="/enfant/lecon/:id" element={<LessonPlayer />} />
           <Route path="/enfant/diagnostic" element={<LessonPlayer diagnostic />} />
+          <Route path="/enfant/jeux/:gid" element={<GamePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </HashRouter>

@@ -254,6 +254,12 @@ function Settings({ child, set, onDelete }: { child: Child; set: (fn: (c: Child)
         <div className="toggle"><div><b>Rappel de pause</b><div className="tiny muted">Après combien de minutes d’écran</div></div>
           <select className="input" style={{ width: 120 }} value={child.breakMin} aria-label="Rappel de pause" onChange={e => set(c => { c.breakMin = Number(e.target.value) })}>
             <option value={0}>Aucun</option><option value={15}>15 min</option><option value={20}>20 min</option><option value={30}>30 min</option></select></div>
+        <div className="toggle"><div><b>Ludothèque</b><div className="tiny muted">{(child.games?.mode ?? 'tickets') === 'tickets' ? '3 parties par jour, plus une par leçon terminée' : child.games?.mode === 'free' ? 'Parties illimitées' : 'Jeux désactivés'}</div></div>
+          <select className="input" style={{ width: 170 }} value={child.games?.mode ?? 'tickets'} aria-label="Accès à la ludothèque" onChange={e => set(c => { c.games = { ...(c.games ?? {}), mode: e.target.value as 'tickets' | 'free' | 'off' } })}>
+            <option value="tickets">Après les leçons</option><option value="free">Libre</option><option value="off">Désactivée</option></select></div>
+        {(child.games?.mode ?? 'tickets') !== 'off' && <div className="toggle"><div><b>Temps de jeu par jour</b><div className="tiny muted">Au-delà, la ludothèque se ferme jusqu’au lendemain</div></div>
+          <select className="input" style={{ width: 150 }} value={child.games?.maxMin ?? 0} aria-label="Temps de jeu par jour" onChange={e => set(c => { c.games = { ...(c.games ?? {}), maxMin: Number(e.target.value) } })}>
+            <option value={0}>Sans limite</option><option value={10}>10 min</option><option value={20}>20 min</option><option value={30}>30 min</option><option value={45}>45 min</option></select></div>}
         <div className="toggle"><div><b>Sons</b></div><Switch label="Sons" on={child.sound} onChange={v => set(c => { c.sound = v })} /></div>
         <div className="toggle"><div><b>Police facile à lire</b></div><Switch label="Police facile à lire" on={child.font === 'dys'} onChange={v => set(c => { c.font = v ? 'dys' : 'default' })} /></div>
       </section>

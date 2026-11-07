@@ -102,6 +102,18 @@ export interface Child {
   unlocked: string[]        // avatars et cadres débloqués
   diagnosticDone: boolean
   assignments: Assignment[]
+  /** Ludothèque : réglage parent, compteurs du jour, meilleurs scores. */
+  games?: GamesState
+}
+
+export interface GamesState {
+  mode?: 'tickets' | 'free' | 'off'
+  maxMin?: number        // 0 = pas de limite quotidienne
+  day?: string           // jour des compteurs ci-dessous
+  used?: number          // parties lancées ce jour
+  ms?: number            // temps de jeu ce jour
+  best?: Record<string, number>
+  wins?: Record<string, number>
 }
 
 export interface Account {

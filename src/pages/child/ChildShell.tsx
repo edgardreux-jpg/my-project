@@ -1,7 +1,7 @@
 import { applyVoicePrefs } from '../../lib/audio'
 import { useEffect, useState } from 'react'
 import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom'
-import { Home, Gift, UserRound, Map as MapIcon, Lock, Users } from 'lucide-react'
+import { Home, Gift, UserRound, Map as MapIcon, Lock, Users, Puzzle } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Logo, Modal, Toast } from '../../components/common'
 import { readyChests } from '../../lib/progress'
@@ -45,6 +45,7 @@ export default function ChildShell() {
   const items = [
     { to: '/enfant', end: true, icon: <Home size={24} strokeWidth={2.4} />, label: 'Accueil', c: 'coral' },
     { to: '/enfant/matieres', icon: <MapIcon size={24} strokeWidth={2.4} />, label: 'Mondes', c: 'teal' },
+    { to: '/enfant/jeux', icon: <Puzzle size={24} strokeWidth={2.4} />, label: 'Jeux', c: 'violet' },
     { to: '/enfant/recompenses', icon: <Gift size={24} strokeWidth={2.4} />, label: 'Trésors', c: 'gold', badge: chests },
     { to: '/enfant/moi', icon: <UserRound size={24} strokeWidth={2.4} />, label: 'Moi', c: 'blue' },
   ]
