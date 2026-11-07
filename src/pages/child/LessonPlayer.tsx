@@ -13,8 +13,11 @@ import { Ico, Stars, avatarColor } from '../../components/Icon'
 
 type Phase = 'intro' | 'play' | 'done'
 
+// CE1 et CE2 : ton enjoué. CM1 et CM2 : ton plus posé, façon coach.
 const PRAISE = ['Bien vu !', 'Exact !', 'Trop fort !', 'Bravo !', 'Parfait !', 'Super !', 'C’est ça !', 'Génial !']
 const CHEER = ['À toi de jouer !', 'Prends ton temps.', 'Tu vas trouver !', 'Allez, on continue !', 'Lis bien la question.', 'Je suis avec toi !']
+const PRAISE_SR = ['Bien joué.', 'Exact.', 'C’est juste.', 'Impeccable.', 'Bien raisonné.', 'Correct.', 'Solide.', 'Validé.']
+const CHEER_SR = ['On enchaîne.', 'Lis attentivement.', 'Prends le temps de vérifier.', 'Tu gères.', 'Concentre-toi bien.', 'Garde le rythme.']
 const FOX = `${import.meta.env.BASE_URL}logo.png`
 
 /** Écran de victoire : les étoiles tombent une à une, les points montent, Foxy félicite. */
@@ -213,7 +216,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
     if (checked.ok) {
       return (
         <div className="fb ok" role="status"><div className="in">
-          <div className="grow"><b>{PRAISE[(handled + gems) % PRAISE.length]}</b>{cur.explanation && <div className="small">{cur.explanation}</div>}</div>
+          <div className="grow"><b>{(sr ? PRAISE_SR : PRAISE)[(handled + gems) % PRAISE.length]}</b>{cur.explanation && <div className="small">{cur.explanation}</div>}</div>
           <button className="btn" onClick={next} autoFocus>Continuer</button>
         </div></div>
       )
@@ -332,21 +335,32 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
   const pct = Math.min(100, (handled / (total + requeued.length)) * 100)
   const left = queue.length
   const qNum = Math.min(handled + 1, total + requeued.length)
-  const big = child.grade === 'ce1' || child.grade === 'ce2'
-  const foxSay = checked?.ok
-    ? (combo >= 3 ? `${combo} d’affilée ! Tu es en feu !` : left <= 1 ? 'Et voilà la dernière !' : 'Continue comme ça !')
-    : checked ? 'Pas grave, on regarde ensemble.'
-    : tip ? 'On réessaie ensemble, regarde l’indice.'
-    : handled === 0 ? `À toi de jouer, ${child.nickname} !`
-    : left <= 3 ? `Plus que ${left} !`
-    : CHEER[handled % CHEER.length]
+  const sr = child.grade === 'cm1' || child.grade === 'cm2'
+  const nSeg = total + requeued.length
+  const foxSay = sr
+    ? (checked?.ok ? (combo >= 3 ? `Série de ${combo}. Continue !` : left <= 1 ? 'Dernière question validée.' : 'Bien joué, on continue.')
+      : checked ? 'Regarde la correction, elle reviendra.'
+      : tip ? 'Presque. Relis l’indice et retente.'
+      : handled === 0 ? `C’est parti, ${child.nickname}.`
+      : left <= 3 ? `Encore ${left} question${left > 1 ? 's' : ''}.`
+      : CHEER_SR[handled % CHEER_SR.length])
+    : (checked?.ok ? (combo >= 3 ? `${combo} d’affilée ! Tu es en feu !` : left <= 1 ? 'Et voilà la dernière !' : 'Continue comme ça !')
+      : checked ? 'Pas grave, on regarde ensemble.'
+      : tip ? 'On réessaie ensemble, regarde l’indice.'
+      : handled === 0 ? `À toi de jouer, ${child.nickname} !`
+      : left <= 3 ? `Plus que ${left} !`
+      : CHEER[handled % CHEER.length])
   const mood = checked?.ok ? 'happy' : checked || tip ? 'soft' : ''
   return (
-    <div className={`player play ${big ? 'big' : ''}`} style={tint}>
+    <div className={`player play lv-${child.grade} ${sr ? 'grand' : 'petit'}`} style={tint}>
       <div className="ptoolbar">
         <button className="iconbtn" aria-label="Quitter la leçon" onClick={() => setQuit(true)}><X /></button>
-        <div className={`bar pbar ${pct >= 50 ? 'half' : ''}`} role="progressbar" aria-label={`Question ${qNum} sur ${total + requeued.length}`} aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${Math.max(pct, 4)}%` }} /><b className="pmile" aria-hidden="true" /></div>
-        {combo >= 3 && <span key={`c${combo}`} className={`combo ${combo >= 5 ? 'hot' : ''}`} title={`${combo} réussites d’affilée`}><Ico e="🔥" size={combo >= 5 ? 22 : 18} />{combo}</span>}
+        {sr
+          ? <div className="pseg" role="progressbar" aria-label={`Question ${qNum} sur ${nSeg}`} aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
+              {Array.from({ length: nSeg }, (_, i) => <i key={i} className={i < handled ? 'on' : i === handled ? 'cur' : ''} />)}
+            </div>
+          : <div className={`bar pbar ${pct >= 50 ? 'half' : ''}`} role="progressbar" aria-label={`Question ${qNum} sur ${nSeg}`} aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${Math.max(pct, 4)}%` }} /><b className="pmile" aria-hidden="true" /></div>}
+        {combo >= 3 && <span key={`c${combo}`} className={`combo ${combo >= 5 ? 'hot' : ''}`} title={`${combo} réussites d’affilée`}><Ico e="🔥" size={combo >= 5 ? 22 : 18} />{sr ? `×${combo}` : combo}</span>}
         <span className="gems" title="Bonnes réponses dans cette leçon" aria-label={`${gems} bonne${gems > 1 ? 's' : ''} réponse${gems > 1 ? 's' : ''}`}>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" /></svg>
           <span key={`g${gems}`} className="gems-n">{gems}</span>
@@ -360,7 +374,7 @@ function Player({ diagnostic }: { diagnostic: boolean }) {
             <img src={FOX} alt="" />
             <div className="pfox-say" aria-live="polite">{foxSay}</div>
           </div>
-          <div className="qchip"><Ico e={diagnostic ? '🧭' : m.emoji} size={16} /> Question {qNum}{left <= 3 && left > 0 && !checked ? <em>{left === 1 ? 'dernière !' : `plus que ${left}`}</em> : null}</div>
+          <div className="qchip"><Ico e={diagnostic ? '🧭' : m.emoji} size={16} /> {sr ? `Question ${qNum} / ${nSeg}` : `Question ${qNum}`}{left <= 3 && left > 0 && !checked ? <em>{left === 1 ? 'dernière !' : `plus que ${left}`}</em> : null}</div>
           {cur && (
             <ExerciseView key={`${cur.id}-${attempt}`} ex={cur} answer={answer} setAnswer={pick} eliminated={eliminated}
               locked={!!checked && (checked.ok || attempt > 0)} status={checked ? checked.ok : null}

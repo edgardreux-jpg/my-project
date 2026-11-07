@@ -1228,7 +1228,7 @@ b.late{color:#B42318}
 .play .fb b{font-size:1.3rem}
 @keyframes fbup{from{transform:translateY(100%)}}
 .play .numin,.play .slot,.play .tile{border-color:color-mix(in srgb,var(--sc) 28%,#fff)}
-.player.big .q-title{font-size:1.6rem}
+.player.petit .q-title{font-size:1.6rem}
 html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{border-width:2px;box-shadow:0 3px 0 color-mix(in srgb,var(--sc) 25%,#fff);font-weight:700}
 @media (max-width:560px){
   .play .ptoolbar{padding:10px 12px;gap:8px}
@@ -1241,3 +1241,57 @@ html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{bo
 }
 .play .frac button{width:76px;height:76px;border-color:var(--sc);border-radius:16px;box-shadow:0 4px 0 color-mix(in srgb,var(--sc) 30%,#fff)}
 .play .frac button.on{background:var(--gold);border-color:#C98A00}
+
+/* ----- Niveaux : CE1 très ludique, CE2 ludique, CM1 sobre, CM2 « mode défi » ----- */
+/* CE1 : plus gros, plus rond, fond à pois */
+.player.lv-ce1{background:radial-gradient(circle at 12px 12px,color-mix(in srgb,var(--sc) 10%,transparent) 3px,transparent 3.5px) 0 0/34px 34px,radial-gradient(120% 60% at 50% 0%,var(--ss) 0%,color-mix(in srgb,var(--ss) 45%,#fff) 55%,#fff 100%);background-attachment:fixed}
+.lv-ce1 .q-title{font-size:1.8rem!important;line-height:1.25}
+.lv-ce1 .pfox img{width:66px;height:66px}
+.lv-ce1 .pfox-say{font-size:1.05rem;padding:10px 16px;border-radius:20px 20px 20px 6px}
+.lv-ce1 .q-head{border-radius:28px;border-width:3px}
+.player.lv-ce1 .opt{min-height:72px;font-size:1.3rem;border-radius:22px;border-width:3px;box-shadow:0 6px 0 color-mix(in srgb,var(--sc) 30%,#fff)}
+.player.lv-ce1 :is(.cols2,.cols3) .opt{min-height:104px;font-size:2rem}
+.lv-ce1 .pbar{height:24px}
+.lv-ce1 .gems{font-size:1.15rem;padding:5px 12px 5px 8px}
+
+/* CM1 et CM2 : style plus « grand », sans gros effets */
+.player.grand .pfox{align-items:center;gap:8px;margin:0 0 10px}
+.player.grand .pfox img{width:34px;height:34px;filter:none}
+.player.grand .pfox-say{font-size:.92rem;padding:5px 12px;border-radius:10px;box-shadow:none;border-width:1px;font-weight:700}
+.player.grand .pfox.happy img{animation:none}
+.player.grand .qchip{text-transform:none;letter-spacing:0;font-size:.85rem;border-radius:8px}
+.player.grand .q-head{border-radius:14px;border-width:1px;box-shadow:0 2px 0 color-mix(in srgb,var(--sc) 14%,#fff),0 10px 26px rgba(15,27,45,.06)}
+.player.grand .q-title{font-size:1.35rem}
+.player.grand .opts{gap:10px}
+.player.grand .opt{border-radius:12px;border-width:1.5px;font-weight:700;font-size:1.08rem;min-height:56px;box-shadow:0 2px 0 color-mix(in srgb,var(--sc) 22%,#fff)}
+.player.grand .opt:active:not(:disabled){transform:translateY(2px);box-shadow:none}
+.player.grand :is(.cols2,.cols3) .opt{min-height:78px;font-size:1.45rem}
+.player.grand .opt.ok{animation:optok .4s;box-shadow:0 2px 0 #7CC68B}
+.player.grand .opt.ok::after{content:"✓";box-shadow:none;width:auto;height:auto;margin:0;left:auto;right:12px;top:50%;transform:translateY(-50%);font-weight:900;color:var(--green);background:none;font-size:1.1rem;animation:checkin .35s}
+.player.grand :is(.cols2,.cols3) .opt.ok::after{top:14px;right:10px;transform:none}
+@keyframes checkin{from{opacity:0;transform:translateY(-50%) scale(.3)}}
+.player.grand .gems{border-radius:8px;border-width:1px;font-size:.92rem;padding:3px 8px 3px 6px}
+.player.grand .combo{border-radius:8px;border-width:1px;font-size:.9rem}
+.player.grand .combo.hot{box-shadow:none}
+.pseg{flex:1;display:flex;gap:4px;align-items:center;height:20px}
+.pseg i{flex:1;height:10px;border-radius:4px;background:color-mix(in srgb,var(--sc) 14%,#fff);transition:background .3s,height .2s}
+.pseg i.on{background:var(--sc)}
+.pseg i.cur{height:16px;background:color-mix(in srgb,var(--sc) 35%,#fff);box-shadow:inset 0 0 0 2px var(--sc)}
+
+/* CM1 : clair, net */
+.player.lv-cm1{background:linear-gradient(180deg,color-mix(in srgb,var(--ss) 70%,#fff) 0,#F6F8FA 240px)}
+
+/* CM2 : bandeau sombre « mode défi », zone de travail claire et lisible */
+.player.lv-cm2{background:linear-gradient(180deg,#0F1B2D 0,#0F1B2D 230px,#EEF1F5 230px)}
+.lv-cm2 .ptoolbar{color:#fff}
+.lv-cm2 .ptoolbar .iconbtn{color:#fff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+.lv-cm2 .pseg i{background:rgba(255,255,255,.14)}
+.lv-cm2 .pseg i.on{background:color-mix(in srgb,var(--sc) 55%,#7FD1C3)}
+.lv-cm2 .pseg i.cur{background:rgba(255,255,255,.28);box-shadow:inset 0 0 0 2px #fff}
+.lv-cm2 .gems{background:rgba(255,200,60,.14);border-color:rgba(255,200,60,.45);color:#FFD66B}
+.lv-cm2 .combo{background:rgba(255,120,70,.16);border-color:rgba(255,140,90,.5);color:#FFB08F}
+.lv-cm2 .pstage{background:#fff;border-radius:16px;padding:16px;box-shadow:0 18px 40px rgba(15,27,45,.16);margin-top:8px}
+.lv-cm2 .play .pbody,.player.lv-cm2 .pbody{justify-content:flex-start}
+.player.lv-cm2 .pstage{margin-block:8px auto}
+.lv-cm2 .q-head{box-shadow:none;background:color-mix(in srgb,var(--sc) 5%,#fff)}
+.player.grand .opts:not(.cols2):not(.cols3) .opt{padding-right:36px}
