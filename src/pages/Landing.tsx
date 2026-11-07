@@ -31,7 +31,7 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
 const SHOTS = [
   { file: 'parent-tableau', icon: 'chart', title: 'L’évolution, semaine après semaine', text: 'Temps passé, réussite au premier essai et leçons acquises, comparés à la semaine précédente.', cap: 'Tableau de bord : la carte de l’enfant' },
   { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
-  { file: 'parent-reperes', icon: 'radar', title: 'Les évaluations nationales, préparées', text: 'En CE1 et CE2, des bilans sur le modèle des évaluations « Repères » dessinent une toile de compétences, avec un conseil pour chaque point fragile.', cap: 'Bilan Repères : la toile de compétences' },
+  { file: 'parent-reperes', icon: 'radar', title: 'Les évaluations nationales, préparées', text: 'En CE1 et CE2, des bilans sur le modèle des évaluations « Repères » dessinent une toile de compétences, avec un conseil pour chaque point fragile. CM1 et CM2 à venir.', cap: 'Bilan Repères : la toile de compétences' },
   { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, matières visibles, classe.', cap: 'Réglages de l’enfant' },
 ] as const
 
