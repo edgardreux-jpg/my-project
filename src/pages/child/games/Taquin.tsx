@@ -3,7 +3,7 @@ import { sfx } from '../../../lib/audio'
 import { rnd } from '../../../lib/games'
 import type { GameProps } from './types'
 
-const CFG: Record<string, { n: number; mix: number }> = { ce1: { n: 3, mix: 24 }, ce2: { n: 3, mix: 70 }, cm1: { n: 4, mix: 60 }, cm2: { n: 4, mix: 160 } }
+const CFG = [{ n: 3, mix: 14 }, { n: 3, mix: 36 }, { n: 3, mix: 100 }, { n: 4, mix: 50 }, { n: 4, mix: 130 }, { n: 4, mix: 300 }]
 
 function scramble(n: number, mix: number): number[] {
   const t = [...Array(n * n).keys()].map(i => (i + 1) % (n * n))   // 0 = case vide, en bas à droite
@@ -17,8 +17,8 @@ function scramble(n: number, mix: number): number[] {
   return t
 }
 
-export default function Taquin({ level, sound, onWin }: GameProps) {
-  const { n, mix } = CFG[level]
+export default function Taquin({ tier, sound, onWin }: GameProps) {
+  const { n, mix } = CFG[tier]
   const [t, setT] = useState(() => { let s = scramble(n, mix); while (s.every((v, i) => v === (i + 1) % (n * n))) s = scramble(n, mix); return s })
   const [moves, setMoves] = useState(0)
   const [done, setDone] = useState(false)

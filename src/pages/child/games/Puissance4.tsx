@@ -5,7 +5,7 @@ import type { GameProps } from './types'
 const W = 7, H = 6
 type Cell = 0 | 1 | 2   // 1 = enfant, 2 = Foxy
 type Board = Cell[][]   // [colonne][ligne depuis le bas]
-const DEPTH: Record<string, number> = { ce1: 1, ce2: 2, cm1: 4, cm2: 6 }
+const DEPTH = [0, 1, 2, 4, 5, 6]
 
 const empty = (): Board => Array.from({ length: W }, () => [])
 const get = (b: Board, c: number, r: number): Cell => (c < 0 || c >= W || r < 0 || r >= H ? 0 : b[c][r] ?? 0)
@@ -48,23 +48,23 @@ function minimax(b: Board, d: number, alpha: number, beta: number, max: boolean)
   let v = Infinity; for (const c of moves) { v = Math.min(v, minimax(play(b, c, 1), d - 1, alpha, beta, true)); beta = Math.min(beta, v); if (alpha >= beta) break } return v
 }
 
-function foxMove(b: Board, level: string): number {
+function foxMove(b: Board, tier: number): number {
   const moves = [3, 2, 4, 1, 5, 0, 6].filter(c => b[c].length < H)
-  // CE1 : Foxy gagne si elle peut, bloque une fois sur deux, sinon joue au hasard
-  if (level === 'ce1') {
+  // Paliers 0 et 1 : Foxy gagne si elle peut, bloque une fois sur deux (palier 0) ou toujours (palier 1), sinon joue au hasard
+  if (tier <= 1) {
     for (const c of moves) if (winLine(play(b, c, 2))) return c
-    if (Math.random() < 0.5) for (const c of moves) if (winLine(play(b, c, 1))) return c
+    if (tier === 1 || Math.random() < 0.5) for (const c of moves) if (winLine(play(b, c, 1))) return c
     return moves[Math.floor(Math.random() * moves.length)]
   }
   let best = moves[0], bv = -Infinity
   for (const c of moves) {
-    const v = minimax(play(b, c, 2), DEPTH[level] - 1, -Infinity, Infinity, false) + Math.random() * (level === 'ce2' ? 4 : 0.5)
+    const v = minimax(play(b, c, 2), DEPTH[tier] - 1, -Infinity, Infinity, false) + Math.random() * (tier === 2 ? 4 : 0.5)
     if (v > bv) { bv = v; best = c }
   }
   return best
 }
 
-export default function Puissance4({ level, sound, onWin, onLose }: GameProps) {
+export default function Puissance4({ tier, sound, onWin, onLose }: GameProps) {
   const [b, setB] = useState<Board>(empty)
   const [turn, setTurn] = useState<1 | 2>(1)
   const [line, setLine] = useState<[number, number][] | null>(null)
@@ -74,7 +74,7 @@ export default function Puissance4({ level, sound, onWin, onLose }: GameProps) {
   useEffect(() => {
     if (turn !== 2 || over) return
     const t = setTimeout(() => {
-      const c = foxMove(b, level)
+      const c = foxMove(b, tier)
       const nb = play(b, c, 2); setB(nb); sfx('tap', sound)
       const w = winLine(nb)
       if (w) { setLine(w); setTimeout(() => onLose?.('Foxy a gagné cette fois. Revanche ?'), 1200) }
@@ -82,7 +82,7 @@ export default function Puissance4({ level, sound, onWin, onLose }: GameProps) {
       else setTurn(1)
     }, 550)
     return () => clearTimeout(t)
-  }, [turn, b, over, level, sound, onLose])
+  }, [turn, b, over, tier, sound, onLose])
 
   const drop = (c: number) => {
     if (turn !== 1 || over || b[c].length >= H) return
@@ -96,18 +96,18 @@ export default function Puissance4({ level, sound, onWin, onLose }: GameProps) {
 
   return (
     <div className="g-p4">
-      <div className="g-stats"><span className={`p4-turn ${turn === 1 ? 'me' : 'fox'}`}>{over ? 'Partie finie' : turn === 1 ? 'À toi : touche une colonne' : 'Foxy réfléchit…'}</span></div>
+      <div className="g-stats"><span className={`p4-turn ${turn === 1 ? 'p4-me' : 'p4-fox'}`}>{over ? 'Partie finie' : turn === 1 ? 'À toi : touche une colonne' : 'Foxy réfléchit…'}</span></div>
       <div className="p4" role="grid" aria-label="Plateau de Puissance 4" onMouseLeave={() => setHover(null)}>
         {Array.from({ length: W }, (_, c) => (
           <button key={c} className={`p4-col ${hover === c && turn === 1 && !over ? 'hov' : ''}`} aria-label={`Colonne ${c + 1}`} disabled={turn !== 1 || over || b[c].length >= H}
             onMouseEnter={() => setHover(c)} onClick={() => drop(c)}>
             {Array.from({ length: H }, (_, k) => { const r = H - 1 - k; const v = get(b, c, r); return (
-              <span key={r} className={`p4-h ${v === 1 ? 'me' : v === 2 ? 'fox' : ''} ${isWin(c, r) ? 'win' : ''}`} style={v ? { animationDuration: `${0.12 + (H - r) * 0.05}s` } : undefined} />
+              <span key={r} className={`p4-h ${v === 1 ? 'p4-me' : v === 2 ? 'p4-fox' : ''} ${isWin(c, r) ? 'p4-win' : ''}`} style={v ? { animationDuration: `${0.12 + (H - r) * 0.05}s` } : undefined} />
             ) })}
           </button>
         ))}
       </div>
-      <div className="row gap16 mt8 small" style={{ justifyContent: 'center' }}><span className="row gap8"><i className="p4-dot me" /> Toi</span><span className="row gap8"><i className="p4-dot fox" /> Foxy</span></div>
+      <div className="row gap16 mt8 small" style={{ justifyContent: 'center' }}><span className="row gap8"><i className="p4-dot p4-me" /> Toi</span><span className="row gap8"><i className="p4-dot p4-fox" /> Foxy</span></div>
     </div>
   )
 }

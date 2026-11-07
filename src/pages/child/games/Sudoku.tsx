@@ -5,12 +5,16 @@ import { rnd, shuffle, fmtTime } from '../../../lib/games'
 import type { GameProps } from './types'
 
 type Cfg = { n: number; br: number; bc: number; holes: number; sym?: string[] }
-export const CFG: Record<string, Cfg> = {
-  ce1: { n: 4, br: 2, bc: 2, holes: 9, sym: ['🍎', '🍌', '🍇', '🍊'] },
-  ce2: { n: 6, br: 2, bc: 3, holes: 17 },
-  cm1: { n: 6, br: 2, bc: 3, holes: 21 },
-  cm2: { n: 9, br: 3, bc: 3, holes: 44 },
-}
+const FRUITS = ['🍎', '🍌', '🍇', '🍊']
+/** Paliers 0 à 5 : du 4×4 en fruits au 9×9 très ouvert */
+export const CFG: Cfg[] = [
+  { n: 4, br: 2, bc: 2, holes: 7, sym: FRUITS },
+  { n: 4, br: 2, bc: 2, holes: 10, sym: FRUITS },
+  { n: 6, br: 2, bc: 3, holes: 15 },
+  { n: 6, br: 2, bc: 3, holes: 21 },
+  { n: 9, br: 3, bc: 3, holes: 40 },
+  { n: 9, br: 3, bc: 3, holes: 52 },
+]
 
 /** Grille résolue : motif de base puis mélanges qui conservent les règles. */
 function solved({ n, br, bc }: Cfg): number[][] {
@@ -61,12 +65,12 @@ export function makePuzzle(cfg: Cfg) {
   return { sol, start: g }
 }
 
-export default function Sudoku({ level, sound, onWin }: GameProps) {
-  const cfg = CFG[level]
+export default function Sudoku({ tier, sound, onWin }: GameProps) {
+  const cfg = CFG[tier]
   const [{ sol, start }] = useState(() => makePuzzle(cfg))
   const [grid, setGrid] = useState(() => start.map(r => r.slice()))
   const [sel, setSel] = useState<[number, number] | null>(null)
-  const [hints, setHints] = useState(level === 'ce1' ? 2 : 3)
+  const [hints, setHints] = useState(tier === 5 ? 2 : 3)
   const [sec, setSec] = useState(0)
   const [won, setWon] = useState(false)
   const n = cfg.n

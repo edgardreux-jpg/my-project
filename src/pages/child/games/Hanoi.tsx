@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { sfx } from '../../../lib/audio'
 import type { GameProps } from './types'
 
-const DISKS: Record<string, number> = { ce1: 3, ce2: 3, cm1: 4, cm2: 5 }
+const DISKS = [2, 3, 3, 4, 5, 6]
 const COLORS = ['#E5484D', '#F5A524', '#30A46C', '#3A76CE', '#8E4EC6', '#D6409F']
 
-export default function Hanoi({ level, sound, onWin }: GameProps) {
-  const n = DISKS[level]
+export default function Hanoi({ tier, sound, onWin }: GameProps) {
+  const n = DISKS[tier]
   const [towers, setTowers] = useState<number[][]>(() => [[...Array(n).keys()].map(i => n - i), [], []])
   const [held, setHeld] = useState<number | null>(null)
   const [moves, setMoves] = useState(0)

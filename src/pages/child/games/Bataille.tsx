@@ -3,12 +3,14 @@ import { sfx, speak, canSpeak } from '../../../lib/audio'
 import { rnd } from '../../../lib/games'
 import type { GameProps } from './types'
 
-const CFG: Record<string, { n: number; ships: number[]; tapGrid: boolean }> = {
-  ce1: { n: 6, ships: [3, 2, 2], tapGrid: true },
-  ce2: { n: 8, ships: [4, 3, 2, 2], tapGrid: false },
-  cm1: { n: 8, ships: [4, 3, 3, 2], tapGrid: false },
-  cm2: { n: 10, ships: [5, 4, 3, 3, 2], tapGrid: false },
-}
+const CFG: { n: number; ships: number[]; tapGrid: boolean }[] = [
+  { n: 5, ships: [3, 2], tapGrid: true },
+  { n: 6, ships: [3, 2, 2], tapGrid: true },
+  { n: 8, ships: [4, 3, 2, 2], tapGrid: false },
+  { n: 8, ships: [4, 3, 3, 2], tapGrid: false },
+  { n: 10, ships: [5, 4, 3, 3, 2], tapGrid: false },
+  { n: 10, ships: [4, 3, 2, 2, 2], tapGrid: false },
+]
 const COLS = 'ABCDEFGHIJ'
 
 export function place(n: number, ships: number[]): number[][] {
@@ -32,8 +34,8 @@ export function place(n: number, ships: number[]): number[][] {
   return []
 }
 
-export default function Bataille({ level, sound, onWin }: GameProps) {
-  const { n, ships, tapGrid } = CFG[level]
+export default function Bataille({ level, tier, sound, onWin }: GameProps) {
+  const { n, ships, tapGrid } = CFG[tier]
   const [fleet] = useState(() => place(n, ships))
   const [shots, setShots] = useState<number[]>([])
   const [col, setCol] = useState<number | null>(null)

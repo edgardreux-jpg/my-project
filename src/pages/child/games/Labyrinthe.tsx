@@ -3,16 +3,16 @@ import { sfx } from '../../../lib/audio'
 import { rnd, shuffle } from '../../../lib/games'
 import type { GameProps } from './types'
 
-const N: Record<string, number> = { ce1: 4, ce2: 5, cm1: 5, cm2: 5 }
+const N = [3, 4, 5, 5, 5, 6]
 
 /** Un calcul juste ou faux selon le niveau. */
-export function calc(level: string, ok: boolean): string {
+export function calc(level: string, ok: boolean, close = false): string {
   let a: number, b: number, r: number, op: string
   if (level === 'ce1') { a = 1 + rnd(10); b = 1 + rnd(10); op = '+'; r = a + b }
   else if (level === 'ce2') { if (rnd(2)) { a = 10 + rnd(40); b = 1 + rnd(20); op = '+'; r = a + b } else { a = 2 + rnd(4); b = 2 + rnd(8); op = '×'; r = a * b } }
   else if (level === 'cm1') { if (rnd(2)) { a = 3 + rnd(7); b = 3 + rnd(7); op = '×'; r = a * b } else { a = 40 + rnd(60); b = 10 + rnd(30); op = '−'; r = a - b } }
   else { const k = rnd(3); if (k === 0) { b = 2 + rnd(8); r = 2 + rnd(9); a = b * r; op = '÷' } else if (k === 1) { a = 6 + rnd(6); b = 11 + rnd(8); op = '×'; r = a * b } else { a = rnd(9) + 1 + rnd(10) / 10; b = rnd(5) + rnd(10) / 10; op = '+'; r = Math.round((a + b) * 10) / 10 } }
-  if (!ok) { const d = [1, 2, 10, -1, -2, -10][rnd(6)]; r = Math.round((r + (Number.isInteger(r) ? d : d / 10)) * 10) / 10; if (r < 0) r = Math.abs(r) + 1 }
+  if (!ok) { const d = close ? [1, -1][rnd(2)] : [1, 2, 10, -1, -2, -10][rnd(6)]; r = Math.round((r + (Number.isInteger(r) ? d : d / 10)) * 10) / 10; if (r < 0) r = Math.abs(r) + 1 }
   const f = (x: number) => String(x).replace('.', ',')
   return `${f(a)} ${op} ${f(b)} = ${f(r)}`
 }
@@ -37,9 +37,9 @@ export function path(n: number): number[] {
   return dfs([0]) ?? [...Array(n).keys()].concat([...Array(n - 1).keys()].map(k => (k + 2) * n - 1))
 }
 
-export default function Labyrinthe({ level, sound, onWin }: GameProps) {
-  const n = N[level]
-  const [{ good, cells }] = useState(() => { const p = path(n); const g = new Set(p); return { good: g, cells: [...Array(n * n).keys()].map(i => calc(level, g.has(i))) } })
+export default function Labyrinthe({ level, tier, sound, onWin }: GameProps) {
+  const n = N[tier]
+  const [{ good, cells }] = useState(() => { const p = path(n); const g = new Set(p); return { good: g, cells: [...Array(n * n).keys()].map(i => calc(level, g.has(i), tier % 2 === 1 && tier >= 3)) } })
   const [pos, setPos] = useState(0)
   const [trail, setTrail] = useState<number[]>([0])
   const [bad, setBad] = useState<number[]>([])

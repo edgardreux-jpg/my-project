@@ -5,12 +5,14 @@ import { pick, rnd, shuffle } from '../../../lib/games'
 import type { GameProps } from './types'
 
 type Op = '+' | '−' | '×' | '÷'
-const CFG: Record<string, { count: number; pool: number[]; ops: Op[]; steps: number; max: number }> = {
-  ce1: { count: 3, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ops: ['+', '−'], steps: 2, max: 30 },
-  ce2: { count: 4, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 20], ops: ['+', '−', '×'], steps: 2, max: 100 },
-  cm1: { count: 5, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50], ops: ['+', '−', '×', '÷'], steps: 3, max: 300 },
-  cm2: { count: 6, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 75, 100], ops: ['+', '−', '×', '÷'], steps: 4, max: 999 },
-}
+const CFG: { count: number; pool: number[]; ops: Op[]; steps: number; max: number }[] = [
+  { count: 3, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9], ops: ['+'], steps: 2, max: 20 },
+  { count: 3, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ops: ['+', '−'], steps: 2, max: 30 },
+  { count: 4, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 20], ops: ['+', '−', '×'], steps: 2, max: 100 },
+  { count: 5, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50], ops: ['+', '−', '×', '÷'], steps: 3, max: 300 },
+  { count: 6, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 75, 100], ops: ['+', '−', '×', '÷'], steps: 4, max: 999 },
+  { count: 6, pool: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 75, 100], ops: ['+', '−', '×', '÷'], steps: 5, max: 999 },
+]
 const apply = (a: number, op: Op, b: number): number | null => {
   if (op === '+') return a + b
   if (op === '−') return a - b > 0 ? a - b : null
@@ -19,8 +21,8 @@ const apply = (a: number, op: Op, b: number): number | null => {
 }
 
 interface Tile { id: number; v: number; used: boolean }
-export function generate(level: string) {
-  const c = CFG[level]
+export function generate(tier: number) {
+  const c = CFG[tier]
   for (let tries = 0; tries < 500; tries++) {
     const nums = shuffle(c.pool).slice(0, c.count)
     let work = nums.slice(); const sol: string[] = []
@@ -34,14 +36,14 @@ export function generate(level: string) {
       work = work.filter((_, k) => k !== i && k !== j); work.push(r)
     }
     const target = work[work.length - 1]
-    if (target > 1 && target <= c.max && !nums.includes(target) && sol.length === c.steps) return { nums, target, sol }
+    if (target >= [3, 5, 10, 20, 50, 100][tier] && target <= c.max && !nums.includes(target) && sol.length === c.steps) return { nums, target, sol }
   }
   return { nums: [2, 3, 4], target: 10, sol: ['2 × 3 = 6', '6 + 4 = 10'] }
 }
 
-export default function Compte({ level, sound, onWin }: GameProps) {
-  const ops = CFG[level].ops
-  const [game] = useState(() => generate(level))
+export default function Compte({ tier, sound, onWin }: GameProps) {
+  const ops = CFG[tier].ops
+  const [game] = useState(() => generate(tier))
   const [tiles, setTiles] = useState<Tile[]>(() => game.nums.map((v, i) => ({ id: i, v, used: false })))
   const [hist, setHist] = useState<{ tiles: Tile[]; line: string }[]>([])
   const [a, setA] = useState<number | null>(null)

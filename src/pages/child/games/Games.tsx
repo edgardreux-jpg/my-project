@@ -39,7 +39,7 @@ export default function Games() {
             <h3 className="k-h3 lu-fam"><i />{F.name}<small>{F.blurb}</small></h3>
             <div className="lu-grid">
               {games.map(x => {
-                const best = g.best?.[x.id], wins = g.wins?.[x.id] ?? 0
+                const best = [1, 0, 2].map(d => g.best?.[`${x.id}:${d}`]).find(v => v != null), wins = g.wins?.[x.id] ?? 0
                 const off = acc.blocked === 'off'
                 return (
                   <Link key={x.id} to={off ? '#' : `/enfant/jeux/${x.id}`} className={`lu-card ${off ? 'off' : ''}`} style={{ ['--gc' as string]: x.color }} aria-disabled={off} onClick={e => { if (off) e.preventDefault() }}>

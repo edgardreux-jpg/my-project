@@ -69,6 +69,8 @@ export function gameAccess(c: Child): GameAccess {
 }
 
 /** Lance une partie : décompte un ticket. */
+export const fmtScore = (unit: string | undefined, v: number) => (unit === 's' ? fmtTime(v) : `${v} ${unit ?? ''}`.trim())
+
 export function spendTicket(c: Child) {
   const g = gamesToday(c)
   c.games = { ...g, used: g.used + 1 }
@@ -79,16 +81,32 @@ export function addPlayTime(c: Child, ms: number) {
   c.games = { ...g, ms: g.ms + ms }
 }
 
-/** Enregistre une victoire et renvoie true si c'est un nouveau record. */
-export function recordWin(c: Child, id: string, score?: number): boolean {
+export type Diff = 0 | 1 | 2
+export const DIFFS = [
+  { name: 'Facile', hint: 'Pour se lancer' },
+  { name: 'Moyen', hint: 'Adapté à ton niveau' },
+  { name: 'Difficile', hint: 'Pour les champions' },
+] as const
+/** Palier de difficulté de 0 à 5 : le niveau scolaire décale la difficulté choisie. */
+export const tierOf = (lv: LevelId, d: Diff) => ORDER.indexOf(lv) + d
+export const bestKey = (id: string, d: Diff) => `${id}:${d}`
+
+export function setDiff(c: Child, id: string, d: Diff) {
+  const g = gamesToday(c)
+  c.games = { ...g, diff: { ...(g.diff ?? {}), [id]: d } }
+}
+
+/** Enregistre une victoire et renvoie true si c'est un nouveau record (par difficulté). */
+export function recordWin(c: Child, id: string, score: number | undefined, d: Diff): boolean {
   const g = gamesToday(c)
   const def = GAMES.find(x => x.id === id)
   const wins = { ...(g.wins ?? {}), [id]: (g.wins?.[id] ?? 0) + 1 }
   const best = { ...(g.best ?? {}) }
   let rec = false
+  const k = bestKey(id, d)
   if (score != null && def?.unit) {
-    const old = best[id]
-    if (old == null || (def.lowerIsBetter ? score < old : score > old)) { best[id] = score; rec = old != null }
+    const old = best[k]
+    if (old == null || (def.lowerIsBetter ? score < old : score > old)) { best[k] = score; rec = old != null }
   }
   c.games = { ...g, wins, best }
   return rec

@@ -6,9 +6,9 @@ import { levelOf, totalStars } from '../../lib/progress'
 import { LEVEL_ICONS } from './kidui'
 import { useStore } from '../../state/store'
 import { applyVoicePrefs, effectiveVoice, listVoices, speak, canSpeak, voiceScore } from '../../lib/audio'
-import { BASE_AVATARS, CHESTS, FRAMES } from '../../lib/progress'
+import { BASE_AVATARS, CHESTS, FRAMES, LEGENDARY } from '../../lib/progress'
 import { Avatar, Switch } from '../../components/common'
-import { avatarId, avatarLabel, avatarSrc, isAvatar } from '../../lib/avatars'
+import { avatarId, avatarLabel, avatarSrc, isAvatar, RARITY } from '../../lib/avatars'
 
 export default function Me() {
   const { child, mutateChild, switchProfile } = useStore()
@@ -25,6 +25,8 @@ export default function Me() {
   if (!child) return null
   const avatars = [...new Set([avatarId(child.avatar), ...BASE_AVATARS, ...child.unlocked.filter(u => !FRAMES.includes(u) && isAvatar(u)).map(avatarId)])]
   const locked = CHESTS.filter(c => c.kind === 'avatar' && !avatars.includes(c.value))
+  const legends = LEGENDARY.filter(l => !avatars.includes(l.id))
+  const tag = (a: string) => RARITY[a] ? <em className={`k-rar ${RARITY[a]}`}>{RARITY[a] === 'legend' ? 'Légende' : 'Rare'}</em> : null
   const frames = ['none', ...child.unlocked.filter(u => FRAMES.includes(u))]
   const set = (fn: (c: Child) => void) => mutateChild(child.id, fn)
   const lv = levelOf(child.xp), LI = LEVEL_ICONS[lv.index]
@@ -45,9 +47,12 @@ export default function Me() {
       </section>
       <section className="card">
         <h3>Choisis ton avatar</h3>
-        <div className="k-avs">{avatars.map(a => <button key={a} className={`k-av ${a === avatarId(child.avatar) ? 'on' : ''}`} aria-label={`Avatar ${avatarLabel(a)}`} aria-pressed={a === avatarId(child.avatar)} onClick={() => set(c => { c.avatar = a })}><img src={avatarSrc(a)} alt="" />{a === avatarId(child.avatar) && <i className="k-av-ok"><Check size={14} strokeWidth={3.4} /></i>}<span>{avatarLabel(a)}</span></button>)}
-          {locked.map(c => <Link to="/enfant/recompenses" key={c.id} className="k-av locked" title={`Dans le « ${c.title} » (${c.xp} points)`}><img src={avatarSrc(c.value)} alt="" /><i className="k-av-lock"><Lock size={13} strokeWidth={3} /></i><span>{c.xp} pts</span></Link>)}</div>
-        {locked.length > 0 && <p className="tiny muted mt8">Les avatars cadenassés se gagnent dans les coffres.</p>}
+        <div className="k-avs">{avatars.map(a => <button key={a} className={`k-av ${a === avatarId(child.avatar) ? 'on' : ''} ${RARITY[a] ?? ''}`} aria-label={`Avatar ${avatarLabel(a)}${RARITY[a] ? (RARITY[a] === 'legend' ? ', légendaire' : ', rare') : ''}`} aria-pressed={a === avatarId(child.avatar)} onClick={() => set(c => { c.avatar = a })}><img src={avatarSrc(a)} alt="" />{tag(a)}{a === avatarId(child.avatar) && <i className="k-av-ok"><Check size={14} strokeWidth={3.4} /></i>}<span>{avatarLabel(a)}</span></button>)}
+          {locked.map(c => <Link to="/enfant/recompenses" key={c.id} className="k-av locked rare" title={`Dans le « ${c.title} » (${c.xp} points)`}><img src={avatarSrc(c.value)} alt="" />{tag(c.value)}<i className="k-av-lock"><Lock size={13} strokeWidth={3} /></i><span>{c.xp} pts</span></Link>)}
+          {legends.map(l => { const v = Math.min(l.goal, l.value(child)); return (
+            <div key={l.id} className="k-av locked legend" title={l.how} aria-label={`Avatar ${avatarLabel(l.id)}, légendaire, verrouillé : ${l.how}`}><img src={avatarSrc(l.id)} alt="" />{tag(l.id)}<i className="k-av-lock"><Lock size={13} strokeWidth={3} /></i><span>{v}/{l.goal}</span><small className="k-av-how">{l.how}</small></div>
+          ) })}</div>
+        {(locked.length > 0 || legends.length > 0) && <p className="tiny muted mt8">Les avatars <b>rares</b> se gagnent dans les coffres. Les <b>légendaires</b> récompensent un grand exploit.</p>}
         {frames.length > 1 && <>
           <h3 className="mt16">Mon cadre</h3>
           <div className="wrap">{frames.map(f => <button key={f} className="iconbtn" style={{ width: 56, height: 56, border: f === child.frame ? '3px solid var(--teal)' : '3px solid transparent' }} aria-label={`Cadre ${f}`} onClick={() => set(c => { c.frame = f })}><Avatar emoji={child.avatar} frame={f} size={40} /></button>)}</div>

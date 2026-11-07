@@ -4,16 +4,19 @@ import { fmtTime, pick, rnd, shuffle } from '../../../lib/games'
 import { THEMES } from './words'
 import type { GameProps } from './types'
 
-const CFG: Record<string, { n: number; count: number; dirs: [number, number][] }> = {
-  ce1: { n: 7, count: 5, dirs: [[1, 0], [0, 1]] },
-  ce2: { n: 9, count: 7, dirs: [[1, 0], [0, 1], [1, 1]] },
-  cm1: { n: 10, count: 8, dirs: [[1, 0], [0, 1], [1, 1], [-1, 0], [1, -1]] },
-  cm2: { n: 11, count: 9, dirs: [[1, 0], [0, 1], [1, 1], [-1, 0], [0, -1], [-1, -1], [1, -1], [-1, 1]] },
-}
+const ALL: [number, number][] = [[1, 0], [0, 1], [1, 1], [-1, 0], [0, -1], [-1, -1], [1, -1], [-1, 1]]
+const CFG: { n: number; count: number; dirs: [number, number][] }[] = [
+  { n: 6, count: 4, dirs: [[1, 0], [0, 1]] },
+  { n: 7, count: 5, dirs: [[1, 0], [0, 1]] },
+  { n: 9, count: 7, dirs: [[1, 0], [0, 1], [1, 1]] },
+  { n: 10, count: 8, dirs: [[1, 0], [0, 1], [1, 1], [-1, 0], [1, -1]] },
+  { n: 11, count: 9, dirs: ALL },
+  { n: 12, count: 11, dirs: ALL },
+]
 const LETTERS = 'AAABCDEEEEFGHIIIJLLMNNOOPQRRSSSTTTUUVZ'
 
-export function build(level: string) {
-  const { n, count, dirs } = CFG[level]
+export function build(tier: number) {
+  const { n, count, dirs } = CFG[tier]
   for (let attempt = 0; attempt < 50; attempt++) {
     const theme = pick(THEMES)
     const words = shuffle(theme.words.filter(w => w.length <= n)).slice(0, count + 3)
@@ -40,9 +43,9 @@ export function build(level: string) {
   throw new Error('grille')
 }
 
-export default function MotsMeles({ level, sound, onWin }: GameProps) {
-  const n = CFG[level].n
-  const [{ theme, grid, placed }] = useState(() => build(level))
+export default function MotsMeles({ tier, sound, onWin }: GameProps) {
+  const n = CFG[tier].n
+  const [{ theme, grid, placed }] = useState(() => build(tier))
   const [found, setFound] = useState<string[]>([])
   const [start, setStart] = useState<number | null>(null)
   const [hover, setHover] = useState<number | null>(null)

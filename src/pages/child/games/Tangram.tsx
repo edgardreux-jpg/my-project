@@ -32,8 +32,8 @@ function raster(poly: Pt[]): string[] {
 interface Piece { id: string; type: string; rot: number; flip: boolean; x: number; y: number }
 const START: [string, string, number, number][] = [['BT', 'BT', 0, 0], ['BT2', 'BT', 4.5, 0], ['MT', 'MT', 9, 0], ['SQ', 'SQ', 0, 2.6], ['PA', 'PA', 2.6, 2.6], ['ST', 'ST', 6.1, 2.6], ['ST2', 'ST', 8.6, 2.6]]
 
-export default function Tangram({ level, sound, onWin }: GameProps) {
-  const [shape] = useState(() => SHAPES[level === 'ce1' ? rnd(6) : rnd(SHAPES.length)])
+export default function Tangram({ tier, sound, onWin }: GameProps) {
+  const [shape] = useState(() => SHAPES[tier <= 1 ? rnd(6) : rnd(SHAPES.length)])
   const geo = useMemo(() => {
     const all = shape.pieces.flatMap(p => p[1])
     const w = Math.max(...all.map(p => p[0])), h = Math.max(...all.map(p => p[1]))
@@ -83,7 +83,7 @@ export default function Tangram({ level, sound, onWin }: GameProps) {
     const d = drag.current; drag.current = null; if (!d) return
     if (!d.moved) { rotate(d.id); sfx('tap', sound) } else { update(d.id, p => p); sfx('tap', sound) }
   }
-  const guides = level === 'ce1' ? shape.pieces : level === 'ce2' ? shape.pieces.filter(p => p[0] === 'BT') : []
+  const guides = tier <= 1 ? shape.pieces : tier <= 3 ? shape.pieces.filter(p => p[0] === 'BT') : []
   const selP = pieces.find(p => p.id === sel)
 
   return (

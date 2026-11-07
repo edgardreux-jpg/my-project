@@ -4,12 +4,13 @@ import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { Home, Gift, UserRound, Map as MapIcon, Lock, Users, Puzzle } from 'lucide-react'
 import { useStore } from '../../state/store'
 import { Logo, Modal, Toast } from '../../components/common'
-import { readyChests } from '../../lib/progress'
+import { claimLegendary, readyChests } from '../../lib/progress'
+import { AVATARS } from '../../lib/avatars'
 import { Hud } from './kidui'
 import KidTour from './KidTour'
 
 export default function ChildShell() {
-  const { child, mode, leaveChild, account, switchProfile, loading } = useStore()
+  const { child, mode, leaveChild, account, switchProfile, loading, mutateChild } = useStore()
   const nav = useNavigate()
   const [ask, setAsk] = useState(false)
   const [pw, setPw] = useState('')
@@ -32,6 +33,16 @@ export default function ChildShell() {
     const t = setTimeout(() => setToast('Tu apprends depuis un moment. Une petite pause pour t’étirer et boire de l’eau ?'), child.breakMin * 60000)
     return () => clearTimeout(t)
   }, [child?.id, child?.breakMin, child])
+
+  // Avatars légendaires : débloqués dès que l'exploit est atteint
+  useEffect(() => {
+    if (!child) return
+    let fresh: string[] = []
+    const pending = claimLegendary(structuredClone(child))
+    if (!pending.length) return
+    mutateChild(child.id, c => { fresh = claimLegendary(c) })
+    if (fresh.length || pending.length) setToast(`Avatar légendaire débloqué : ${(fresh.length ? fresh : pending).map(a => AVATARS[a]).join(', ')} ! Va le choisir dans « Moi ».`)
+  }, [child?.xp, child?.streak.best, child?.games?.wins])   // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <div className="auth"><p className="muted">Chargement…</p></div>
   if (mode !== 'child' || !child) return <Navigate to={account ? '/profils' : '/'} replace />

@@ -4,10 +4,9 @@ import { rnd, shuffle } from '../../../lib/games'
 import type { GameProps } from './types'
 
 type Pair = [string, string]
-function pairs(level: string): Pair[] {
+function pairs(level: string, want: number): Pair[] {
   const out: Pair[] = [], seen = new Set<string>()
   const add = (q: string, a: string) => { if (seen.has(a) || seen.has(q)) return; seen.add(a); seen.add(q); out.push([q, a]) }
-  const want = level === 'ce1' ? 6 : 8
   for (let g = 0; out.length < want && g < 500; g++) {
     if (level === 'ce1') { const a = 1 + rnd(9), b = 1 + rnd(9); add(`${a} + ${b}`, String(a + b)) }
     else if (level === 'ce2') { const t = [2, 3, 4, 5, 10][rnd(5)], k = 2 + rnd(8); add(`${t} × ${k}`, String(t * k)) }
@@ -22,8 +21,9 @@ function pairs(level: string): Pair[] {
 
 interface Card { id: number; pair: number; text: string; kind: 'q' | 'a' }
 
-export default function Memory({ level, sound, onWin }: GameProps) {
-  const [cards] = useState<Card[]>(() => shuffle(pairs(level).flatMap(([q, a], i) => [{ id: i * 2, pair: i, text: q, kind: 'q' as const }, { id: i * 2 + 1, pair: i, text: a, kind: 'a' as const }])))
+export default function Memory({ level, tier, sound, onWin }: GameProps) {
+  const want = [4, 6, 8, 8, 10, 12][tier]
+  const [cards] = useState<Card[]>(() => shuffle(pairs(level, want).flatMap(([q, a], i) => [{ id: i * 2, pair: i, text: q, kind: 'q' as const }, { id: i * 2 + 1, pair: i, text: a, kind: 'a' as const }])))
   const [open, setOpen] = useState<number[]>([])
   const [found, setFound] = useState<number[]>([])
   const [moves, setMoves] = useState(0)

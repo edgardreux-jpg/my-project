@@ -114,6 +114,8 @@ export interface GamesState {
   ms?: number            // temps de jeu ce jour
   best?: Record<string, number>
   wins?: Record<string, number>
+  /** Dernière difficulté choisie par jeu (0 facile, 1 moyen, 2 difficile) */
+  diff?: Record<string, number>
 }
 
 export interface Account {

@@ -9,26 +9,27 @@ import type { GameProps } from './types'
 type Q = { kind: 'continent' | 'ocean' | 'country'; answer: string; label: string }
 const Wd = 960, Hd = 500
 
-function questions(level: string): Q[] {
-  if (level === 'ce1' || level === 'ce2') {
+function questions(tier: number): Q[] {
+  if (tier <= 2) {
     const cs = shuffle(CONTINENTS.filter(c => c !== 'Antarctique')).map(c => ({ kind: 'continent' as const, answer: c, label: `Touche l’${c}` }))
     const os = shuffle(OCEANS).slice(0, 4).map(o => ({ kind: 'ocean' as const, answer: o, label: `Touche l’océan ${o}` }))
-    return shuffle([...cs.slice(0, 6), ...os]).slice(0, 10)
+    if (tier === 0) return cs.slice(0, 6)
+    return shuffle([...cs.slice(0, 6), ...os]).slice(0, tier === 1 ? 8 : 10)
   }
-  const pool = level === 'cm1' ? EUROPE_Q : WORLD_Q
+  const pool = tier === 3 ? EUROPE_Q : tier === 4 ? WORLD_Q.slice(0, 20) : WORLD_Q
   return shuffle(pool).slice(0, 10).map(n => ({ kind: 'country', answer: n, label: `Où se trouve ${FR[n]} ?` }))
 }
 
-export default function Carte({ level, sound, onWin, onLose }: GameProps) {
+export default function Carte({ tier, sound, onWin, onLose }: GameProps) {
   const finish = (s: number) => { const m = `${s} bonne${s > 1 ? 's' : ''} réponse${s > 1 ? 's' : ''} du premier coup sur ${qs.length}.`; if (s >= Math.ceil(qs.length / 2)) onWin(s, `Bravo ! ${m}`); else onLose?.(`${m} Rejoue pour mieux retenir la carte !`) }
   const [world, setWorld] = useState<any[] | null>(null)
-  const [qs] = useState(() => questions(level))
+  const [qs] = useState(() => questions(tier))
   const [i, setI] = useState(0)
   const [score, setScore] = useState(0)
   const [miss, setMiss] = useState(false)
   const [flash, setFlash] = useState<{ name: string; ok: boolean } | null>(null)
   const [reveal, setReveal] = useState(false)
-  const europe = level === 'cm1'
+  const europe = tier === 3
 
   useEffect(() => { import('world-atlas/countries-110m.json').then(t => setWorld((feature(t.default as any, (t.default as any).objects.countries) as any).features)) }, [])
 
@@ -72,15 +73,15 @@ export default function Carte({ level, sound, onWin, onLose }: GameProps) {
   return (
     <div className="g-map">
       <div className="g-stats"><span>Question {Math.min(i + 1, qs.length)}/{qs.length}</span><span>Score : {score}</span></div>
-      <p className="map-q" role="status">{q?.label}{miss && !reveal ? <span className="tiny"> · essaie encore</span> : reveal ? <span className="tiny"> · la voici</span> : null}</p>
+      <p className="gmap-q" role="status">{q?.label}{miss && !reveal ? <span className="tiny"> · essaie encore</span> : reveal ? <span className="tiny"> · la voici</span> : null}</p>
       {!path ? <p className="muted center">Chargement de la carte…</p> : (
-        <div className="map-wrap" ref={el => { if (el && !el.dataset.c) { el.dataset.c = '1'; el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2 } }}>
-        <svg className={`map ${europe ? '' : 'world'}`} viewBox={`0 0 ${Wd} ${Hd}`} role="img" aria-label="Carte du monde">
-          <rect width={Wd} height={Hd} className="map-sea" onClick={onSea} />
-          {!europe && <path d={path({ type: 'Sphere' } as any) ?? ''} className="map-sphere" onClick={e => onSea(e as any)} />}
+        <div className="gmap-wrap" ref={el => { if (el && !el.dataset.c) { el.dataset.c = '1'; el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2 } }}>
+        <svg className={`gmap ${europe ? '' : 'gmap-world'}`} viewBox={`0 0 ${Wd} ${Hd}`} role="img" aria-label="Carte du monde">
+          <rect width={Wd} height={Hd} className="gmap-sea" onClick={onSea} />
+          {!europe && <path d={path({ type: 'Sphere' } as any) ?? ''} className="gmap-sphere" onClick={e => onSea(e as any)} />}
           {world!.map((f: any) => {
             const n = f.properties.name
-            const cls = ['map-c', flash && flash.name === n ? (flash.ok ? 'ok' : 'ko') : '', hl(n) ? 'reveal' : '', contOf(n) ? (flash?.ok ? 'ok' : 'ko') : ''].join(' ')
+            const cls = ['gmap-c', flash && flash.name === n ? (flash.ok ? 'ok' : 'ko') : '', hl(n) ? 'reveal' : '', contOf(n) ? (flash?.ok ? 'ok' : 'ko') : ''].join(' ')
             return <path key={f.id ?? n} d={path(f) ?? ''} className={cls} onClick={e => { e.stopPropagation(); answer(n, null) }} />
           })}
         </svg>

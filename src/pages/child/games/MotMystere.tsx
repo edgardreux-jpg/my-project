@@ -15,9 +15,12 @@ function grade(guess: string, word: string): Mark[] {
   return res
 }
 
-export default function MotMystere({ level, sound, onWin, onLose }: GameProps) {
+export default function MotMystere({ level, diff, sound, onWin, onLose }: GameProps) {
   const [[word, clue]] = useState(() => pick(MYSTERY[level]))
   const L = word.length
+  // Facile : 7 essais et première lettre offerte. Difficile : indice caché, à demander.
+  const tries = diff === 0 ? 7 : 6
+  const [showClue, setShowClue] = useState(diff !== 2)
   const [rows, setRows] = useState<string[]>([])
   const [cur, setCur] = useState('')
   const [shake, setShake] = useState(false)
@@ -32,7 +35,7 @@ export default function MotMystere({ level, sound, onWin, onLose }: GameProps) {
       if (cur.length < L) { setShake(true); sfx('oops', sound); setTimeout(() => setShake(false), 400); return }
       const nr = [...rows, cur]; setRows(nr); setCur('')
       if (cur === word) { setOver(true); sfx('done', sound); setTimeout(() => onWin(nr.length, `Trouvé en ${nr.length} essai${nr.length > 1 ? 's' : ''} : ${word} !`), 900) }
-      else if (nr.length >= 6) { setOver(true); sfx('oops', sound); setTimeout(() => onLose?.(`Le mot était ${word}. Tu l’auras la prochaine fois !`), 1100) }
+      else if (nr.length >= tries) { setOver(true); sfx('oops', sound); setTimeout(() => onLose?.(`Le mot était ${word}. Tu l’auras la prochaine fois !`), 1100) }
       else sfx('tap', sound)
       return
     }
@@ -48,15 +51,18 @@ export default function MotMystere({ level, sound, onWin, onLose }: GameProps) {
 
   return (
     <div className="g-motm">
-      <div className="mw-clue"><small>Indice</small>{clue}<span className="tiny muted"> · {L} lettres</span></div>
+      {showClue
+        ? <div className="mw-clue"><small>Indice</small>{clue}<span className="tiny muted"> · {L} lettres</span></div>
+        : <button className="mw-clue ask" onClick={() => setShowClue(true)}><small>{L} lettres</small>Voir l’indice</button>}
       <div className="mw-grid" style={{ ['--L' as string]: L }}>
-        {Array.from({ length: 6 }, (_, r) => {
+        {Array.from({ length: tries }, (_, r) => {
           const g = rows[r], live = r === rows.length
           const marks = g ? grade(g, word) : null
           const txt = g ?? (live ? cur : '')
+          const ghost = diff === 0 && !g && live && !cur ? word[0] : ''
           return (
             <div key={r} className={`mw-row ${live && shake ? 'shake' : ''}`}>
-              {Array.from({ length: L }, (_, i) => <span key={i} className={`mw-c ${marks ? marks[i] : txt[i] ? 'typed' : ''}`} style={marks ? { animationDelay: `${i * 0.12}s` } : undefined}>{txt[i] ?? ''}</span>)}
+              {Array.from({ length: L }, (_, i) => <span key={i} className={`mw-c ${marks ? marks[i] : txt[i] ? 'typed' : ''} ${ghost && i === 0 ? 'ghost' : ''}`} style={marks ? { animationDelay: `${i * 0.12}s` } : undefined}>{txt[i] ?? (ghost && i === 0 ? ghost : '')}</span>)}
             </div>
           )
         })}

@@ -25,21 +25,38 @@ export function levelOf(xp: number) {
 }
 
 /* ---------- avatars, cadres, coffres ---------- */
-export const BASE_AVATARS = ['princesse', 'prince', 'chevalier', 'chevaliere', 'scientifique', 'scientifique-garcon', 'footballeur', 'footballeuse', 'professeur', 'professeure', 'chanteur', 'chanteuse', 'danseur', 'danseuse']
+export const BASE_AVATARS = ['princesse', 'prince', 'chevalier', 'chevaliere', 'scientifique', 'scientifique-garcon', 'footballeur', 'footballeuse', 'professeur', 'professeure', 'chanteur', 'chanteuse', 'danseur', 'danseuse', 'pirate', 'pirate-f', 'veterinaire', 'veterinaire-f', 'explorateur', 'exploratrice']
 export const FRAMES = ['none', 'gold', 'mint', 'violet', 'sunset', 'rainbow']
 
 export interface Chest { id: string; xp: number; title: string; kind: 'avatar' | 'frame'; value: string; label: string }
 export const CHESTS: Chest[] = [
   { id: 'c1', xp: 60, title: 'Coffre de la forêt', kind: 'avatar', value: 'fantome', label: 'Avatar fantôme' },
+  { id: 'c10', xp: 110, title: 'Coffre enchanté', kind: 'avatar', value: 'magicienne', label: 'Avatar magicienne' },
   { id: 'c2', xp: 150, title: 'Coffre doré', kind: 'frame', value: 'gold', label: 'Cadre doré' },
+  { id: 'c11', xp: 220, title: 'Coffre du grimoire', kind: 'avatar', value: 'magicien', label: 'Avatar magicien' },
   { id: 'c3', xp: 300, title: 'Coffre des étoiles', kind: 'avatar', value: 'astronaute', label: 'Avatar astronaute' },
+  { id: 'c12', xp: 400, title: 'Coffre des super-pouvoirs', kind: 'avatar', value: 'super-heroine', label: 'Avatar super-héroïne' },
   { id: 'c4', xp: 500, title: 'Coffre du volcan', kind: 'avatar', value: 'dragon', label: 'Avatar dragon' },
+  { id: 'c13', xp: 650, title: 'Coffre de la cape', kind: 'avatar', value: 'super-heros', label: 'Avatar super-héros' },
   { id: 'c5', xp: 800, title: 'Coffre violet', kind: 'frame', value: 'violet', label: 'Cadre violet' },
   { id: 'c6', xp: 1200, title: 'Coffre du dojo', kind: 'avatar', value: 'judoka', label: 'Avatar judoka' },
   { id: 'c7', xp: 1600, title: 'Coffre des héros', kind: 'avatar', value: 'pompier', label: 'Avatar pompier' },
   { id: 'c8', xp: 2100, title: 'Coffre de la rampe', kind: 'avatar', value: 'skater', label: 'Avatar skater' },
   { id: 'c9', xp: 2700, title: 'Coffre des vidéos', kind: 'avatar', value: 'youtubeuse', label: 'Avatar youtubeuse' },
 ]
+
+/** Avatars légendaires : ils se gagnent par de vrais exploits, pas avec des points. */
+export const LEGENDARY: { id: string; how: string; goal: number; value: (c: Child) => number }[] = [
+  { id: 'sirene', how: 'Fais une série de 7 jours', goal: 7, value: c => c.streak.best },
+  { id: 'robot', how: 'Gagne 10 parties à la ludothèque', goal: 10, value: c => Object.values(c.games?.wins ?? {}).reduce((a, b) => a + b, 0) },
+  { id: 'licorne', how: 'Gagne 100 étoiles', goal: 100, value: c => totalStars(c) },
+]
+/** Débloque les avatars légendaires atteints ; renvoie ceux qui viennent d'être gagnés. */
+export function claimLegendary(c: Child): string[] {
+  const fresh = LEGENDARY.filter(l => l.value(c) >= l.goal && !c.unlocked.includes(l.id)).map(l => l.id)
+  c.unlocked.push(...fresh)
+  return fresh
+}
 
 export const readyChests = (c: Child) => CHESTS.filter(x => c.xp >= x.xp && !c.chestsOpened.includes(x.id))
 
