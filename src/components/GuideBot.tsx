@@ -35,6 +35,22 @@ export default function GuideBot() {
     setOpen(false)
   }, [key])
 
+  // Sur téléphone, Foxy s'efface quand on descend dans la page (il ne cache plus le contenu) et revient quand on remonte
+  const [tuck, setTuck] = useState(false)
+  useEffect(() => {
+    let last = window.scrollY
+    const onScroll = () => {
+      const y = window.scrollY, dy = y - last
+      if (Math.abs(dy) < 6) return
+      const atEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 40
+      setTuck(!(window.innerWidth >= 700 || y < 80 || atEnd) && dy > 0)
+      last = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  useEffect(() => { setTuck(false) }, [key])
+
   useEffect(() => {
     const close = () => setOpen(false)
     window.addEventListener('edufun-guide-close', close)
@@ -52,7 +68,7 @@ export default function GuideBot() {
   const tip = tips[Math.min(i, tips.length - 1)]
 
   return (
-    <div className={`guide ${kid ? 'kid' : ''}`}>
+    <div className={`guide ${kid ? 'kid' : ''} ${tuck && !open ? 'tuck' : ''}`}>
       {open && (
         <div className="guide-bubble" role="dialog" aria-label="Foxy, ton guide" aria-live="polite">
           <button className="guide-x" aria-label="Fermer" onClick={() => setOpen(false)}><X size={18} /></button>

@@ -1728,7 +1728,13 @@ html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{bo
   .toggle{flex-wrap:wrap;row-gap:8px}
   .toggle>div:first-child{flex:1 1 170px;min-width:0}
   a.row.small{min-height:44px;align-items:center}
-  .top nav{gap:14px}
+  .top nav{gap:4px 12px;flex-wrap:wrap;justify-content:space-between;overflow:visible;mask-image:none}
+  .top nav a{font-size:.88rem;padding:8px 0}
+  .guide-btn{width:54px;height:54px;padding:5px}
+  .guide-dot{width:20px;height:20px;font-size:.75rem}
+  .guide{transition:transform .25s ease,opacity .25s ease}
+  .guide.tuck{transform:translateX(calc(100% + 24px));opacity:0;pointer-events:none}
+  .guide.tuck>*{pointer-events:none}
   .kid-foot{flex-wrap:wrap}
   .kid-foot>.grow{flex:1 1 100%}
   .kid-foot>.btn{flex:1 1 0}
