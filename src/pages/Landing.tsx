@@ -1,6 +1,6 @@
 import type React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb, Volume2, RotateCw, Check } from 'lucide-react'
+import { ShieldCheck, BookOpenCheck, EyeOff, Coffee, LineChart as LC, Sparkles, HeartHandshake, School, ArrowRight, ArrowUp, Lightbulb, Volume2, RotateCw, Check, Radar as RadarIc } from 'lucide-react'
 import { Logo, Spark } from '../components/common'
 import { Ico, Stars } from '../components/Icon'
 import { LEVELS, SOURCES, levelStats, levelData, meta } from '../lib/curriculum'
@@ -31,6 +31,7 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
 const SHOTS = [
   { file: 'parent-tableau', icon: 'chart', title: 'L’évolution, semaine après semaine', text: 'Temps passé, réussite au premier essai et leçons acquises, comparés à la semaine précédente.', cap: 'Tableau de bord : la carte de l’enfant' },
   { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
+  { file: 'parent-reperes', icon: 'radar', title: 'Les évaluations nationales, préparées', text: 'En CE1 et CE2, des bilans sur le modèle des évaluations « Repères » dessinent une toile de compétences, avec un conseil pour chaque point fragile.', cap: 'Bilan Repères : la toile de compétences' },
   { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, matières visibles, classe.', cap: 'Réglages de l’enfant' },
 ] as const
 
@@ -64,7 +65,7 @@ function ParentShots() {
         {SHOTS.map((s, i) => (
           <button key={s.file} type="button" className={`feat featbtn ${cur === i ? 'on' : ''}`} aria-pressed={cur === i}
             onPointerEnter={e => { if (e.pointerType === 'mouse') go(i) }} onFocus={() => go(i)} onClick={() => go(i)}>
-            <div className="ic">{s.icon === 'chart' ? <LC size={24} /> : <Ico e={s.icon} color="currentColor" />}</div>
+            <div className="ic">{s.icon === 'chart' ? <LC size={24} /> : s.icon === 'radar' ? <RadarIc size={24} /> : <Ico e={s.icon} color="currentColor" />}</div>
             <h3>{s.title}</h3><p className="muted">{s.text}</p>
           </button>
         ))}
@@ -84,7 +85,7 @@ function ParentShots() {
         </button>
         <p className="shot-desc">{SHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{SHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des trois encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
+        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des quatre encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
       </div>
     </>
   )

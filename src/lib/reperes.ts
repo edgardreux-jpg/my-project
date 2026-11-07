@@ -342,7 +342,7 @@ export function demoReperes(c: Child, seed: number, level = 0.7) {
   ids.forEach((sid, k) => {
     const subj = sid.startsWith('fr') ? 'fr' : 'ma'
     const s: CompScore = {}
-    comps.filter(x => x.subject === subj).forEach(x => { const max = 3; s[x.id] = [Math.max(0, Math.min(max, Math.round(max * (level + (r() - 0.5) * 0.7)))), max] })
+    comps.filter(x => x.subject === subj).forEach(x => { const max = 6; s[x.id] = [Math.max(0, Math.min(max, Math.round(max * (level + (r() - 0.5) * 0.8)))), max] })
     saveSeq(c, 0, sid, { s, at: new Date(Date.now() - (20 - k) * 86400000).toISOString(), ms: 480000 })
   })
 }
