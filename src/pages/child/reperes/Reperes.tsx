@@ -38,7 +38,7 @@ export function ReperesWeb({ child, adult = false }: { child: Child; adult?: boo
 export default function Reperes() {
   const { child } = useStore()
   if (!child) return null
-  if (!hasReperes(child.grade)) return <div className="k-page"><h1 className="k-hi">Mon bilan</h1><p className="muted">Les bilans sont disponibles en CE1 et en CE2. CM1 et CM2 à venir !</p></div>
+  if (!hasReperes(child.grade)) return <div className="k-page"><h1 className="k-hi">Mon bilan</h1><p className="muted">Les bilans sont disponibles du CE1 au CM2.</p></div>
   const prog = Math.round(programProgress(child) * 100)
   const cur = (([0, 1, 2] as Phase[]).find(p => phaseState(child, p) === 'open') ?? null)
   const seqs = cur != null ? buildBilan(child, cur) : []

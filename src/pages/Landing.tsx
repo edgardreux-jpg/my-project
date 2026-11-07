@@ -31,7 +31,7 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
 const SHOTS = [
   { file: 'parent-tableau', icon: 'chart', title: 'L’évolution, semaine après semaine', text: 'Temps passé, réussite au premier essai et leçons acquises, comparés à la semaine précédente.', cap: 'Tableau de bord : la carte de l’enfant' },
   { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
-  { file: 'parent-reperes', icon: 'radar', title: 'Les évaluations nationales, préparées', text: 'En CE1 et CE2, des bilans sur le modèle des évaluations « Repères » dessinent une toile de compétences, avec un conseil pour chaque point fragile. CM1 et CM2 à venir.', cap: 'Bilan Repères : la toile de compétences' },
+  { file: 'parent-reperes', icon: 'radar', title: 'Les évaluations nationales, préparées', text: 'Du CE1 au CM2, des bilans sur le modèle des évaluations « Repères » dessinent une toile de compétences, avec un conseil pour chaque point fragile.', cap: 'Bilan Repères : la toile de compétences' },
   { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, matières visibles, classe.', cap: 'Réglages de l’enfant' },
 ] as const
 
@@ -103,7 +103,6 @@ function LevelFlip({ id }: { id: LevelId }) {
   const [on, setOn] = useState(false)
   const ptr = useRef('')  // type du dernier appui : sur téléphone (Safari compris), un toucher retourne la carte
   const lv = LEVELS.find(l => l.id === id)!, s = levelStats(id), k = LV_LOOK[id]
-  const full = id === 'ce1' || id === 'ce2'
   const subjects = levelData(id).subjects
   const m = meta(k.subj)
   return (
@@ -124,7 +123,7 @@ function LevelFlip({ id }: { id: LevelId }) {
             <span><b>{s.lessons}</b><small>leçons jouables</small></span>
           </span>
           <span className="lvf-subj" aria-hidden="true">{subjects.slice(0, 7).map(su => <i key={su.id} style={{ background: meta(su.id).soft, color: meta(su.id).color }}><Ico e={meta(su.id).emoji} size={14} color="currentColor" /></i>)}</span>
-          <span className={`lvf-status ${full ? 'ok' : 'wip'}`}>{full ? <><BookOpenCheck size={15} /> Programme complet</> : <><Sparkles size={15} /> En construction</>}</span>
+          <span className="lvf-status ok"><BookOpenCheck size={15} /> Programme complet</span>
           <span className="lvf-hint"><RotateCw size={13} /> Un exemple au dos</span>
         </span>
         <span className="lvf-face back">
@@ -133,7 +132,7 @@ function LevelFlip({ id }: { id: LevelId }) {
           <span className="lvf-opts">{k.opts.map((o, i) => <span key={o} className={i === k.ok ? 'ok' : ''}>{i === k.ok && <Check size={14} />}{o}</span>)}</span>
           <span className="lvf-sub">{subjects.length} matières, dont</span>
           <span className="lvf-tags">{subjects.slice(0, 4).map(su => <span key={su.id}>{meta(su.id).name}</span>)}</span>
-          <span className="lvf-foot">{full ? 'Toutes les notions de l’année sont jouables.' : 'Programme cadré, premières leçons de découverte.'}</span>
+          <span className="lvf-foot">Toutes les notions de l’année sont jouables.</span>
         </span>
       </span>
     </button>
@@ -225,6 +224,8 @@ export default function Landing() {
   const cta = account ? (mode === 'parent' ? '/parent' : '/profils') : '/inscription'
   const ce1 = levelStats('ce1')
   const ce2 = levelStats('ce2')
+  const cm1 = levelStats('cm1')
+  const cm2 = levelStats('cm2')
   const [y, setY] = useState(0)
   useEffect(() => {
     const on = () => setY(window.scrollY)
@@ -357,7 +358,7 @@ export default function Landing() {
       <section className="section alt" id="niveaux"><div className="in">
         <span className="eyebrow">Programme</span>
         <h2 className="h-lg mb8">Du CE1 au CM2</h2>
-        <p className="lead mb16">Le CE1 ({ce1.lessons} leçons) et le CE2 ({ce2.lessons} leçons) sont complets. Le CM1 et le CM2 s’enrichissent : leur programme est cadré et les premières leçons de découverte sont jouables.</p>
+        <p className="lead mb16">Les quatre niveaux sont complets, avec une leçon pour chaque thème du programme officiel : {ce1.lessons} leçons en CE1, {ce2.lessons} en CE2, {cm1.lessons} en CM1 et {cm2.lessons} en CM2.</p>
         <div className="lvl-grid">
           {LEVELS.map(l => <LevelFlip key={l.id} id={l.id} />)}
         </div>
@@ -383,7 +384,7 @@ export default function Landing() {
         <FaqTabs left={<>
           <div className="faq-col">
             <h3 className="faq-h"><span className="faq-ic"><Sparkles size={18} /></span> Apprendre avec EDUFUN</h3>
-            <details><summary>Pour quels âges et quels niveaux ?</summary><p>Pour les enfants de 7 à 11 ans, du CE1 au CM2. Le CE1 et le CE2 sont complets ; le CM1 et le CM2 s’enrichissent régulièrement de nouvelles leçons.</p></details>
+            <details><summary>Pour quels âges et quels niveaux ?</summary><p>Pour les enfants de 7 à 11 ans, du CE1 au CM2. Les quatre niveaux sont complets : chaque thème du programme officiel a sa leçon.</p></details>
             <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EDUFUN est un complément : il ne remplace ni l’école ni une évaluation.</p></details>
             <details><summary>Quelles matières sont proposées ?</summary><p>Français, mathématiques, questionner le monde, sciences, histoire, géographie et anglais, ainsi que vivre ensemble, arts plastiques, musique, sport et « grandir ensemble ».</p></details>
             <details><summary>Combien de temps par jour ?</summary><p>Quelques minutes suffisent : une leçon dure 3 à 8 minutes. Vous fixez un objectif de 1 à 3 leçons par jour et un rappel de pause.</p></details>

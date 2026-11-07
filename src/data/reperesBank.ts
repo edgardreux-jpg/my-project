@@ -279,7 +279,7 @@ export const CE2_SYNO: MCQ[] = [
 /** Trouver l’intrus (le mot qui n’est pas de la même famille). */
 export const CE2_FAMILLES: MCQ[] = [
   { q: 'Trouve l’intrus.', options: ['jardin', 'jardiner', 'jardinier', 'jambe'], answer: 3 },
-  { q: 'Trouve l’intrus.', options: ['dent', 'dentiste', 'dentelle', 'dentifrice'], answer: 2 },
+  { q: 'Trouve l’intrus.', options: ['dent', 'dentiste', 'ardent', 'dentifrice'], answer: 2 },
   { q: 'Trouve l’intrus.', options: ['lait', 'laitier', 'laid', 'laitage'], answer: 2 },
   { q: 'Trouve l’intrus.', options: ['chanter', 'chanteur', 'chanson', 'chandelle'], answer: 3 },
   { q: 'Trouve l’intrus.', options: ['terre', 'terrain', 'terrible', 'enterrer'], answer: 2 },
@@ -316,3 +316,271 @@ export const CE2_PHRASES: PicItem[] = [
 
 /** Fractions écrites en lettres → écriture en chiffres. */
 export const CE2_FRAC_MOTS: [string, string][] = [['un demi', '1/2'], ['un tiers', '1/3'], ['un quart', '1/4'], ['trois quarts', '3/4'], ['deux tiers', '2/3'], ['cinq sixièmes', '5/6'], ['trois huitièmes', '3/8'], ['deux cinquièmes', '2/5'], ['sept dixièmes', '7/10']]
+
+/* ============================== CM1 ============================== */
+
+/** Textes lus seul, 4 questions (informations explicites, implicite, reprises, vocabulaire). */
+export const CM1_LUS: Text[] = [
+  {
+    title: 'Le phare de l’île aux Mouettes',
+    text: 'Depuis plus de cent ans, un phare veille sur l’île aux Mouettes. Autrefois, un gardien y vivait toute l’année : chaque soir, il montait les deux cents marches pour allumer la lampe. Aujourd’hui, la lumière s’allume toute seule grâce à un capteur, et le gardien est parti. Pourtant, les marins continuent de l’appeler « la maison de Jules », en souvenir du dernier gardien, qui avait sauvé un équipage pendant une terrible tempête.',
+    qs: [
+      { q: 'Pourquoi n’y a-t-il plus de gardien dans le phare ?', options: ['Le phare est fermé', 'La lumière s’allume seule', 'Il y a trop de marches', 'Les marins n’en veulent plus'], answer: 1 },
+      { q: 'Qui était Jules ?', options: ['Un marin', 'Le dernier gardien du phare', 'Le capitaine du bateau', 'Un pêcheur de l’île'], answer: 1 },
+      { q: 'Pourquoi les marins se souviennent-ils de lui ?', options: ['Il était très grand', 'Il avait sauvé un équipage', 'Il avait construit le phare', 'Il vendait du poisson'], answer: 1 },
+      { q: 'Dans ce texte, « veille sur » veut dire…', options: ['dort sur', 'surveille et protège', 'se trouve sous', 'éclaire seulement le jour'], answer: 1 },
+    ],
+  },
+  {
+    title: 'Le concours de cerfs-volants',
+    text: 'Le jour du concours, le vent était si faible que les cerfs-volants retombaient les uns après les autres. Maëlle, elle, n’avait pas l’air inquiète. Elle avait fabriqué le sien avec son oncle, en papier de soie et en baguettes de bambou : il était si léger qu’une simple brise suffisait à le soulever. Quand le jury annonça les résultats, personne ne fut surpris.',
+    qs: [
+      { q: 'Quel problème y avait-il le jour du concours ?', options: ['Il pleuvait', 'Le vent était trop faible', 'Le jury était absent', 'Il faisait nuit'], answer: 1 },
+      { q: 'Pourquoi le cerf-volant de Maëlle volait-il ?', options: ['Il avait un moteur', 'Il était très léger', 'Il était très grand', 'Son oncle le tenait'], answer: 1 },
+      { q: 'Que comprend-on à la fin ?', options: ['Maëlle a perdu', 'Maëlle a gagné', 'Le concours est annulé', 'Le jury s’est trompé'], answer: 1 },
+      { q: 'Dans « le sien », « sien » désigne…', options: ['le vent', 'le cerf-volant de Maëlle', 'son oncle', 'le jury'], answer: 1 },
+    ],
+  },
+  {
+    title: 'Les castors bâtisseurs',
+    text: 'Le castor est le plus grand rongeur d’Europe. Avec ses dents très solides, il abat de petits arbres pour construire des barrages sur les rivières. L’eau qui monte derrière le barrage forme un étang calme, où il installe sa hutte. L’entrée de la hutte se trouve sous l’eau : ainsi, les renards et les loups ne peuvent pas y entrer. Ces barrages sont aussi utiles à d’autres animaux, comme les grenouilles et les libellules, qui profitent de l’étang.',
+    qs: [
+      { q: 'À quoi servent les dents du castor ?', options: ['À attraper des poissons', 'À abattre de petits arbres', 'À creuser la terre', 'À se défendre des loups'], answer: 1 },
+      { q: 'Pourquoi l’entrée de la hutte est-elle sous l’eau ?', options: ['Pour avoir frais', 'Pour que les prédateurs ne puissent pas entrer', 'Pour pêcher plus facilement', 'Pour boire'], answer: 1 },
+      { q: 'Qui profite aussi des barrages ?', options: ['Les renards', 'Les grenouilles et les libellules', 'Les loups', 'Les oiseaux de mer'], answer: 1 },
+      { q: 'Ce texte est…', options: ['un conte', 'un documentaire', 'une recette', 'une lettre'], answer: 1 },
+    ],
+  },
+]
+
+/** Textes entendus (lus deux fois). */
+export const CM1_ORAUX: Text[] = [
+  {
+    title: 'Le message du capitaine',
+    text: 'Attention, mesdames et messieurs, ici le capitaine. En raison du brouillard, notre arrivée au port de Saint-Malo est retardée d’environ quarante minutes. Pour votre sécurité, merci de rester à l’intérieur du bateau et de ne pas monter sur le pont supérieur. Le bar restera ouvert jusqu’à l’arrivée. Nous vous remercions de votre patience.',
+    qs: [
+      { q: 'Pourquoi le bateau est-il en retard ?', options: ['À cause d’une panne', 'À cause du brouillard', 'À cause d’une tempête', 'À cause d’un passager'], answer: 1 },
+      { q: 'De combien de temps environ est le retard ?', options: ['Dix minutes', 'Quarante minutes', 'Deux heures', 'Une journée'], answer: 1 },
+      { q: 'Que demande le capitaine aux passagers ?', options: ['De monter sur le pont', 'De rester à l’intérieur', 'De descendre du bateau', 'D’aller au bar'], answer: 1 },
+      { q: 'Où va le bateau ?', options: ['À Brest', 'À Saint-Malo', 'À Marseille', 'À Nice'], answer: 1 },
+    ],
+  },
+  {
+    title: 'La grande migration',
+    text: 'Chaque automne, des milliers de cigognes quittent l’Europe pour passer l’hiver en Afrique. Elles parcourent plus de quatre mille kilomètres. Pour économiser leurs forces, elles utilisent les courants d’air chaud qui les portent très haut dans le ciel, puis elles planent sans battre des ailes. Au printemps, elles reviennent souvent dans le même nid que l’année précédente.',
+    qs: [
+      { q: 'Quand les cigognes partent-elles ?', options: ['Au printemps', 'En automne', 'En été', 'Pendant l’hiver'], answer: 1 },
+      { q: 'Où passent-elles l’hiver ?', options: ['En Asie', 'En Afrique', 'Au pôle Nord', 'En Amérique'], answer: 1 },
+      { q: 'Comment économisent-elles leurs forces ?', options: ['Elles volent la nuit', 'Elles planent grâce à l’air chaud', 'Elles s’arrêtent chaque jour', 'Elles volent très bas'], answer: 1 },
+      { q: 'Que font-elles souvent au printemps ?', options: ['Elles construisent un nouveau nid en Afrique', 'Elles retrouvent le même nid', 'Elles restent en Afrique', 'Elles changent de pays'], answer: 1 },
+    ],
+  },
+  {
+    title: 'Le trésor de la classe',
+    text: 'Le jour de la rentrée, la maîtresse posa une vieille boîte en fer sur son bureau. « Cette boîte contient un trésor, dit-elle, mais elle ne s’ouvrira qu’en juin, quand vous aurez tous réussi un défi. » Pendant toute l’année, les élèves s’entraidèrent pour relever leurs défis. En juin, ils ouvrirent enfin la boîte : à l’intérieur, il y avait une photo de la classe prise le premier jour, et un mot : « Le trésor, c’est ce que vous avez construit ensemble. »',
+    qs: [
+      { q: 'Quand la boîte devait-elle être ouverte ?', options: ['À Noël', 'En juin', 'Le premier jour', 'Jamais'], answer: 1 },
+      { q: 'Que fallait-il faire pour l’ouvrir ?', options: ['Trouver une clé', 'Que chacun réussisse un défi', 'Payer', 'Répondre à une devinette'], answer: 1 },
+      { q: 'Que contenait la boîte ?', options: ['Des pièces d’or', 'Une photo de la classe et un mot', 'Des bonbons', 'Rien du tout'], answer: 1 },
+      { q: 'Selon la maîtresse, quel est le vrai trésor ?', options: ['La boîte', 'Ce que la classe a construit ensemble', 'La photo', 'Les bonnes notes'], answer: 1 },
+    ],
+  },
+]
+
+/** Mots dictés (fréquents, invariables, lettres muettes). */
+export const CM1_MOTS_DICTES = ['blanc', 'hier', 'famille', 'chocolat', 'jamais', 'main', 'regard', 'toujours', 'vague', 'lourd', 'alors', 'longtemps', 'souvent', 'pendant', 'parfois', 'beaucoup', 'aujourd’hui', 'quelquefois', 'printemps', 'dimanche', 'bientôt', 'ensemble', 'sourire', 'combien']
+
+export const CM1_SUJET: MCQ[] = [
+  { q: 'Au fond du jardin poussent de grands tournesols.', options: ['Au fond du jardin', 'poussent', 'de grands tournesols', 'du jardin'], answer: 2 },
+  { q: 'Les élèves de la classe verte partiront lundi.', options: ['Les élèves de la classe verte', 'partiront', 'lundi', 'la classe verte'], answer: 0 },
+  { q: 'Ma voisine et son chien se promènent chaque soir.', options: ['son chien', 'Ma voisine et son chien', 'se promènent', 'chaque soir'], answer: 1 },
+  { q: 'Dans le ciel brillaient mille étoiles.', options: ['Dans le ciel', 'brillaient', 'mille étoiles', 'le ciel'], answer: 2 },
+  { q: 'Elle nous a raconté une histoire drôle.', options: ['Elle', 'nous', 'une histoire drôle', 'a raconté'], answer: 0 },
+  { q: 'Le train qui part de Lyon arrive à midi.', options: ['Lyon', 'Le train qui part de Lyon', 'arrive', 'à midi'], answer: 1 },
+]
+export const CM1_VERBE: MCQ[] = [
+  { q: 'Les oiseaux construisent leur nid au printemps.', options: ['oiseaux', 'construisent', 'nid', 'printemps'], answer: 1 },
+  { q: 'Ce matin, nous avons visité un musée.', options: ['matin', 'avons visité', 'un musée', 'nous'], answer: 1 },
+  { q: 'Demain, tu prendras le bus avec ta sœur.', options: ['Demain', 'prendras', 'bus', 'sœur'], answer: 1 },
+  { q: 'Le petit chat noir dormait près du feu.', options: ['petit', 'noir', 'dormait', 'feu'], answer: 2 },
+  { q: 'Vous finissez toujours vos devoirs avant le dîner.', options: ['finissez', 'toujours', 'devoirs', 'dîner'], answer: 0 },
+  { q: 'Le marchand vend des fruits très frais.', options: ['marchand', 'vend', 'fruits', 'frais'], answer: 1 },
+]
+export const CM1_ACCORD: MCQ[] = [
+  { q: 'des chemises …', options: ['blanc', 'blanche', 'blancs', 'blanches'], answer: 3 },
+  { q: 'de … voitures', options: ['beau', 'belle', 'belles', 'beaux'], answer: 2 },
+  { q: 'des chevaux …', options: ['noir', 'noirs', 'noire', 'noires'], answer: 1 },
+  { q: 'une … nouvelle', options: ['bon', 'bons', 'bonne', 'bonnes'], answer: 2 },
+  { q: 'les … feuilles', options: ['dernier', 'derniers', 'dernière', 'dernières'], answer: 3 },
+  { q: 'un vent …', options: ['froid', 'froide', 'froids', 'froides'], answer: 0 },
+  { q: 'des … journaux', options: ['vieux', 'vieil', 'vieille', 'vieilles'], answer: 0 },
+]
+export const CM1_TEMPS: MCQ[] = [
+  { q: 'Autrefois, les enfants allaient à l’école à pied.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 1 },
+  { q: 'Nous partirons en vacances en juillet.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 2 },
+  { q: 'Hier, j’ai rangé ma chambre.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 3 },
+  { q: 'Le soleil se lève à l’est.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 0 },
+  { q: 'Tu feras tes devoirs après le goûter.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 2 },
+  { q: 'Ils sont venus nous voir dimanche.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 3 },
+  { q: 'Elle chantait chaque soir sous la douche.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 1 },
+]
+export const CM1_TEMPS_PROD: MCQ[] = [
+  { q: 'Demain, nous (aller) au cinéma.', options: ['allons', 'irons', 'allions', 'sommes allés'], answer: 1 },
+  { q: 'Hier, tu (finir) ton puzzle.', options: ['finis', 'finiras', 'as fini', 'finissais'], answer: 2 },
+  { q: 'Quand j’étais petit, je (avoir) peur du noir.', options: ['ai', 'aurai', 'avais', 'ai eu'], answer: 2 },
+  { q: 'Maintenant, vous (être) prêts.', options: ['êtes', 'serez', 'étiez', 'avez été'], answer: 0 },
+  { q: 'L’an prochain, elles (faire) du judo.', options: ['font', 'feront', 'faisaient', 'ont fait'], answer: 1 },
+  { q: 'Ce matin, il (prendre) le train.', options: ['prend', 'prendra', 'prenait', 'a pris'], answer: 3 },
+]
+export const CM1_CLASSES: MCQ[] = [
+  { q: 'Le chien RAPIDE attrape la balle.', options: ['nom', 'verbe', 'adjectif', 'déterminant'], answer: 2 },
+  { q: 'Mon frère MANGE une pomme.', options: ['nom', 'verbe', 'adjectif', 'déterminant'], answer: 1 },
+  { q: 'Ces enfants jouent dans la COUR.', options: ['nom', 'verbe', 'adjectif', 'pronom'], answer: 0 },
+  { q: 'ILS regardent le ciel.', options: ['nom', 'déterminant', 'pronom', 'adjectif'], answer: 2 },
+  { q: 'J’ai lu TROIS livres.', options: ['déterminant', 'adjectif', 'verbe', 'pronom'], answer: 0 },
+  { q: 'Elle marche LENTEMENT.', options: ['adjectif', 'adverbe', 'nom', 'verbe'], answer: 1 },
+]
+export const CM1_SYNO: MCQ[] = [
+  { q: 'Le randonneur était ÉPUISÉ après la montée.', options: ['très fatigué', 'très content', 'perdu', 'mouillé'], answer: 0 },
+  { q: 'Il a DISSIMULÉ la clé sous le tapis.', options: ['cassé', 'caché', 'trouvé', 'perdu'], answer: 1 },
+  { q: 'Le vieux château était IMMENSE.', options: ['minuscule', 'très grand', 'très vieux', 'abandonné'], answer: 1 },
+  { q: 'Elle a RÉPLIQUÉ aussitôt.', options: ['répondu', 'recommencé', 'pleuré', 'oublié'], answer: 0 },
+  { q: 'Le chiot était CRAINTIF.', options: ['joyeux', 'peureux', 'affamé', 'endormi'], answer: 1 },
+  { q: 'Il faut PRÉSERVER la nature.', options: ['abîmer', 'dessiner', 'protéger', 'visiter'], answer: 2 },
+]
+export const CM1_FAMILLES: MCQ[] = [
+  { q: '', options: ['terre', 'terrain', 'terrible', 'enterrer'], answer: 2 },
+  { q: '', options: ['dent', 'dentiste', 'ardent', 'dentifrice'], answer: 2 },
+  { q: '', options: ['fleur', 'fleuriste', 'fleuve', 'fleurir'], answer: 2 },
+  { q: '', options: ['chant', 'chanteur', 'chanter', 'champ'], answer: 3 },
+  { q: '', options: ['lait', 'laitier', 'laid', 'allaiter'], answer: 2 },
+  { q: '', options: ['pied', 'piéton', 'pieuvre', 'piétiner'], answer: 2 },
+]
+
+/* ============================== CM2 ============================== */
+
+export const CM2_LUS: Text[] = [
+  {
+    title: 'L’invention qui venait du froid',
+    text: 'En 1912, Clarence Birdseye travaillait comme naturaliste au Canada. Il remarqua que les poissons pêchés par les Inuits gelaient presque instantanément dans l’air glacé et que, plusieurs mois plus tard, une fois cuits, ils avaient gardé tout leur goût. De retour aux États-Unis, il chercha à reproduire ce froid extrême à l’aide de machines. Quelques années plus tard, les premiers aliments surgelés apparaissaient dans les magasins.',
+    qs: [
+      { q: 'Où Clarence Birdseye a-t-il fait sa découverte ?', options: ['Aux États-Unis', 'Au Canada', 'En France', 'En Afrique'], answer: 1 },
+      { q: 'Qu’a-t-il remarqué ?', options: ['Les poissons pourrissaient vite', 'Les poissons gelés rapidement gardaient leur goût', 'Les Inuits ne mangeaient pas de poisson', 'Il ne faisait pas froid'], answer: 1 },
+      { q: 'Quelle invention ce texte raconte-t-il ?', options: ['Le réfrigérateur', 'Les aliments surgelés', 'La canne à pêche', 'Le four'], answer: 1 },
+      { q: 'Dans ce texte, « instantanément » signifie…', options: ['très lentement', 'presque aussitôt', 'pendant des mois', 'jamais'], answer: 1 },
+    ],
+  },
+  {
+    title: 'Le dernier jour',
+    text: 'Théo rangea une dernière fois ses crayons dans sa trousse. Autour de lui, ses camarades riaient et se promettaient de s’écrire pendant l’été. Lui ne disait rien. Il regardait la classe vide, les murs où l’on avait décroché les dessins, le tableau effacé. En septembre, il entrerait au collège, dans une autre ville. Quand la maîtresse lui serra la main, il sentit sa gorge se nouer et baissa vite les yeux.',
+    qs: [
+      { q: 'Quel jour se passe la scène ?', options: ['Le jour de la rentrée', 'Le dernier jour de l’école', 'Un jour de vacances', 'Un dimanche'], answer: 1 },
+      { q: 'Comment se sent Théo ?', options: ['Très joyeux', 'Ému et un peu triste', 'En colère', 'Indifférent'], answer: 1 },
+      { q: 'Pourquoi peut-on penser qu’il est triste ?', options: ['Il a perdu sa trousse', 'Il va quitter ses camarades et sa ville', 'Il a eu une mauvaise note', 'Il est malade'], answer: 1 },
+      { q: '« Sa gorge se noue » montre qu’il…', options: ['a mal à la gorge', 'retient ses larmes', 'a soif', 'va chanter'], answer: 1 },
+    ],
+  },
+  {
+    title: 'Fiche : le parc national des Écrins',
+    text: 'Situation : Alpes, entre Grenoble et Briançon. Création : 1973. Superficie du cœur du parc : environ 920 km². Point culminant : la barre des Écrins, 4 102 m. Animaux emblématiques : bouquetin, chamois, aigle royal, gypaète barbu. Règles dans le cœur du parc : chiens interdits, même tenus en laisse ; cueillette interdite ; camping interdit (bivouac toléré pour une nuit).',
+    qs: [
+      { q: 'Dans quelle montagne se trouve ce parc ?', options: ['Les Pyrénées', 'Les Alpes', 'Le Massif central', 'Les Vosges'], answer: 1 },
+      { q: 'Quelle est l’altitude du point le plus haut ?', options: ['920 m', '1 973 m', '4 102 m', '4 810 m'], answer: 2 },
+      { q: 'Peut-on promener son chien en laisse dans le cœur du parc ?', options: ['Oui', 'Non', 'Seulement l’été', 'Seulement la nuit'], answer: 1 },
+      { q: 'Quel animal n’est pas cité comme emblématique ?', options: ['le chamois', 'le bouquetin', 'l’ours brun', 'l’aigle royal'], answer: 2 },
+    ],
+  },
+]
+
+export const CM2_ORAUX: Text[] = [
+  {
+    title: 'Flash info météo',
+    text: 'Bonjour à tous. Ce mardi, un épisode de fortes pluies touche le sud-est du pays. Les départements du Gard et de l’Hérault sont placés en vigilance orange. Il est conseillé de limiter ses déplacements et de ne jamais traverser une route inondée, même en voiture. Le retour du soleil est prévu jeudi, avec des températures en hausse.',
+    qs: [
+      { q: 'Quelle région est touchée par les fortes pluies ?', options: ['Le nord-ouest', 'Le sud-est', 'Le centre', 'L’est'], answer: 1 },
+      { q: 'Quelle est la couleur de la vigilance ?', options: ['Verte', 'Jaune', 'Orange', 'Rouge'], answer: 2 },
+      { q: 'Quel conseil est donné ?', options: ['Aller voir les rivières', 'Ne jamais traverser une route inondée', 'Partir en vacances', 'Rester sur la plage'], answer: 1 },
+      { q: 'Quand le soleil doit-il revenir ?', options: ['Mercredi', 'Jeudi', 'Samedi', 'Ce soir'], answer: 1 },
+    ],
+  },
+  {
+    title: 'Marie Curie',
+    text: 'Marie Curie est née en Pologne en 1867. À cette époque, les femmes ne pouvaient pas étudier à l’université dans son pays. Elle partit donc à Paris, où elle étudia la physique et les mathématiques. Avec son mari Pierre, elle découvrit deux nouveaux éléments, le polonium et le radium. Elle fut la première femme à recevoir un prix Nobel, et la seule personne à en avoir reçu deux dans deux sciences différentes.',
+    qs: [
+      { q: 'Dans quel pays Marie Curie est-elle née ?', options: ['En France', 'En Pologne', 'En Allemagne', 'En Suède'], answer: 1 },
+      { q: 'Pourquoi est-elle partie à Paris ?', options: ['Pour se marier', 'Pour pouvoir étudier à l’université', 'Pour voyager', 'Pour travailler dans une usine'], answer: 1 },
+      { q: 'Quels éléments a-t-elle découverts ?', options: ['L’or et l’argent', 'Le polonium et le radium', 'L’oxygène et l’hydrogène', 'Le fer et le cuivre'], answer: 1 },
+      { q: 'Qu’a-t-elle de remarquable ?', options: ['Elle a reçu deux prix Nobel dans deux sciences', 'Elle a inventé l’électricité', 'Elle a été reine de Pologne', 'Elle n’est jamais allée à l’école'], answer: 0 },
+    ],
+  },
+  {
+    title: 'Le pari d’Anouk',
+    text: 'Anouk avait parié avec son grand frère qu’elle lirait un livre de trois cents pages avant la fin des vacances. Les premiers jours, elle lisait à peine dix pages par soir et commençait à regretter son pari. Puis l’histoire devint passionnante : une enquête dans un vieux musée, des indices cachés partout. Elle finit le livre une semaine avant la rentrée. Son frère lui offrit la glace promise, et Anouk lui tendit aussitôt le deuxième tome.',
+    qs: [
+      { q: 'Quel était le pari d’Anouk ?', options: ['Écrire un livre', 'Lire un livre de 300 pages', 'Visiter un musée', 'Manger une glace'], answer: 1 },
+      { q: 'Pourquoi lit-elle plus vite ensuite ?', options: ['Son frère l’aide', 'L’histoire devient passionnante', 'Le livre est plus court', 'Elle est obligée'], answer: 1 },
+      { q: 'Qu’a-t-elle gagné ?', options: ['Un livre', 'Une glace', 'Un voyage', 'Rien'], answer: 1 },
+      { q: 'Pourquoi tend-elle le deuxième tome à son frère ?', options: ['Pour qu’il le range', 'Pour lui donner envie de le lire', 'Pour le lui rendre', 'Parce qu’elle ne l’aime pas'], answer: 1 },
+    ],
+  },
+]
+
+export const CM2_MOTS_DICTES = ['malgré', 'pourtant', 'autrefois', 'cependant', 'désormais', 'certainement', 'immédiatement', 'auparavant', 'quelqu’un', 'plusieurs', 'longtemps', 'environ', 'aujourd’hui', 'néanmoins', 'soudain', 'tellement', 'parmi', 'derrière', 'davantage', 'accueil', 'automne', 'silence', 'oiseau', 'hiver']
+
+export const CM2_ACCORD_SV: MCQ[] = [
+  { q: 'Les enfants de mon voisin … au football.', options: ['joue', 'joues', 'jouent', 'jouons'], answer: 2 },
+  { q: 'Toi et moi … partir demain.', options: ['devons', 'doivent', 'devez', 'doit'], answer: 0 },
+  { q: 'Dans la forêt … des cerfs.', options: ['vit', 'vivent', 'vis', 'vivons'], answer: 1 },
+  { q: 'Le chat et le chien … dans le salon.', options: ['dort', 'dorment', 'dors', 'dormons'], answer: 1 },
+  { q: 'Les fleurs que tu as cueillies … bon.', options: ['sent', 'sens', 'sentent', 'sentons'], answer: 2 },
+  { q: 'Mes cousines … arrivées hier.', options: ['est', 'sont', 'ont', 'sommes'], answer: 1 },
+]
+export const CM2_COMPLEMENT: MCQ[] = [
+  { q: 'Léo lit un roman passionnant. Quel est le complément d’objet ?', options: ['Léo', 'lit', 'un roman passionnant', 'passionnant'], answer: 2 },
+  { q: 'Nous parlons de nos vacances. Quel est le complément d’objet ?', options: ['Nous', 'parlons', 'de nos vacances', 'nos'], answer: 2 },
+  { q: 'Le soir, Inès téléphone à sa grand-mère. Quel est le complément d’objet ?', options: ['Le soir', 'Inès', 'téléphone', 'à sa grand-mère'], answer: 3 },
+  { q: 'Dans la cour, les élèves attendent le bus. Quel est le complément d’objet ?', options: ['Dans la cour', 'les élèves', 'attendent', 'le bus'], answer: 3 },
+  { q: 'Il pense souvent à son ami. Quel mot est un complément circonstanciel ?', options: ['Il', 'pense', 'souvent', 'à son ami'], answer: 2 },
+  { q: 'Hier, Paul a réparé son vélo. Quel groupe indique le temps ?', options: ['Hier', 'Paul', 'a réparé', 'son vélo'], answer: 0 },
+]
+export const CM2_TEMPS: MCQ[] = [
+  { q: 'Le chevalier entra dans la grotte.', options: ['imparfait', 'passé simple', 'passé composé', 'futur'], answer: 1 },
+  { q: 'Quand il arriva, tout le monde dormait.', options: ['présent', 'imparfait', 'futur', 'passé composé'], answer: 1 },
+  { q: 'Il faisait beau ce jour-là.', options: ['passé simple', 'imparfait', 'présent', 'futur'], answer: 1 },
+  { q: 'Elle avait oublié ses clés.', options: ['passé composé', 'imparfait', 'plus-que-parfait', 'passé simple'], answer: 2 },
+  { q: 'Vous viendrez avec nous.', options: ['présent', 'futur', 'imparfait', 'conditionnel'], answer: 1 },
+  { q: 'Ils ont gagné le match.', options: ['passé simple', 'passé composé', 'imparfait', 'plus-que-parfait'], answer: 1 },
+]
+export const CM2_TEMPS_PROD: MCQ[] = [
+  { q: 'Soudain, le loup (surgir) du bois. (passé simple)', options: ['surgit', 'surgissait', 'a surgi', 'surgira'], answer: 0 },
+  { q: 'Autrefois, les gens (s’éclairer) à la bougie.', options: ['s’éclairent', 's’éclairaient', 's’éclaireront', 'se sont éclairés'], answer: 1 },
+  { q: 'Ils (partir) quand nous sommes arrivés. (plus-que-parfait)', options: ['partaient', 'étaient partis', 'sont partis', 'partirent'], answer: 1 },
+  { q: 'L’été prochain, je (voir) la mer.', options: ['vois', 'verrai', 'voyais', 'vis'], answer: 1 },
+  { q: 'Hier soir, nous (dîner) chez Mamie.', options: ['dînons', 'avons dîné', 'dînerons', 'dînions'], answer: 1 },
+  { q: 'Les soldats (avancer) lentement. (passé simple)', options: ['avancèrent', 'avançaient', 'ont avancé', 'avanceront'], answer: 0 },
+]
+export const CM2_CLASSES: MCQ[] = [
+  { q: 'Le vent souffle TRÈS fort.', options: ['adjectif', 'adverbe', 'préposition', 'nom'], answer: 1 },
+  { q: 'Il est parti SANS son manteau.', options: ['préposition', 'conjonction', 'adverbe', 'déterminant'], answer: 0 },
+  { q: 'Je voudrais du thé OU du café.', options: ['préposition', 'conjonction de coordination', 'adverbe', 'pronom'], answer: 1 },
+  { q: 'LEUR maison est au bord de l’eau.', options: ['pronom', 'déterminant', 'adjectif', 'nom'], answer: 1 },
+  { q: 'Je LEUR ai prêté mon livre.', options: ['pronom', 'déterminant', 'adjectif', 'adverbe'], answer: 0 },
+  { q: 'La PATIENCE est une qualité.', options: ['verbe', 'adjectif', 'nom', 'adverbe'], answer: 2 },
+]
+export const CM2_SYNO: MCQ[] = [
+  { q: 'Le spectacle était SAISISSANT.', options: ['ennuyeux', 'très impressionnant', 'trop long', 'gratuit'], answer: 1 },
+  { q: 'Il a ABANDONNÉ son projet.', options: ['terminé', 'renoncé à', 'commencé', 'présenté'], answer: 1 },
+  { q: 'Cette région est très ARIDE.', options: ['sèche', 'peuplée', 'froide', 'riche'], answer: 0 },
+  { q: 'Elle a FRANCHI la rivière.', options: ['longé', 'traversé', 'regardé', 'remonté'], answer: 1 },
+  { q: 'Le témoin a été FORMEL.', options: ['hésitant', 'très sûr de lui', 'poli', 'absent'], answer: 1 },
+  { q: 'Le roi était REDOUTÉ par ses ennemis.', options: ['aimé', 'craint', 'oublié', 'aidé'], answer: 1 },
+]
+export const CM2_FAMILLES: MCQ[] = [
+  { q: '', options: ['mer', 'marin', 'maritime', 'mercredi'], answer: 3 },
+  { q: '', options: ['jour', 'journal', 'journée', 'jouer'], answer: 3 },
+  { q: '', options: ['porte', 'portail', 'portière', 'portrait'], answer: 3 },
+  { q: '', options: ['ami', 'amitié', 'amical', 'amidon'], answer: 3 },
+  { q: '', options: ['nuit', 'nuitée', 'nuisible', 'minuit'], answer: 2 },
+  { q: '', options: ['vol', 'voler', 'volcan', 'envol'], answer: 2 },
+]
+export const CM2_DECIMAUX_DITS: [string, string][] = [['quinze centièmes', '0,15'], ['trois unités et sept dixièmes', '3,7'], ['deux unités et huit centièmes', '2,08'], ['quarante-deux centièmes', '0,42'], ['douze unités et cinq dixièmes', '12,5'], ['six centièmes', '0,06'], ['un et vingt-cinq centièmes', '1,25'], ['neuf dixièmes', '0,9']]
