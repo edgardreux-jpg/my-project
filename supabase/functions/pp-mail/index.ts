@@ -2,7 +2,7 @@
 // Appelée par pg_cron (bilan) et par un déclencheur SQL (révision). Chaque envoi n'a lieu qu'une fois.
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-const SITE = 'https://pepite-nine.vercel.app'
+const SITE = 'https://edufun-app.vercel.app'
 const sb = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } })
 const BREVO = Deno.env.get('BREVO_API_KEY') ?? ''
 const FROM = { email: Deno.env.get('SENDER_EMAIL') ?? 'edgard.reux@gmail.com', name: 'EDUFUN' }
