@@ -14,12 +14,13 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
   const [on, setOn] = useState(false)
   const mouse = useRef(false)
   return (
-    <button type="button" className={`a flip ${className} ${on ? 'on' : ''}`} aria-pressed={on} aria-label={`Exemple ${label} : retourner la carte`}
+    <button type="button" className={`a flip ${className} ${on ? 'on' : ''}`} aria-pressed={on} aria-describedby={`fd-${className}`}
       onPointerEnter={e => { if (e.pointerType === 'mouse') { mouse.current = true; setOn(true) } }}
       onPointerLeave={e => { if (e.pointerType === 'mouse') { mouse.current = false; setOn(false) } }}
       onPointerDown={e => { mouse.current = e.pointerType === 'mouse' }}
       onClick={() => { if (!mouse.current) setOn(v => !v) }}>
-      <span className="flip-in" aria-hidden="true">
+      <span className="sr-only" id={`fd-${className}`}>Exemple {label} : appuyez pour retourner la carte</span>
+      <span className="flip-in">
         <span className="face front">{front}</span>
         <span className="face back">{back}</span>
       </span>
@@ -69,11 +70,12 @@ function ParentShots() {
         ))}
       </div>
       <div className="shotwrap">
-        <button type="button" className="shotflip" aria-label={`Capture : ${SHOTS[cur].cap}. Voir la suivante`}
+        <button type="button" className="shotflip" aria-describedby="shot-next"
           {...touch} onClick={tapNext}>
+          <span className="sr-only" id="shot-next">Voir la capture suivante</span>
           <span className="shot-in" style={{ transform: `rotateY(${angle}deg)` }}>
             {faces.map((f, k) => (
-              <span key={k} className={`shot-face ${k ? 'back' : ''}`}>
+              <span key={k} aria-hidden={(Math.round(angle / 180) % 2 === 0) === !!k} className={`shot-face ${k ? 'back' : ''}`}>
                 <span className="shot-bar"><i /><i /><i /><b>{SHOTS[f].cap}</b></span>
                 <img src={src(f)} alt={SHOTS[f].cap} loading="lazy" />
               </span>
@@ -105,12 +107,13 @@ function LevelFlip({ id }: { id: LevelId }) {
   const m = meta(k.subj)
   return (
     <button type="button" className={`lvf ${on ? 'on' : ''}`} style={{ ['--lc' as string]: k.color, ['--ld' as string]: k.dark, ['--ls' as string]: k.soft } as React.CSSProperties}
-      aria-pressed={on} aria-label={`${lv.title} : voir un exemple de question`}
+      aria-pressed={on} aria-describedby={`lvd-${id}`}
       onPointerEnter={e => { if (e.pointerType === 'mouse') setOn(true) }}
       onPointerLeave={e => { if (e.pointerType === 'mouse') setOn(false) }}
       onPointerDown={e => { ptr.current = e.pointerType }}
       onTouchStart={() => { ptr.current = 'touch' }}
       onClick={() => { if (ptr.current !== 'mouse') setOn(v => !v); ptr.current = '' }}>
+      <span className="sr-only" id={`lvd-${id}`}>Appuyez pour voir un exemple de question</span>
       <span className="lvf-in">
         <span className="lvf-face">
           <span className="lvf-top"><span>{k.cycle}</span><span>{lv.ages}</span></span>

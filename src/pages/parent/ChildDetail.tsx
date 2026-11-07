@@ -204,7 +204,7 @@ function Activity({ child, set, today }: { child: Child; set: (fn: (c: Child) =>
     <div className="col gap20">
       <section className="card"><h3>Dernières séances</h3>
         {sessions.length === 0 ? <Empty title="Aucune séance">Les séances terminées apparaissent ici.</Empty> : (
-          <div style={{ overflowX: 'auto' }}><table className="table"><thead><tr><th>Date</th><th>Leçon</th><th>Durée</th><th>1er essai</th><th>Étoiles</th></tr></thead><tbody>
+          <div style={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label="Dernières séances"><table className="table"><thead><tr><th>Date</th><th>Leçon</th><th>Durée</th><th>1er essai</th><th>Étoiles</th></tr></thead><tbody>
             {sessions.map(s => {
               const l = lessonById.get(s.lessonId)
               return <tr key={s.id}><td>{relDay(s.day, today)}</td><td><b>{l?.title ?? 'Parcours de départ'}</b><div className="tiny muted">{meta(s.subject).name}</div></td><td>{fmtMin(s.ms)}</td><td>{s.firstOk}/{s.total}</td><td>{s.kind === 'lesson' ? '⭐'.repeat(s.stars) : '–'}</td></tr>

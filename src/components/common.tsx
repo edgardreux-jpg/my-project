@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useStore } from '../state/store'
 import { Ico } from './Icon'
@@ -28,14 +28,30 @@ export function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boo
 }
 
 export function Modal({ children, onClose, label }: { children: ReactNode; onClose?: () => void; label: string }) {
+  const box = useRef<HTMLDivElement>(null)
+  const close = useRef(onClose); close.current = onClose
+  const [prev] = useState(() => document.activeElement as HTMLElement | null)
+  // Accessibilité : focus dans la fenêtre, Tab qui reste dedans, Échap pour fermer, focus rendu à la fermeture
   useEffect(() => {
-    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose?.() }
+    const sel = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    const first = () => box.current?.querySelector<HTMLElement>('[autofocus]') ?? box.current?.querySelector<HTMLElement>(sel)
+    setTimeout(() => { if (!box.current?.contains(document.activeElement)) first()?.focus() }, 0)
+    const k = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close.current?.()
+      if (e.key === 'Tab' && box.current) {
+        const els = [...box.current.querySelectorAll<HTMLElement>(sel)].filter(x => x.offsetParent !== null)
+        if (!els.length) return
+        const a = els[0], z = els[els.length - 1]
+        if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus() }
+        else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus() }
+      }
+    }
     window.addEventListener('keydown', k)
-    return () => window.removeEventListener('keydown', k)
-  }, [onClose])
+    return () => { window.removeEventListener('keydown', k); setTimeout(() => { if (prev?.isConnected) prev.focus() }, 0) }
+  }, [])
   return (
     <div className="modal-bg" onMouseDown={e => { if (e.target === e.currentTarget) onClose?.() }}>
-      <div className="modal" role="dialog" aria-modal="true" aria-label={label}>{children}</div>
+      <div className="modal" role="dialog" aria-modal="true" aria-label={label} ref={box}>{children}</div>
     </div>
   )
 }

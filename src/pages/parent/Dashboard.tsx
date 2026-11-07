@@ -226,7 +226,7 @@ export default function Dashboard() {
               const ins = insight(k, today)
               const t = mastersTotals(k)
               return (
-                <div key={k.id} className={`card kid ${openKids.includes(k.id) ? 'open' : ''}`} onClick={() => nav(`/parent/enfant/${k.id}`)} role="link" tabIndex={0} aria-label={`Voir le suivi de ${k.nickname}`} onKeyDown={e => { if (e.key === 'Enter') nav(`/parent/enfant/${k.id}`) }}>
+                <div key={k.id} className={`card kid ${openKids.includes(k.id) ? 'open' : ''}`} onClick={() => nav(`/parent/enfant/${k.id}`)} role="link" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') nav(`/parent/enfant/${k.id}`) }}>
                   <div className="kid-head">
                     <Avatar emoji={k.avatar} frame={k.frame} size={52} />
                     <div className="grow">
@@ -275,7 +275,7 @@ export default function Dashboard() {
             })}
           </div>
 
-          <div className="grid2 p-charts">
+          <div className="grid2 p-charts" tabIndex={0} role="region" aria-label="Graphiques de la famille">
             <section className="card">
               <h3>Temps d’apprentissage de la famille</h3>
               <BarChart labels={family.labels} values={family.minutes} unit="min" />

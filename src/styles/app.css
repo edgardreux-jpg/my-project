@@ -3,7 +3,7 @@
   --gold:#F5C65D;--gold-d:#D9A23A;--gold-s:#FFF3D1;
   --coral:#F28D62;--coral-d:#C9633A;--coral-s:#FFEADF;
   --violet:#7751A8;--violet-d:#573680;--violet-s:#EFE7F8;
-  --red:#D6455D;--red-d:#A82D43;--red-s:#FDE6EA;
+  --red:#B8304A;--red-d:#8A2236;--red-s:#FDE6EA;
   --green:#3F9B52;--green-d:#2A7339;--green-s:#E1F4E5;
   --ink:#24354C;--ink2:#4A5B72;--ink3:#76859A;
   --line:#E7DFCF;--line2:#F0E9DA;
@@ -1162,3 +1162,9 @@ b.late{color:#B42318}
   .pmain{padding:0!important;max-width:none!important}
   .sheet{border:0;max-width:none;height:277mm;grid-template-rows:repeat(4,1fr)}
 }
+/* Accessibilité : contrastes et textes réservés aux lecteurs d'écran */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.role.kid{color:#9E3D1C}
+.guide-next{background:#B54708}
+.p-date{color:var(--ink2)}
+.k-tab-badge{background:#C4232B}

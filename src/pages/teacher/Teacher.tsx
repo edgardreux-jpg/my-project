@@ -43,7 +43,7 @@ export function TeacherShell() {
 function CodeBox({ code, big = false }: { code: string; big?: boolean }) {
   const [copied, setCopied] = useState(false)
   return (
-    <button type="button" className={`classcode ${big ? 'big' : ''}`} aria-label={`Code de classe ${code.split('').join(' ')}, copier`}
+    <button type="button" className={`classcode ${big ? 'big' : ''}`} title="Copier le code de classe"
       onClick={e => { e.preventDefault(); e.stopPropagation(); navigator.clipboard?.writeText(code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1600) }).catch(() => {}) }}>
       <span className="cc-code">{code}</span>
       <span className="cc-act"><Copy size={big ? 18 : 14} /> {copied ? 'Copié' : 'Copier'}</span>
@@ -356,7 +356,7 @@ export function ClassView() {
               </div>
               <button className="btn quiet sm" onClick={() => exportCsv(cls.name, s, tasks)}><FileSpreadsheet size={16} /> Exporter (tableur)</button>
               <label className="small muted" htmlFor="srt">Trier par</label>
-              <select id="srt" className="input" style={{ width: 'auto', minHeight: 40, padding: '6px 10px' }} value={sort} onChange={e => setSort(e.target.value as typeof sort)}>
+              <select id="srt" aria-label="Trier les élèves par" className="input" style={{ width: 'auto', minHeight: 40, padding: '6px 10px' }} value={sort} onChange={e => setSort(e.target.value as typeof sort)}>
                 <option value="name">Prénom</option><option value="acc">Réussite (plus faible d’abord)</option><option value="time">Temps (plus faible d’abord)</option><option value="last">Inactivité</option>
               </select>
             </div>

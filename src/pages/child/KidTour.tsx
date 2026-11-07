@@ -24,6 +24,12 @@ export default function KidTour({ childId }: { childId: string }) {
   }, [childId, pathname])
 
   useEffect(() => {
+    if (step < 0) return
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') { try { localStorage.setItem(key(childId), '1') } catch { /* ignoré */ } setStep(-1) } }
+    window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k)
+  }, [step, childId])
+
+  useEffect(() => {
     document.body.classList.toggle('touring', step >= 0)
     return () => document.body.classList.remove('touring')
   }, [step])
