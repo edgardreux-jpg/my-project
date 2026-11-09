@@ -27,7 +27,7 @@ export const GAMES: GameDef[] = [
   { id: 'division', family: 'calcul', title: 'Memory du partage', blurb: 'Retrouve chaque division et son résultat.', color: '#C77F1F', lowerIsBetter: true, unit: 'coups' },
   { id: 'geographie', family: 'monde', title: 'Continents et pays', blurb: 'Retrouve continents et pays sur la carte.', color: '#3A76CE', unit: 'pts' },
   { id: 'capitales', family: 'monde', title: 'Pays et capitales', blurb: 'Quelle est la capitale de ce pays ?', color: '#B2428A', unit: 'pts' },
-  { id: 'mers', family: 'monde', title: 'Mers et océans', blurb: 'Situe les océans et les mers sur la carte.', color: '#2B7C99', unit: 'pts' },
+  { id: 'mers', family: 'monde', title: 'Mers et océans', blurb: 'Navigue en bateau sur les océans et les mers.', color: '#2B7C99', unit: 'pts' },
 ]
 
 const ORDER: LevelId[] = ['ce1', 'ce2', 'cm1', 'cm2']

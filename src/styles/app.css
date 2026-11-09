@@ -1817,3 +1817,15 @@ html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{bo
 @media (max-width:560px){.gi-d small{display:block;font-size:.72rem;margin-top:2px}}
 .lg-sea-europe::after,.lg-sea-france::after{display:none!important}
 @media (max-width:640px){.gmap-wrap::after{position:sticky;left:0;width:min(100%,calc(100vw - 64px));box-sizing:border-box}}
+.lg-boat{transition:transform .9s cubic-bezier(.45,.05,.3,1)}
+.lg-bob{animation:lgbob 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes lgbob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(3deg)}}
+.lg-wake{fill:#fff;opacity:.55}
+.lg-ring{fill:rgba(255,255,255,.25);stroke:#fff;stroke-width:3;stroke-dasharray:8 7;animation:lgspin 8s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes lgspin{to{transform:rotate(360deg)}}
+.lg-gems{display:inline-flex;align-items:center;gap:6px;color:#2B7C99;background:#DEF0F6;border-radius:99px;padding:3px 12px}
+.lg-opts3{grid-template-columns:1fr}
+.lg-opts3 .lg-opt{min-height:54px}
+.lg-sea-fit::after{display:none!important}
+.lg-sea-fit .gmap{min-width:0!important}
+@media (prefers-reduced-motion:reduce){.lg-bob,.lg-ring{animation:none}.lg-boat{transition:none}}

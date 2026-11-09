@@ -24,7 +24,7 @@ const HOW: Record<string, string> = {
   division: 'Retourne deux cartes : une division et son résultat. Si elles vont ensemble, elles restent visibles. Retiens bien leur place.',
   geographie: 'Lis la question puis touche le bon continent ou le bon pays sur la carte.',
   capitales: 'Le pays est en couleur sur la carte. Choisis sa capitale, ou le pays qui a cette capitale.',
-  mers: 'Pour un océan, touche l’eau au bon endroit. Pour une mer, touche le bon point bleu.',
+  mers: 'Un petit bateau navigue sur les océans et les mers. Dis où il se trouve, ou emmène-le au bon endroit. Chaque bonne réponse du premier coup rapporte un trésor.',
 }
 const TIPS: Record<string, string[]> = {
   multiplication: ['5 × 7 = 7 × 5 : l’ordre ne change rien.', 'Multiplier par 10, c’est ajouter un zéro aux nombres entiers.', 'Pour × 9 : fais × 10, puis enlève le nombre.'],
@@ -33,7 +33,7 @@ const TIPS: Record<string, string[]> = {
   division: ['Diviser, c’est chercher combien de fois le nombre rentre : 24 ÷ 6, combien de fois 6 dans 24 ?', 'Utilise tes tables : 6 × 4 = 24, donc 24 ÷ 6 = 4.', 'Retourne d’abord une carte inconnue.'],
   geographie: ['L’Europe est au-dessus de l’Afrique.', 'La France est à l’ouest de l’Europe, entre l’Espagne et l’Allemagne.', 'La Russie est le plus grand pays du monde.'],
   capitales: ['La capitale est souvent la ville où se trouve le gouvernement.', 'Attention : la capitale des États-Unis est Washington, pas New York.', 'La capitale de l’Australie est Canberra, pas Sydney.'],
-  mers: ['Le plus grand océan est le Pacifique.', 'La Manche sépare la France et le Royaume-Uni.', 'La mer Méditerranée est au sud de la France.'],
+  mers: ['Besoin d’aide ? Touche le bouton Indice.', 'Le plus grand océan est le Pacifique.', 'La Manche sépare la France et le Royaume-Uni.', 'La mer Méditerranée est au sud de la France.'],
 }
 
 function when(iso: string) {
