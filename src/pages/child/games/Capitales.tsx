@@ -4,6 +4,7 @@ import { sfx } from '../../../lib/audio'
 import { shuffle } from '../../../lib/games'
 import { MH, MW, useWorld } from './worldMap'
 import type { GameProps } from './types'
+import type { LevelId } from '../../../types'
 
 /** [nom world-atlas, pays avec article, « de … », capitale, en Europe ?] */
 type C = [string, string, string, string, boolean]
@@ -28,14 +29,27 @@ const WORLD: C[] = [
   ['Tunisia', 'la Tunisie', 'de la Tunisie', 'Tunis', false], ['Senegal', 'le Sénégal', 'du Sénégal', 'Dakar', false], ['Kenya', 'le Kenya', 'du Kenya', 'Nairobi', false],
   ['Australia', 'l’Australie', 'de l’Australie', 'Canberra', false], ['Turkey', 'la Turquie', 'de la Turquie', 'Ankara', false],
 ]
-const POOL = [EU1, [...EU1, ...EU2], [...EU1, ...EU2], [...EU2, ...WORLD], [...EU1, ...EU2, ...WORLD], [...EU2, ...WORLD]]
-const N = 10
+const FR6 = EU1.slice(0, 6)
+/** [réserve de pays, questions dans les deux sens ?] selon la classe et la difficulté */
+export function poolOf(lv: LevelId, d: number): [C[], boolean] {
+  switch (`${lv}${d}`) {
+    case 'ce10': return [FR6, false]
+    case 'ce11': case 'ce20': return [EU1, false]
+    case 'ce12': return [EU1, true]
+    case 'ce21': case 'cm10': return [[...EU1, ...EU2], false]
+    case 'ce22': case 'cm20': return [[...EU1, ...EU2], true]
+    case 'cm11': return [[...EU2, ...WORLD], false]
+    case 'cm12': return [[...EU2, ...WORLD], true]
+    case 'cm21': return [WORLD, false]
+    default: return [[...EU1, ...EU2, ...WORLD], true]
+  }
+}
 
 type Q = { c: C; reverse: boolean; options: string[]; answer: string }
-function build(tier: number): Q[] {
-  const pool = POOL[tier] ?? POOL[5]
-  return shuffle(pool).slice(0, N).map((c, k) => {
-    const reverse = tier >= 2 && k % 2 === 1
+export function build(lv: LevelId, d: number): Q[] {
+  const [pool, both] = poolOf(lv, d)
+  return shuffle(pool).slice(0, 10).map((c, k) => {
+    const reverse = both && k % 2 === 1
     const others = shuffle(pool.filter(x => x !== c)).slice(0, 3)
     const answer = reverse ? cap(c[1]) : c[3]
     return { c, reverse, answer, options: shuffle([answer, ...others.map(o => reverse ? cap(o[1]) : o[3])]) }
@@ -44,8 +58,9 @@ function build(tier: number): Q[] {
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 /** Pays et capitales : la carte montre le pays, on choisit la bonne réponse. */
-export default function Capitales({ tier, sound, onWin, onLose }: GameProps) {
-  const [qs] = useState(() => build(tier))
+export default function Capitales({ level, diff, sound, onWin, onLose }: GameProps) {
+  const [qs] = useState(() => build(level, diff))
+  const N = qs.length
   const [i, setI] = useState(0)
   const [score, setScore] = useState(0)
   const [chosen, setChosen] = useState<string | null>(null)
@@ -70,7 +85,7 @@ export default function Capitales({ tier, sound, onWin, onLose }: GameProps) {
       setChosen(null)
       if (i + 1 < N) { setI(i + 1); return }
       const m = `${s} bonne${s > 1 ? 's' : ''} réponse${s > 1 ? 's' : ''} sur ${N}`
-      if (s >= 6) onWin(s, `Bravo ! ${m}.`); else onLose?.(`${m}. Rejoue pour les retenir !`)
+      if (s >= Math.ceil(N * 0.6)) onWin(s, `Bravo ! ${m}.`); else onLose?.(`${m}. Rejoue pour les retenir !`)
     }, good ? 900 : 1700)
   }
 

@@ -5,6 +5,8 @@ import { sfx } from '../../../lib/audio'
 import { shuffle } from '../../../lib/games'
 import { CONTINENT_OF, CONTINENTS, EUROPE_Q, FR, WORLD_Q } from './geoData'
 import type { GameProps } from './types'
+import { useCentered } from './worldMap'
+import type { LevelId } from '../../../types'
 
 type Q = { kind: 'continent' | 'ocean' | 'country'; answer: string; label: string }
 const Wd = 960, Hd = 500
@@ -14,24 +16,29 @@ const EU_EASY = ['France', 'Spain', 'Italy', 'Germany', 'Belgium', 'Switzerland'
 const contQ = () => shuffle(CONTINENTS.filter(c => c !== 'Antarctique')).map(c => ({ kind: 'continent' as const, answer: c, label: `Touche l’${c}` }))
 const countryQ = (pool: string[], n: number) => shuffle(pool).slice(0, n).map(c => ({ kind: 'country' as const, answer: c, label: `Où se trouve ${FR[c]} ?` }))
 
-function questions(tier: number): Q[] {
-  if (tier === 0) return contQ()
-  if (tier === 1) return shuffle([...contQ(), ...countryQ(BIG, 4)])
-  if (tier === 2) return countryQ(EU_EASY, 8)
-  if (tier === 3) return countryQ(EUROPE_Q, 10)
-  return countryQ(tier === 4 ? WORLD_Q.slice(0, 20) : WORLD_Q, 10)
+export function questions(lv: LevelId, d: number): Q[] {
+  switch (`${lv}${d}`) {
+    case 'ce10': return contQ()
+    case 'ce11': case 'ce20': return shuffle([...contQ(), ...countryQ(['France'], 1)])
+    case 'ce12': case 'ce21': return shuffle([...contQ(), ...countryQ(BIG, 4)])
+    case 'ce22': case 'cm10': return countryQ(EU_EASY, 8)
+    case 'cm11': case 'cm20': return countryQ(EUROPE_Q, 10)
+    case 'cm12': case 'cm21': return countryQ(WORLD_Q.slice(0, 20), 10)
+    default: return countryQ(WORLD_Q, 10)
+  }
 }
+const isEurope = (lv: LevelId, d: number) => ['ce22', 'cm10', 'cm11', 'cm20'].includes(`${lv}${d}`)
 
-export default function Geographie({ tier, sound, onWin, onLose }: GameProps) {
+export default function Geographie({ level, diff, sound, onWin, onLose }: GameProps) {
   const finish = (s: number) => { const m = `${s} bonne${s > 1 ? 's' : ''} réponse${s > 1 ? 's' : ''} du premier coup sur ${qs.length}.`; if (s >= Math.ceil(qs.length / 2)) onWin(s, `Bravo ! ${m}`); else onLose?.(`${m} Rejoue pour mieux retenir la carte !`) }
   const [world, setWorld] = useState<any[] | null>(null)
-  const [qs] = useState(() => questions(tier))
+  const [qs] = useState(() => questions(level, diff))
   const [i, setI] = useState(0)
   const [score, setScore] = useState(0)
   const [miss, setMiss] = useState(false)
   const [flash, setFlash] = useState<{ name: string; ok: boolean } | null>(null)
   const [reveal, setReveal] = useState(false)
-  const europe = tier === 2 || tier === 3
+  const europe = isEurope(level, diff)
 
   useEffect(() => { import('world-atlas/countries-110m.json').then(t => setWorld((feature(t.default as any, (t.default as any).objects.countries) as any).features)) }, [])
 
@@ -41,6 +48,7 @@ export default function Geographie({ tier, sound, onWin, onLose }: GameProps) {
     return geoNaturalEarth1().fitExtent([[6, 6], [Wd - 6, Hd - 6]], { type: 'Sphere' } as any)
   }, [world, europe])
   const path = proj ? geoPath(proj) : null
+  const mapRef = useCentered(!!proj, europe ? "eu" : "w")
   const q = qs[i]
 
   const isRight = (name: string | null, ocean: string | null) =>
@@ -71,7 +79,7 @@ export default function Geographie({ tier, sound, onWin, onLose }: GameProps) {
       <div className="g-stats"><span>Question {Math.min(i + 1, qs.length)}/{qs.length}</span><span>Score : {score}</span></div>
       <p className="gmap-q" role="status">{q?.label}{miss && !reveal ? <span className="tiny"> · essaie encore</span> : reveal ? <span className="tiny"> · la voici</span> : null}</p>
       {!path ? <p className="muted center">Chargement de la carte…</p> : (
-        <div className="gmap-wrap" ref={el => { if (el && !el.dataset.c) { el.dataset.c = '1'; el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2 } }}>
+        <div className="gmap-wrap" ref={mapRef}>
         <svg className={`gmap ${europe ? '' : 'gmap-world'}`} viewBox={`0 0 ${Wd} ${Hd}`} role="img" aria-label="Carte du monde">
           <rect width={Wd} height={Hd} className="gmap-sea" onClick={onSea} />
           {!europe && <path d={path({ type: 'Sphere' } as any) ?? ''} className="gmap-sphere" onClick={onSea} />}

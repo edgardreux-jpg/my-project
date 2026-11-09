@@ -4,44 +4,49 @@ import { sfx } from '../../../lib/audio'
 import { shuffle } from '../../../lib/games'
 import { fr, ri, TimeBar, useCountdown } from './kit'
 import type { GameProps } from './types'
+import type { LevelId } from '../../../types'
 
 const N = 12, LIVES = 3
-const SEC = [15, 14, 13, 13, 14, 16]
+const SEC: Record<LevelId, number> = { ce1: 16, ce2: 15, cm1: 15, cm2: 16 }
 
-function make(tier: number): [number, number] {
-  switch (tier) {
-    case 0: { const a = ri(6, 20); return [a, ri(1, Math.min(9, a - 1))] }
-    case 1: { const a = ri(21, 99); return [a, ri(3, 9)] }
-    case 2: { const a = ri(30, 99); return [a, ri(11, a - 5)] }
-    case 3: { const a = ri(120, 999); return [a, ri(15, 99)] }
-    case 4: { const a = ri(1200, 9999); return [a, ri(150, 999)] }
-    default: { const a = ri(50, 400) / 10; return [a, ri(11, Math.floor(a * 10) - 5) / 10] }
+export function make(lv: LevelId, d: number): [number, number] {
+  switch (`${lv}${d}`) {
+    case 'ce10': { const a = ri(6, 20); return [a, ri(1, Math.min(9, a - 1))] }
+    case 'ce11': { const a = ri(21, 99); return [a, ri(2, 9)] }
+    case 'ce12': case 'ce20': { const a = ri(30, 99); return [a, ri(11, a - 5)] }
+    case 'ce21': { const a = ri(120, 999); return [a, ri(15, 99)] }
+    case 'ce22': case 'cm10': { const a = ri(300, 999); return [a, ri(101, a - 50)] }
+    case 'cm11': case 'cm20': { const a = ri(1200, 9999); return [a, ri(150, 999)] }
+    case 'cm12': { const a = ri(12000, 99999); return [a, ri(1200, 9999)] }
+    case 'cm21': { const a = ri(50, 400) / 10; return [a, ri(11, Math.floor(a * 10) - 5) / 10] }
+    default: { const a = ri(500, 9999) / 100; return [a, ri(101, Math.floor(a * 100) - 50) / 100] }
   }
 }
-function options(a: number, b: number, tier: number): number[] {
-  const r = Number((a - b).toFixed(1)), u = tier >= 5 ? 0.1 : 1
-  const cand = [r + u, r - u, r + 10 * u, r - 10 * u, Number((a + b).toFixed(1)), r + 2 * u].map(x => Number(x.toFixed(1))).filter(x => x >= 0 && x !== r)
+export function options(a: number, b: number, u: number): number[] {
+  const r = Number((a - b).toFixed(2))
+  const cand = [r + u, r - u, r + 10 * u, r - 10 * u, a + b, r + 2 * u].map(x => Number(x.toFixed(2))).filter(x => x >= 0 && x !== r)
   return shuffle([r, ...shuffle([...new Set(cand)]).slice(0, 3)])
 }
 
 /** Fusée des soustractions : 12 calculs, 3 vies, un peu de temps pour chacun. */
-export default function Soustraction({ tier, sound, onWin, onLose }: GameProps) {
-  const sec = SEC[tier] ?? 14
+export default function Soustraction({ level, diff, sound, onWin, onLose }: GameProps) {
+  const sec = SEC[level]
+  const u = level === 'cm2' && diff === 2 ? 0.01 : level === 'cm2' && diff === 1 ? 0.1 : 1
   const [i, setI] = useState(0)
-  const [q, setQ] = useState(() => make(tier))
-  const [opts, setOpts] = useState(() => options(q[0], q[1], tier))
+  const [q, setQ] = useState(() => make(level, diff))
+  const [opts, setOpts] = useState(() => options(q[0], q[1], u))
   const [lives, setLives] = useState(LIVES)
   const [ok, setOk] = useState(0)
   const [chosen, setChosen] = useState<number | null>(null)
   const [round, setRound] = useState(0)
-  const r = Number((q[0] - q[1]).toFixed(1))
+  const r = Number((q[0] - q[1]).toFixed(2))
 
   const advance = (l: number, good: number) => {
     setTimeout(() => {
       setChosen(null)
       if (l <= 0) { onLose?.(`Plus de vies ! Tu as réussi ${good} soustraction${good > 1 ? 's' : ''} sur ${N}. Rejoue, la fusée t’attend.`); return }
       if (i + 1 >= N) { onWin(good, `Décollage réussi ! ${good} bonne${good > 1 ? 's' : ''} réponse${good > 1 ? 's' : ''} sur ${N}.`); return }
-      const n = make(tier); setQ(n); setOpts(options(n[0], n[1], tier)); setI(i + 1); setRound(x => x + 1)
+      const n = make(level, diff); setQ(n); setOpts(options(n[0], n[1], u)); setI(i + 1); setRound(x => x + 1)
     }, l < lives ? 1400 : 800)
   }
   const choose = (v: number | null) => {

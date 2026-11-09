@@ -3,19 +3,23 @@ import { sfx } from '../../../lib/audio'
 import { pick, shuffle } from '../../../lib/games'
 import { fr, ri } from './kit'
 import type { GameProps } from './types'
+import type { LevelId } from '../../../types'
 
 const ROUNDS = 3, PAIRS = 6
 
-/** Une cible et 6 paires de nombres dont la somme vaut la cible. */
-function round(tier: number): { target: number; nums: number[] } {
+/** Une cible et 6 paires de nombres dont la somme vaut la cible, selon la classe. */
+export function round(lv: LevelId, d: number): { target: number; nums: number[] } {
   let target = 10, mk = () => ri(1, 9)
-  switch (tier) {
-    case 0: target = 10; mk = () => ri(1, 9); break
-    case 1: target = ri(12, 20); mk = () => ri(2, target - 2); break
-    case 2: target = pick([50, 100]); mk = () => target === 100 ? ri(1, 9) * 10 : ri(11, 39); break
-    case 3: target = 100; mk = () => ri(11, 89); break
-    case 4: target = pick([500, 1000]); mk = () => ri(11, target / 10 - 1) * 10 - pick([0, 0, 5]); break
-    default: target = pick([1, 10]); mk = () => target === 1 ? ri(1, 9) / 10 : ri(11, 89) / 10
+  switch (`${lv}${d}`) {
+    case 'ce10': target = 10; mk = () => ri(1, 9); break
+    case 'ce11': case 'ce20': target = ri(12, 20); mk = () => ri(2, target - 2); break
+    case 'ce12': target = 100; mk = () => ri(1, 9) * 10; break
+    case 'ce21': target = pick([50, 100]); mk = () => target === 50 ? ri(1, 9) * 5 : ri(1, 9) * 10; break
+    case 'ce22': case 'cm10': target = 100; mk = () => ri(11, 89); break
+    case 'cm11': target = 1000; mk = () => ri(1, 19) * 50; break
+    case 'cm12': case 'cm20': target = 1000; mk = () => ri(11, 89) * 10 + (lv === 'cm2' ? ri(0, 9) : 0); break
+    case 'cm21': target = 1; mk = () => ri(1, 9) / 10; break
+    default: target = 10; mk = () => ri(11, 89) / 10
   }
   const nums: number[] = []
   for (let i = 0; i < PAIRS; i++) { const a = Number(mk().toFixed(2)); nums.push(a, Number((target - a).toFixed(2))) }
@@ -23,9 +27,9 @@ function round(tier: number): { target: number; nums: number[] } {
 }
 
 /** Bulles d'addition : relie deux bulles dont la somme fait la cible, le plus vite possible. */
-export default function Addition({ tier, sound, onWin }: GameProps) {
+export default function Addition({ level, diff, sound, onWin }: GameProps) {
   const [r, setR] = useState(0)
-  const [cur, setCur] = useState(() => round(tier))
+  const [cur, setCur] = useState(() => round(level, diff))
   const [gone, setGone] = useState<Set<number>>(new Set())
   const [sel, setSel] = useState<number | null>(null)
   const [bad, setBad] = useState<number[]>([])
@@ -46,7 +50,7 @@ export default function Addition({ tier, sound, onWin }: GameProps) {
         if (r + 1 >= ROUNDS) {
           const s = Math.round((Date.now() - t0.current) / 1000)
           setTimeout(() => onWin(s, `Bravo ! ${ROUNDS * PAIRS} additions trouvées en ${s} secondes${miss ? `, avec ${miss} erreur${miss > 1 ? 's' : ''}` : ' sans aucune erreur'}.`), 400)
-        } else setTimeout(() => { setR(r + 1); setCur(round(tier)); setGone(new Set()) }, 500)
+        } else setTimeout(() => { setR(r + 1); setCur(round(level, diff)); setGone(new Set()) }, 500)
       }
     } else {
       sfx('oops', sound); setMiss(miss + 1); setBad([sel, i])

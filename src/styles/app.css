@@ -1802,3 +1802,18 @@ html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{bo
 .lg-mini{overflow:hidden;border:2px solid #DCE7F2;background:#CFE6F7}
 .lg-mini svg.lg-mapfit{display:block;width:100%;height:auto;min-width:0}
 .lg-card:not(.up) span{font-size:1.9rem;opacity:.9}
+.lg-lbl{font-weight:800;fill:#5B4A2E;paint-order:stroke;stroke:#F4EBD8;stroke-width:4px;stroke-linejoin:round}
+.lg-lbl.lg-lbl-world{font-size:22px}
+.lg-lbl.lg-lbl-europe{font-size:20px}
+.lg-lbl.lg-lbl-france{font-size:26px}
+.lg-lbl.sea{fill:#1D4F86;stroke:#BFDDF2;font-style:italic;font-size:20px}
+.gmap-c.lg-fr{fill:#EBD9B3}
+.lg-dot.done{fill:#9CC5E3}
+.lg-hintrow{display:flex;justify-content:center;margin-top:10px}
+.lg-hint{display:flex;gap:8px;align-items:flex-start;background:#FFF6DB;border:2px solid #F5D77A;color:#6B4E00;border-radius:14px;padding:10px 14px;font-weight:700;margin:0}
+.lg-hint svg{flex:none;margin-top:2px}
+.lg-sea-europe .gmap,.lg-sea-france .gmap{min-width:0}
+.gi-lv{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:99px;background:var(--fs,#E3F4EE);color:var(--fc,#17766E);font-size:.8rem;font-weight:800;vertical-align:middle}
+@media (max-width:560px){.gi-d small{display:block;font-size:.72rem;margin-top:2px}}
+.lg-sea-europe::after,.lg-sea-france::after{display:none!important}
+@media (max-width:640px){.gmap-wrap::after{position:sticky;left:0;width:min(100%,calc(100vw - 64px));box-sizing:border-box}}

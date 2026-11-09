@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { geoMercator, geoNaturalEarth1, geoPath, type GeoProjection } from 'd3-geo'
 import { feature } from 'topojson-client'
 
@@ -26,3 +26,9 @@ export function useProjection(world: any[] | null, view: View) {
 }
 /** Centre la carte horizontalement une fois (utile sur téléphone, où la carte défile). */
 export const centerOnce = (el: HTMLDivElement | null) => { if (el && !el.dataset.c) { el.dataset.c = '1'; el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2 } }
+/** Centre horizontalement une carte qui défile, une fois la carte dessinée. */
+export function useCentered(ready: boolean, key: string) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => { const el = ref.current; if (ready && el) requestAnimationFrame(() => { el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2 }) }, [ready, key])
+  return ref
+}

@@ -3,26 +3,31 @@ import { sfx } from '../../../lib/audio'
 import { pick, shuffle } from '../../../lib/games'
 import { fr, ri } from './kit'
 import type { GameProps } from './types'
+import type { LevelId } from '../../../types'
 
 type Card = { id: number; pair: number; text: string; kind: 'calc' | 'res' }
 
-/** Une division (ou un partage) et son résultat ; résultats tous différents dans une partie. */
-function make(tier: number): [string, number] {
-  switch (tier) {
-    case 0: { const q = ri(1, 10); return [`moitié de ${q * 2}`, q] }
-    case 1: { const d = pick([2, 5, 10]), q = ri(1, 10); return [`${q * d} ÷ ${d}`, q] }
-    case 2: { const d = ri(2, 5), q = ri(2, 10); return [`${q * d} ÷ ${d}`, q] }
-    case 3: { const d = ri(3, 9), q = ri(2, 10); return [`${q * d} ÷ ${d}`, q] }
-    case 4: { const d = ri(2, 6), q = ri(11, 30); return [`${q * d} ÷ ${d}`, q] }
-    default: { if (Math.random() < 0.3) { const q = ri(2, 99); return [`${fr(q * 100)} ÷ 100`, q] } const d = ri(3, 9), q = ri(12, 99); return [`${fr(q * d)} ÷ ${d}`, q] }
+/** Une division (ou un partage) et son résultat, selon la classe ; résultats tous différents dans une partie. */
+export function make(lv: LevelId, d: number): [string, number] {
+  switch (`${lv}${d}`) {
+    case 'ce10': { const q = ri(1, 10); return [`moitié de ${q * 2}`, q] }
+    case 'ce11': { const q = ri(5, 20); return [`moitié de ${q * 2}`, q] }
+    case 'ce12': { const p = ri(2, 5), q = ri(2, 9); return [`${q * p} partagé en ${p}`, q] }
+    case 'ce20': { const p = pick([2, 5, 10]), q = ri(1, 10); return [`${q * p} ÷ ${p}`, q] }
+    case 'ce21': { const p = ri(2, 5), q = ri(2, 10); return [`${q * p} ÷ ${p}`, q] }
+    case 'ce22': case 'cm10': { const p = ri(lv === 'cm1' ? 3 : 2, 9), q = ri(2, 10); return [`${q * p} ÷ ${p}`, q] }
+    case 'cm11': { const q = ri(2, 99), p = pick([10, 100]); return [`${fr(q * p)} ÷ ${p}`, q] }
+    case 'cm12': case 'cm20': { const p = ri(2, 6), q = ri(11, 30); return [`${q * p} ÷ ${p}`, q] }
+    case 'cm21': { const p = ri(3, 9), q = ri(12, 99); return [`${fr(q * p)} ÷ ${p}`, q] }
+    default: { if (Math.random() < 0.5) { const q = ri(11, 99) / 10; return [`${Math.round(q * 10)} ÷ 10`, q] } const q = ri(101, 999) / 100; return [`${Math.round(q * 100)} ÷ 100`, q] }
   }
 }
-function deck(tier: number): Card[] {
-  const n = tier >= 3 ? 8 : 6
+export function deck(lv: LevelId, d: number): Card[] {
+  const n = lv === 'cm1' || lv === 'cm2' ? 8 : 6
   const used = new Set<number>(), out: Card[] = []
   let guard = 0
   while (used.size < n && guard++ < 500) {
-    const [calc, q] = make(tier)
+    const [calc, q] = make(lv, d)
     if (used.has(q)) continue
     used.add(q)
     out.push({ id: out.length, pair: q, text: calc, kind: 'calc' }, { id: out.length + 1, pair: q, text: fr(q), kind: 'res' })
@@ -31,8 +36,8 @@ function deck(tier: number): Card[] {
 }
 
 /** Memory du partage : retrouve chaque division et son résultat. */
-export default function Division({ tier, sound, onWin }: GameProps) {
-  const [cards] = useState(() => deck(tier))
+export default function Division({ level, diff, sound, onWin }: GameProps) {
+  const [cards] = useState(() => deck(level, diff))
   const [open, setOpen] = useState<number[]>([])
   const [found, setFound] = useState<Set<number>>(new Set())
   const [tries, setTries] = useState(0)

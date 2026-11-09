@@ -88,7 +88,8 @@ export const DIFFS = [
 ] as const
 /** Palier de difficulté de 0 à 5 : le niveau scolaire décale la difficulté choisie. */
 export const tierOf = (lv: LevelId, d: Diff) => ORDER.indexOf(lv) + d
-export const bestKey = (id: string, d: Diff) => `${id}:${d}`
+/** Records par jeu, par classe et par difficulté (le contenu dépend de la classe). */
+export const bestKey = (id: string, d: Diff, lv: LevelId) => `${id}:${lv}:${d}`
 
 export function setDiff(c: Child, id: string, d: Diff) {
   const g = gamesToday(c)
@@ -102,7 +103,7 @@ export function recordWin(c: Child, id: string, score: number | undefined, d: Di
   const wins = { ...(g.wins ?? {}), [id]: (g.wins?.[id] ?? 0) + 1 }
   const best = { ...(g.best ?? {}) }
   let rec = false
-  const k = bestKey(id, d)
+  const k = bestKey(id, d, c.grade)
   if (score != null && def?.unit) {
     const old = best[k]
     if (old == null || (def.lowerIsBetter ? score < old : score > old)) { best[k] = score; rec = old != null }

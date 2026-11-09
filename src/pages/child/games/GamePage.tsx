@@ -8,6 +8,7 @@ import { addPlayTime, logGame, bestKey, DIFFS, FAMILIES, fmtScore, GAMES, gameAc
 import { sfx } from '../../../lib/audio'
 import { Confetti, Modal } from '../../../components/common'
 import { GameIcon } from './GameIcon'
+import { ABOUT } from './levels'
 import type { GameProps } from './types'
 
 const LOAD: Record<string, () => Promise<{ default: ComponentType<GameProps> }>> = {
@@ -125,7 +126,7 @@ function GameScreen() {
   const acc = gameAccess(child)
   const G = LAZY[def.id]
   const F = FAMILIES[def.family]
-  const best = (d: Diff) => child.games?.best?.[bestKey(def.id, d)]
+  const best = (d: Diff) => child.games?.best?.[bestKey(def.id, d, child.grade)]
   const tips = TIPS[def.id] ?? []
   const tipsList = [HOW[def.id].split('. ')[0] + '.', ...tips]
 
@@ -158,7 +159,7 @@ function GameScreen() {
             </div>
           ) : (
             <>
-              <h3 className="gi-h">Choisis ta difficulté</h3>
+              <h3 className="gi-h">Choisis ta difficulté <span className="gi-lv">Programme de {child.grade.toUpperCase()}</span></h3>
               <div className="gi-diffs" role="radiogroup" aria-label="Difficulté">
                 {DIFFS.map((d, i) => {
                   const b = best(i as Diff)
@@ -166,7 +167,7 @@ function GameScreen() {
                     <button key={d.name} role="radio" aria-checked={diff === i} className={`gi-d d${i} ${diff === i ? 'on' : ''}`} onClick={() => { setD(i as Diff); sfx('tap', child.sound) }}>
                       <span className="gi-stars" aria-hidden="true">{[0, 1, 2].map(k => <i key={k} className={k <= i ? 'f' : ''} />)}</span>
                       <b>{d.name}</b>
-                      <small>{d.hint}</small>
+                      <small>{ABOUT[def.id]?.[child.grade]?.[i] ?? d.hint}</small>
                       {b != null && def.unit && <em><Trophy size={12} /> {fmtScore(def.unit, b)}</em>}
                     </button>
                   )
