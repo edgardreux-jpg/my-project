@@ -10,6 +10,6 @@ export interface GameProps {
   name: string
   /** Partie gagnée : score facultatif (coups, secondes…) et message de Foxy. */
   onWin: (score?: number, msg?: string) => void
-  /** Partie perdue (Puissance 4, Mot mystère) : on encourage. */
+  /** Partie perdue (objectif non atteint) : on encourage. */
   onLose?: (msg: string) => void
 }

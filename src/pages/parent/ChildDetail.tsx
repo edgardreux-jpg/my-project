@@ -211,7 +211,7 @@ function GamesCard({ child, today }: { child: Child; today: string }) {
   const week = log.filter(e => diffDays(today, dayKey(new Date(e.at))) < 7)
   const ms = week.reduce((a, e) => a + e.ms, 0)
   const count: Record<string, number> = {}
-  week.forEach(e => { count[e.g] = (count[e.g] ?? 0) + 1 })
+  week.forEach(e => { if (GAMES.some(x => x.id === e.g)) count[e.g] = (count[e.g] ?? 0) + 1 })
   const top = Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 3)
   const mode = child.games?.mode ?? 'tickets'
   return (
@@ -222,7 +222,7 @@ function GamesCard({ child, today }: { child: Child; today: string }) {
         <span><b>{week.filter(e => e.win).length}</b><small>victoires</small></span>
         <span><b>{fmtMin(ms)}</b><small>de jeu</small></span>
       </div>
-      {top.length > 0 && <p className="small mt8">Jeux préférés : {top.map(([g, n]) => `${GAMES.find(x => x.id === g)?.title ?? g} (${n})`).join(', ')}.</p>}
+      {top.length > 0 && <p className="small mt8">Jeux préférés : {top.map(([g, n]) => `${GAMES.find(x => x.id === g)!.title} (${n})`).join(', ')}.</p>}
     </section>
   )
 }

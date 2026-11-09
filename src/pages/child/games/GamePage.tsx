@@ -11,40 +11,28 @@ import { GameIcon } from './GameIcon'
 import type { GameProps } from './types'
 
 const LOAD: Record<string, () => Promise<{ default: ComponentType<GameProps> }>> = {
-  sudoku: () => import('./Sudoku'), puissance4: () => import('./Puissance4'), taquin: () => import('./Taquin'), hanoi: () => import('./Hanoi'),
-  compte: () => import('./Compte'), memory: () => import('./Memory'), labyrinthe: () => import('./Labyrinthe'),
-  motmystere: () => import('./MotMystere'), motsmeles: () => import('./MotsMeles'),
-  bataille: () => import('./Bataille'), tangram: () => import('./Tangram'), carte: () => import('./Carte'),
+  multiplication: () => import('./Multiplication'), addition: () => import('./Addition'), soustraction: () => import('./Soustraction'), division: () => import('./Division'),
+  geographie: () => import('./Geographie'), capitales: () => import('./Capitales'), mers: () => import('./Mers'),
 }
 const LAZY: Record<string, ComponentType<GameProps>> = Object.fromEntries(Object.entries(LOAD).map(([k, f]) => [k, lazy(f)]))
 
 const HOW: Record<string, string> = {
-  sudoku: 'Remplis la grille : chaque symbole doit apparaître une seule fois dans chaque ligne, chaque colonne et chaque bloc. Touche une case, puis un symbole.',
-  puissance4: 'Chacun son tour, fais tomber un jeton dans une colonne. Le premier qui aligne 4 jetons (en ligne, en colonne ou en diagonale) gagne.',
-  taquin: 'Fais glisser les tuiles dans la case vide pour les remettre dans l’ordre, de 1 jusqu’au dernier nombre.',
-  hanoi: 'Déplace toute la tour vers l’arrivée. Un seul disque à la fois, et jamais un grand disque sur un plus petit.',
-  compte: 'Choisis un nombre, une opération, puis un deuxième nombre : le résultat remplace les deux. Atteins la cible exactement !',
-  memory: 'Retourne deux cartes : si le calcul et son résultat vont ensemble, elles restent visibles. Retiens bien leur place.',
-  labyrinthe: 'Pars du départ et avance case par case, seulement sur les calculs justes, jusqu’à la sortie.',
-  motmystere: 'Propose un mot. Vert : la lettre est bien placée. Jaune : elle est dans le mot mais ailleurs. Gris : elle n’y est pas.',
-  motsmeles: 'Retrouve tous les mots de la liste cachés dans la grille. Glisse le doigt dessus ou touche la première puis la dernière lettre.',
-  bataille: 'Des bateaux sont cachés. Vise une case avec sa lettre et son chiffre : touché, coulé ou dans l’eau ?',
-  tangram: 'Place les 7 pièces pour remplir exactement la silhouette. Touche une pièce pour la faire tourner.',
-  carte: 'Lis la question puis touche le bon endroit sur la carte.',
+  multiplication: 'Tu as 1 minute pour trouver le plus de résultats possible. Tape le résultat sur le pavé : s’il est juste, la question suivante arrive toute seule.',
+  addition: 'Touche une bulle, puis une deuxième : si leur somme fait la cible, elles éclatent. Vide les 3 manches le plus vite possible.',
+  soustraction: 'Choisis le bon résultat avant la fin du temps. 12 calculs, 3 vies : chaque bonne réponse fait avancer la fusée.',
+  division: 'Retourne deux cartes : une division et son résultat. Si elles vont ensemble, elles restent visibles. Retiens bien leur place.',
+  geographie: 'Lis la question puis touche le bon continent ou le bon pays sur la carte.',
+  capitales: 'Le pays est en couleur sur la carte. Choisis sa capitale, ou le pays qui a cette capitale.',
+  mers: 'Pour un océan, touche l’eau au bon endroit. Pour une mer, touche le bon point bleu.',
 }
 const TIPS: Record<string, string[]> = {
-  sudoku: ['Commence par les lignes presque pleines.', 'Regarde chaque bloc : quel symbole manque ?', 'Une case rouge ? Ce symbole est déjà dans la ligne, la colonne ou le bloc.'],
-  puissance4: ['Le milieu du plateau est la meilleure place.', 'Avant de jouer, regarde si Foxy peut aligner 4 jetons.', 'Prépare deux menaces à la fois !'],
-  taquin: ['Range d’abord la première ligne, puis la suivante.', 'Fais tourner les tuiles en cercle pour les amener à leur place.'],
-  hanoi: ['Avec un nombre impair de disques, le petit disque part d’abord vers l’arrivée.', 'Le petit disque bouge un coup sur deux.'],
-  compte: ['Cherche un nombre proche de la cible.', 'Une multiplication fait vite grandir les nombres.', 'Tu peux annuler un calcul à tout moment.'],
-  memory: ['Retiens bien les cartes déjà vues.', 'Retourne d’abord une carte inconnue.'],
-  labyrinthe: ['Vérifie chaque calcul avant d’avancer.', 'Les cases qui brillent sont celles où tu peux aller.'],
-  motmystere: ['Commence par un mot avec beaucoup de voyelles.', 'Une lettre grise ne sert plus : évite-la.'],
-  motsmeles: ['Cherche d’abord les lettres rares : K, Z, X, W.', 'Les mots peuvent être à l’envers en mode difficile !'],
-  bataille: ['Les bateaux ne se touchent jamais.', 'Après un « touché », vise les cases juste à côté.'],
-  tangram: ['Place d’abord les deux grands triangles.', 'Touche une pièce pour la faire tourner d’un quart de tour.'],
-  carte: ['L’Europe est au-dessus de l’Afrique.', 'Le plus grand océan est le Pacifique.'],
+  multiplication: ['5 × 7 = 7 × 5 : l’ordre ne change rien.', 'Multiplier par 10, c’est ajouter un zéro aux nombres entiers.', 'Pour × 9 : fais × 10, puis enlève le nombre.'],
+  addition: ['Pour faire 10 : 1 + 9, 2 + 8, 3 + 7, 4 + 6, 5 + 5.', 'Pour faire 100, pense aux dizaines : 30 + 70.', 'Commence par la plus grosse bulle et cherche son complément.'],
+  soustraction: ['Vérifie ta réponse : résultat + nombre enlevé = premier nombre.', 'Pour enlever 9, enlève 10 puis ajoute 1.', 'Le résultat est toujours plus petit que le premier nombre.'],
+  division: ['Diviser, c’est chercher combien de fois le nombre rentre : 24 ÷ 6, combien de fois 6 dans 24 ?', 'Utilise tes tables : 6 × 4 = 24, donc 24 ÷ 6 = 4.', 'Retourne d’abord une carte inconnue.'],
+  geographie: ['L’Europe est au-dessus de l’Afrique.', 'La France est à l’ouest de l’Europe, entre l’Espagne et l’Allemagne.', 'La Russie est le plus grand pays du monde.'],
+  capitales: ['La capitale est souvent la ville où se trouve le gouvernement.', 'Attention : la capitale des États-Unis est Washington, pas New York.', 'La capitale de l’Australie est Canberra, pas Sydney.'],
+  mers: ['Le plus grand océan est le Pacifique.', 'La Manche sépare la France et le Royaume-Uni.', 'La mer Méditerranée est au sud de la France.'],
 }
 
 function when(iso: string) {

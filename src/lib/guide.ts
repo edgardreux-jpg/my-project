@@ -85,7 +85,7 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Ta toile', 'Plus la toile est grande, plus la compétence est acquise. Les bilans suivants s’ouvrent quand tu avances dans tes leçons.'),
   ]
   if (path === '/enfant/jeux') return [
-    P('La ludothèque', 'Des jeux pour réfléchir, calculer, jouer avec les mots et se repérer. Choisis-en un !'),
+    P('La ludothèque', 'Des jeux pour t’entraîner au calcul et découvrir le monde : tables, additions, pays, capitales, mers et océans. Choisis-en un !'),
     P('Les parties', 'Tu as quelques parties chaque jour, et chaque leçon terminée t’en fait gagner une de plus.'),
     P('Les records', 'Quand tu gagnes, ton meilleur score s’affiche sur la carte du jeu. Essaie de le battre !'),
   ]

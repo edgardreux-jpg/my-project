@@ -1,40 +1,33 @@
 import type { Child, GameLog, GamesState, LevelId } from '../types'
 import { dayKey } from './dates'
 
-export type Family = 'logique' | 'nombres' | 'mots' | 'espace'
+export type Family = 'calcul' | 'monde'
 export interface GameDef {
   id: string
   family: Family
   title: string
   blurb: string
   color: string
-  /** Niveau minimum (la carte du monde arrive en CE2). */
+  /** Niveau minimum */
   from?: LevelId
-  /** Meilleur score : plus petit = meilleur (coups, essais) */
+  /** Meilleur score : plus petit = meilleur (coups, secondes) */
   lowerIsBetter?: boolean
   unit?: string
 }
 
 export const FAMILIES: Record<Family, { name: string; color: string; soft: string; blurb: string }> = {
-  logique: { name: 'Logique', color: '#6D4FD8', soft: '#EEEAFD', blurb: 'Réfléchir, anticiper' },
-  nombres: { name: 'Nombres', color: '#17766E', soft: '#E3F4EE', blurb: 'Calculer en s’amusant' },
-  mots: { name: 'Mots', color: '#D2582F', soft: '#FFEADF', blurb: 'Lire, épeler, chercher' },
-  espace: { name: 'Espace et monde', color: '#2B7C99', soft: '#DEF0F6', blurb: 'Se repérer, construire' },
+  calcul: { name: 'Calcul', color: '#17766E', soft: '#E3F4EE', blurb: 'Les quatre opérations, en s’amusant' },
+  monde: { name: 'Le monde', color: '#2B7C99', soft: '#DEF0F6', blurb: 'Continents, pays, capitales, mers et océans' },
 }
 
 export const GAMES: GameDef[] = [
-  { id: 'sudoku', family: 'logique', title: 'Sudoku', blurb: 'Chaque symbole une seule fois par ligne, colonne et bloc.', color: '#6D4FD8', lowerIsBetter: true, unit: 's' },
-  { id: 'puissance4', family: 'logique', title: 'Puissance 4', blurb: 'Aligne 4 jetons avant Foxy.', color: '#C4232B' },
-  { id: 'taquin', family: 'logique', title: 'Taquin', blurb: 'Remets les tuiles dans l’ordre.', color: '#8A5CF6', lowerIsBetter: true, unit: 'coups' },
-  { id: 'hanoi', family: 'logique', title: 'Tours de Hanoï', blurb: 'Déplace la tour, jamais un grand disque sur un petit.', color: '#B2428A', lowerIsBetter: true, unit: 'coups' },
-  { id: 'compte', family: 'nombres', title: 'Le compte est bon', blurb: 'Combine les nombres pour atteindre la cible.', color: '#17766E' },
-  { id: 'memory', family: 'nombres', title: 'Memory des calculs', blurb: 'Retrouve chaque calcul et son résultat.', color: '#2C8FA6', lowerIsBetter: true, unit: 'coups' },
-  { id: 'labyrinthe', family: 'nombres', title: 'Labyrinthe de calcul', blurb: 'Avance seulement sur les calculs justes.', color: '#4A8F3A', lowerIsBetter: true, unit: 'erreurs' },
-  { id: 'motmystere', family: 'mots', title: 'Mot mystère', blurb: 'Trouve le mot caché en 6 essais.', color: '#D2582F', lowerIsBetter: true, unit: 'essais' },
-  { id: 'motsmeles', family: 'mots', title: 'Mots mêlés', blurb: 'Retrouve les mots cachés dans la grille.', color: '#C77F1F', lowerIsBetter: true, unit: 's' },
-  { id: 'bataille', family: 'espace', title: 'Bataille navale', blurb: 'Vise juste avec les coordonnées.', color: '#2B7C99', lowerIsBetter: true, unit: 'tirs' },
-  { id: 'tangram', family: 'espace', title: 'Tangram', blurb: 'Reproduis la silhouette avec 7 pièces.', color: '#D9A23A' },
-  { id: 'carte', family: 'espace', title: 'Carte du monde', blurb: 'Retrouve continents, océans et pays.', color: '#3A76CE', from: 'ce2', unit: 'pts' },
+  { id: 'multiplication', family: 'calcul', title: 'Course aux tables', blurb: 'Le plus de multiplications justes en 1 minute.', color: '#6D4FD8', unit: 'justes' },
+  { id: 'addition', family: 'calcul', title: 'Bulles d’addition', blurb: 'Relie deux bulles qui font la cible.', color: '#17766E', lowerIsBetter: true, unit: 's' },
+  { id: 'soustraction', family: 'calcul', title: 'Fusée des soustractions', blurb: '12 calculs et 3 vies pour faire décoller la fusée.', color: '#D2582F', unit: 'justes' },
+  { id: 'division', family: 'calcul', title: 'Memory du partage', blurb: 'Retrouve chaque division et son résultat.', color: '#C77F1F', lowerIsBetter: true, unit: 'coups' },
+  { id: 'geographie', family: 'monde', title: 'Continents et pays', blurb: 'Retrouve continents et pays sur la carte.', color: '#3A76CE', unit: 'pts' },
+  { id: 'capitales', family: 'monde', title: 'Pays et capitales', blurb: 'Quelle est la capitale de ce pays ?', color: '#B2428A', unit: 'pts' },
+  { id: 'mers', family: 'monde', title: 'Mers et océans', blurb: 'Situe les océans et les mers sur la carte.', color: '#2B7C99', unit: 'pts' },
 ]
 
 const ORDER: LevelId[] = ['ce1', 'ce2', 'cm1', 'cm2']
