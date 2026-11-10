@@ -33,7 +33,7 @@ export default function ChildHome() {
   const tasks = useTeacherTasks().filter(t => t.childId === child.id && !taskDone(child, t))
   const today_ = learned.has(today)
   const foxSay = (() => {
-    if (!child.sessions.length) return { t: 'Bienvenue ! Je suis Foxy. Appuie sur « Jouer » pour ta toute première leçon.', tone: '' }
+    if (!child.sessions.length) return { t: 'Bienvenue ! Je suis Shuku. Appuie sur « Jouer » pour ta toute première leçon.', tone: '' }
     const urgent = tasks.find(t => t.due && diffDays(t.due, today) <= 1)
     if (urgent) return { t: `${urgent.teacher} attend ta mission pour ${dueLabel(urgent.due!, today)} ! Elle ne prend que quelques minutes.`, tone: 'warn' }
     if (streak > 0 && !today_) return { t: `Ta série de ${streak} jour${streak > 1 ? 's' : ''} est en danger ! Une leçon aujourd’hui et elle est sauvée.`, tone: 'warn' }
@@ -48,7 +48,7 @@ export default function ChildHome() {
     <div className="col gap20 k-page">
       <div className="k-greet">
         <h1 className="k-hi">{big ? `Salut ${child.nickname} !` : `Bonjour ${child.nickname}`} <span className="k-wave" aria-hidden="true"><Hand size={30} color="#E07A4B" strokeWidth={2.4} /></span></h1>
-        <div className={`k-foxsay ${foxSay.tone}`} role="status"><img src={`${import.meta.env.BASE_URL}logo.png`} alt="Foxy" /><p>{foxSay.t}</p></div>
+        <div className={`k-foxsay ${foxSay.tone}`} role="status"><img src={`${import.meta.env.BASE_URL}logo.png`} alt="Shuku" /><p>{foxSay.t}</p></div>
       </div>
 
       {!child.diagnosticDone && (

@@ -20,7 +20,7 @@ const PRAISE_SR = ['Bien joué.', 'Exact.', 'C’est juste.', 'Impeccable.', 'Bi
 const CHEER_SR = ['On enchaîne.', 'Lis attentivement.', 'Prends le temps de vérifier.', 'Tu gères.', 'Concentre-toi bien.', 'Garde le rythme.']
 const FOX = `${import.meta.env.BASE_URL}logo.png`
 
-/** Écran de victoire : les étoiles tombent une à une, les points montent, Foxy félicite. */
+/** Écran de victoire : les étoiles tombent une à une, les points montent, Shuku félicite. */
 function Celebrate({ stars, sound, name, firstOk, total, xp, title, big }: { stars: number; sound: boolean; name: string; firstOk: number; total: number; xp: number; title: string; big: boolean }) {
   const [pts, setPts] = useState(0)
   const [lit, setLit] = useState(0)

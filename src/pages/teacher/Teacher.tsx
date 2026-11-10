@@ -160,7 +160,7 @@ function exportCsv(name: string, s: StudentStat[], tasks: TaskRow[]) {
   const csv = '\ufeff' + [head, ...rows].map(r => r.map(q).join(';')).join('\r\n')
   const a = document.createElement('a')
   a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
-  a.download = `edufun-${name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}-${dayKey()}.csv`
+  a.download = `shukudai-${name.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}-${dayKey()}.csv`
   a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000)
 }
 
@@ -328,7 +328,7 @@ export function ClassView() {
           <span className="tiny muted" style={{ fontWeight: 800 }}>CODE À DONNER AUX FAMILLES</span>
           <CodeBox code={cls.code} big />
           <button className="btn quiet sm" onClick={() => {
-            const txt = `Bonjour,\n\nVotre enfant peut rejoindre la classe « ${cls.name} » sur EDUFUN (https://edufun-app.vercel.app) pour s’entraîner à la maison.\n\n1. Connectez-vous à votre espace parent.\n2. Ouvrez la fiche de votre enfant, rubrique « Classe ».\n3. Saisissez le code : ${cls.code}\n\nJe verrai uniquement son pseudo et sa progression dans les leçons. Vous pouvez quitter la classe à tout moment.\n\nMerci !`
+            const txt = `Bonjour,\n\nVotre enfant peut rejoindre la classe « ${cls.name} » sur Shukudai (https://www.shukudai.fr) pour s’entraîner à la maison.\n\n1. Connectez-vous à votre espace parent.\n2. Ouvrez la fiche de votre enfant, rubrique « Classe ».\n3. Saisissez le code : ${cls.code}\n\nJe verrai uniquement son pseudo et sa progression dans les leçons. Vous pouvez quitter la classe à tout moment.\n\nMerci !`
             navigator.clipboard?.writeText(txt).then(() => { setMsgCopied(true); setTimeout(() => setMsgCopied(false), 2000) }).catch(() => {})
           }}><MessageSquareText size={16} /> {msgCopied ? 'Message copié' : 'Copier le message pour les familles'}</button>
           <Link className="btn quiet sm" to={`/enseignant/classe/${id}/fiche`}><Printer size={16} /> Fiche à imprimer</Link>
@@ -449,7 +449,7 @@ export function ClassSheet() {
   useEffect(() => { api.list().then(l => setCls(l.find(c => c.id === id) ?? null)) }, [api, id])
   if (cls === null) return <Navigate to="/enseignant" replace />
   if (!cls) return <p className="muted">Chargement…</p>
-  const site = 'edufun-app.vercel.app'
+  const site = 'www.shukudai.fr'
   return (
     <div className="col gap16">
       <div className="row wrap gap8 no-print">
@@ -460,7 +460,7 @@ export function ClassSheet() {
       <div className="sheet">
         {Array.from({ length: 8 }, (_, i) => (
           <div key={i} className="coupon">
-            <div className="row" style={{ gap: 8 }}><img src={`${import.meta.env.BASE_URL}logo.png`} alt="" /><b className="fred"><span style={{ color: '#17766E' }}>EDU</span><span style={{ color: '#E07A4B' }}>FUN</span></b><span className="grow" /><span className="tiny">{gradeTitle(cls.grade)}</span></div>
+            <div className="row" style={{ gap: 8 }}><img src={`${import.meta.env.BASE_URL}logo.png`} alt="" /><b className="fred"><span style={{ color: '#17766E' }}>Shuku</span><span style={{ color: '#E07A4B' }}>dai</span></b><span className="grow" /><span className="tiny">{gradeTitle(cls.grade)}</span></div>
             <p className="c-t">{account?.name ? `${account.name} invite votre enfant` : 'Votre enfant est invité'} à rejoindre la classe <b>« {cls.name} »</b> pour s’entraîner à la maison.</p>
             <div className="c-code">{cls.code}</div>
             <ol><li>Créez un compte parent sur <b>{site}</b></li><li>Ajoutez votre enfant, puis ouvrez sa fiche, rubrique « Classe »</li><li>Saisissez le code ci-dessus</li></ol>

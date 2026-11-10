@@ -11,7 +11,7 @@ const STEPS = [
 const key = (id: string) => `edufun.tour.${id}`
 const visible = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].find(e => e.offsetParent !== null && e.getBoundingClientRect().width > 0)
 
-/** Parcours de découverte : 4 bulles de Foxy à la toute première visite de l'enfant. */
+/** Parcours de découverte : 4 bulles de Shuku à la toute première visite de l'enfant. */
 export default function KidTour({ childId }: { childId: string }) {
   const { pathname } = useLocation()
   const [step, setStep] = useState(-1)

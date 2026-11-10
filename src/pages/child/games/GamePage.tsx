@@ -190,7 +190,7 @@ function GameScreen() {
           </div>
           <div className="gtip" aria-live="polite">
             <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" />
-            <p key={tip}><b>Astuce de Foxy :</b> {tipsList[tip % tipsList.length]}</p>
+            <p key={tip}><b>Astuce de Shuku :</b> {tipsList[tip % tipsList.length]}</p>
           </div>
         </main>
       )}

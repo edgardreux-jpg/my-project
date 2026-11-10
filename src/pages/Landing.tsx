@@ -30,7 +30,7 @@ function FlipCard({ front, back, className, label }: { front: ReactNode; back: R
 
 const SHOTS = [
   { file: 'parent-tableau', icon: 'chart', title: 'L’évolution, semaine après semaine', text: 'Temps passé, réussite au premier essai et leçons acquises, comparés à la semaine précédente.', cap: 'Tableau de bord : la carte de l’enfant' },
-  { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'EDUFUN repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
+  { file: 'parent-notions', icon: '🎯', title: 'Les notions à consolider', text: 'Shukudai repère les thèmes où l’enfant bute, pour l’aider au bon moment.', cap: 'Fiche de l’enfant : notions à consolider' },
   { file: 'parent-reperes', icon: 'radar', title: 'Les évaluations nationales, préparées', text: 'Du CE1 au CM2, des bilans sur le modèle des évaluations « Repères » dessinent une toile de compétences, avec un conseil pour chaque point fragile.', cap: 'Bilan Repères : la toile de compétences' },
   { file: 'parent-reglages', icon: '🛡️', title: 'Vous gardez la main', text: 'Objectif du jour, rappel de pause, sons, police adaptée, matières visibles, classe.', cap: 'Réglages de l’enfant' },
 ] as const
@@ -252,6 +252,7 @@ export default function Landing() {
         <div>
           <span className="eyebrow">Du CE1 au CM2 · programmes officiels</span>
           <h1 className="h-xl">Apprendre en s’amusant, progresser en confiance.</h1>
+          <p className="name-note"><span className="name-kanji" lang="ja" aria-hidden="true">宿題</span><span><b>Shukudai</b> signifie « devoirs à la maison » en japonais. Ici, les devoirs deviennent un jeu, avec Shuku le renard pour guide.</span></p>
           <p className="lead mt16">Des leçons de quelques minutes, alignées sur les programmes de l’école. L’enfant joue et avance à son rythme ; ses parents, et son enseignant s’ils le souhaitent, suivent ses progrès.</p>
           <ul className="who mt24">
             <li><span className="who-ic kid"><Sparkles size={20} /></span><div><b>Pour l’enfant</b><span>De petites aventures, des étoiles à gagner et un indice quand il se trompe. Jamais de punition.</span></div></li>
@@ -383,15 +384,16 @@ export default function Landing() {
         <h2 className="h-lg mb16">Vous vous demandez peut-être…</h2>
         <FaqTabs left={<>
           <div className="faq-col">
-            <h3 className="faq-h"><span className="faq-ic"><Sparkles size={18} /></span> Apprendre avec EDUFUN</h3>
+            <h3 className="faq-h"><span className="faq-ic"><Sparkles size={18} /></span> Apprendre avec Shukudai</h3>
+            <details><summary>Que veut dire « Shukudai » ?</summary><p>Shukudai (宿題) signifie « devoirs à la maison » en japonais. Nous avons choisi ce nom parce que la plateforme transforme les révisions du soir en petites aventures. Shuku, le renard, accompagne les enfants sur chaque page.</p></details>
             <details><summary>Pour quels âges et quels niveaux ?</summary><p>Pour les enfants de 7 à 11 ans, du CE1 au CM2. Les quatre niveaux sont complets : chaque thème du programme officiel a sa leçon.</p></details>
-            <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. EDUFUN est un complément : il ne remplace ni l’école ni une évaluation.</p></details>
+            <details><summary>Est-ce conforme aux programmes ?</summary><p>Les leçons suivent les thèmes des programmes officiels de l’élémentaire. Shukudai est un complément : il ne remplace ni l’école ni une évaluation.</p></details>
             <details><summary>Quelles matières sont proposées ?</summary><p>Français, mathématiques, questionner le monde, sciences, histoire, géographie et anglais, ainsi que vivre ensemble, arts plastiques, musique, sport et « grandir ensemble ».</p></details>
             <details><summary>Combien de temps par jour ?</summary><p>Quelques minutes suffisent : une leçon dure 3 à 8 minutes. Vous fixez un objectif de 1 à 3 leçons par jour et un rappel de pause.</p></details>
             <details><summary>Que se passe-t-il si mon enfant se trompe ?</summary><p>Il reçoit un indice et une seconde chance. S’il se trompe encore, l’explication s’affiche et la notion revient plus tard pour s’ancrer.</p></details>
             <details><summary>Comment mon enfant reste-t-il motivé ?</summary><p>Étoiles, séries de jours, coffres à ouvrir, avatars et badges à gagner. Les séries pardonnent un oubli grâce aux jokers : jamais de punition.</p></details>
             <details><summary>Et s’il ne lit pas encore très bien ?</summary><p>Les consignes peuvent être lues à voix haute. Une police adaptée à la dyslexie et une taille de texte réglable sont aussi disponibles.</p></details>
-            <details><summary>Faut-il installer une application ?</summary><p>Non. EDUFUN fonctionne dans le navigateur, sur ordinateur, tablette ou téléphone, au clavier comme au toucher.</p></details>
+            <details><summary>Faut-il installer une application ?</summary><p>Non. Shukudai fonctionne dans le navigateur, sur ordinateur, tablette ou téléphone, au clavier comme au toucher.</p></details>
           </div>
         </>} right={<>
           <div className="faq-col">
@@ -410,7 +412,7 @@ export default function Landing() {
 
       <footer className="footer"><div className="in">
         <div className="row wrap" style={{ alignItems: 'flex-start' }}>
-          <div className="grow"><b style={{ color: '#fff', fontSize: '1.2rem' }}>EDUFUN</b><p className="small mt8">Une plateforme éducative pour les enfants du CE1 au CM2.</p></div>
+          <div className="grow"><b style={{ color: '#fff', fontSize: '1.2rem' }}>Shukudai</b><p className="small mt8">Une plateforme éducative pour les enfants du CE1 au CM2.</p></div>
           <div style={{ maxWidth: 420 }}>
             <details className="srcs">
               <summary>Sources officielles</summary>

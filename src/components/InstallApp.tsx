@@ -9,7 +9,7 @@ const standalone = () => typeof window !== 'undefined' && (window.matchMedia('(d
 const ios = () => typeof navigator !== 'undefined' && /iphone|ipad|ipod/i.test(navigator.userAgent)
 const KEY = 'edufun.install.hide'
 
-/** Encart « Installer EDUFUN » : bouton natif sur Android/ordinateur, mode d'emploi sur iPhone. */
+/** Encart « Installer Shukudai » : bouton natif sur Android/ordinateur, mode d'emploi sur iPhone. */
 export default function InstallApp() {
   const [can, setCan] = useState(!!deferred)
   const [hide, setHide] = useState(() => { try { return localStorage.getItem(KEY) === '1' } catch { return false } })
@@ -20,7 +20,7 @@ export default function InstallApp() {
     <section className="card install">
       <img src={`${import.meta.env.BASE_URL}icon-192.png`} alt="" />
       <div className="grow">
-        <b>Installez EDUFUN sur votre téléphone</b>
+        <b>Installez Shukudai sur votre téléphone</b>
         {can ? <p className="small muted">Une icône renard sur l’écran d’accueil, comme une vraie application.</p>
           : <p className="small muted">Sur iPhone : touchez <Share size={14} style={{ verticalAlign: '-2px' }} /> <b>Partager</b>, puis <b>« Sur l’écran d’accueil »</b>.</p>}
       </div>

@@ -8,7 +8,7 @@ export interface GameProps {
   diff: 0 | 1 | 2
   sound: boolean
   name: string
-  /** Partie gagnée : score facultatif (coups, secondes…) et message de Foxy. */
+  /** Partie gagnée : score facultatif (coups, secondes…) et message de Shuku. */
   onWin: (score?: number, msg?: string) => void
   /** Partie perdue (objectif non atteint) : on encourage. */
   onLose?: (msg: string) => void

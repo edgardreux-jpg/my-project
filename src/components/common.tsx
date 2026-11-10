@@ -8,9 +8,9 @@ export function Logo() {
   // Le logo ramène toujours à la page d'accueil du site
   const dest = '/'
   return (
-    <Link to={dest} className="logo" aria-label="EDUFUN, page d’accueil">
+    <Link to={dest} className="logo" aria-label="Shukudai, page d’accueil">
       <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" width={40} height={40} />
-      <span className="wordmark"><span className="w1">EDU</span><span className="w2">FUN</span></span>
+      <span className="wordmark"><span className="w1">Shuku</span><span className="w2">dai</span></span>
     </Link>
   )
 }

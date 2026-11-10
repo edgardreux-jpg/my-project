@@ -9,7 +9,7 @@ const MUTE = 'edufun.guide.auto'
 const read = (k: string) => { try { return localStorage.getItem(k) } catch { return null } }
 const write = (k: string, v: string) => { try { localStorage.setItem(k, v) } catch { /* ignore */ } }
 
-/** Foxy, le renard guide : un bouton flottant en bas à droite qui explique chaque page. */
+/** Shuku, le renard guide : un bouton flottant en bas à droite qui explique chaque page. */
 export default function GuideBot() {
   const { pathname } = useLocation()
   const { account, mode } = useStore()
@@ -20,12 +20,12 @@ export default function GuideBot() {
   const kid = pathname.startsWith('/enfant') && mode === 'child'
   const key = pathname.replace(/\/[0-9a-f-]{8,}$/i, '/:id')
 
-  // À la première visite d'une page, Foxy se présente tout seul
+  // À la première visite d'une page, Shuku se présente tout seul
   useEffect(() => {
     setI(0)
     if (hiddenOn(pathname)) { setOpen(false); return }
     const seen = new Set((read(SEEN) ?? '').split('|').filter(Boolean))
-    // Sur téléphone, la page d'accueil reste dégagée : Foxy attend qu'on le touche
+    // Sur téléphone, la page d'accueil reste dégagée : Shuku attend qu'on le touche
     const phoneHome = pathname === '/' && window.innerWidth < 700
     if (auto && !seen.has(key) && !phoneHome) {
       seen.add(key); write(SEEN, [...seen].join('|'))
@@ -35,7 +35,7 @@ export default function GuideBot() {
     setOpen(false)
   }, [key])
 
-  // Sur téléphone, Foxy s'efface quand on descend dans la page (il ne cache plus le contenu) et revient quand on remonte
+  // Sur téléphone, Shuku s'efface quand on descend dans la page (il ne cache plus le contenu) et revient quand on remonte
   const [tuck, setTuck] = useState(false)
   useEffect(() => {
     let last = window.scrollY
@@ -70,7 +70,7 @@ export default function GuideBot() {
   return (
     <div className={`guide ${kid ? 'kid' : ''} ${tuck && !open ? 'tuck' : ''}`}>
       {open && (
-        <div className="guide-bubble" role="dialog" aria-label="Foxy, ton guide" aria-live="polite">
+        <div className="guide-bubble" role="dialog" aria-label="Shuku, ton guide" aria-live="polite">
           <button className="guide-x" aria-label="Fermer" onClick={() => setOpen(false)}><X size={18} /></button>
           <b className="guide-t">{tip.title}</b>
           <p className="guide-p">{tip.text}</p>
@@ -85,10 +85,10 @@ export default function GuideBot() {
             </>}
             {tips.length === 1 && <button className="guide-next" onClick={() => setOpen(false)}>{kid ? 'Compris !' : 'Merci'}</button>}
           </div>
-          <label className="guide-auto"><input type="checkbox" checked={auto} onChange={e => { setAuto(e.target.checked); write(MUTE, e.target.checked ? 'on' : 'off') }} /> {kid ? 'Foxy apparaît tout seul sur les nouvelles pages' : 'M’afficher automatiquement sur les nouvelles pages'}</label>
+          <label className="guide-auto"><input type="checkbox" checked={auto} onChange={e => { setAuto(e.target.checked); write(MUTE, e.target.checked ? 'on' : 'off') }} /> {kid ? 'Shuku apparaît tout seul sur les nouvelles pages' : 'M’afficher automatiquement sur les nouvelles pages'}</label>
         </div>
       )}
-      <button className={`guide-btn ${open ? 'on' : ''}`} aria-label={open ? 'Fermer l’aide de Foxy' : 'Ouvrir l’aide de Foxy'} aria-expanded={open}
+      <button className={`guide-btn ${open ? 'on' : ''}`} aria-label={open ? 'Fermer l’aide de Shuku' : 'Ouvrir l’aide de Shuku'} aria-expanded={open}
         onClick={() => setOpen(o => !o)}>
         <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" />
         {!open && <span className="guide-dot" aria-hidden="true">?</span>}

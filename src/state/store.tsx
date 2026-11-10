@@ -124,7 +124,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     async sendReset(email) {
       if (!validEmail(email)) return { ok: false, error: 'Indiquez d’abord votre adresse e-mail ci-dessus.' }
       const { error } = await sb.auth.resetPasswordForEmail(email.trim().toLowerCase(), { redirectTo: window.location.href.split('#')[0] })
-      if (error) return { ok: false, error: /not authorized/i.test(error.message) ? 'L’envoi d’e-mails n’est pas encore activé sur EDUFUN. Réessayez plus tard.' : /rate|seconds/i.test(error.message) ? 'Trop de demandes. Patientez quelques minutes avant de réessayer.' : 'Envoi impossible pour le moment. Réessayez.' }
+      if (error) return { ok: false, error: /not authorized/i.test(error.message) ? 'L’envoi d’e-mails n’est pas encore activé sur Shukudai. Réessayez plus tard.' : /rate|seconds/i.test(error.message) ? 'Trop de demandes. Patientez quelques minutes avant de réessayer.' : 'Envoi impossible pour le moment. Réessayez.' }
       return { ok: true }
     },
 
@@ -149,7 +149,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         email, password,
         options: { data: role === 'parent' ? { name: name.trim(), code_salt: salt, code_hash: hash } : { name: name.trim(), role: 'teacher' }, emailRedirectTo: window.location.href.split('#')[0] },
       })
-      if (error) { wantParent.current = false; return { ok: false, error: /fetch|network/i.test(error.message) ? NOT_CONFIGURED : /registered|exists/i.test(error.message) ? 'Un compte existe déjà avec cet e-mail.' : /not authorized/i.test(error.message) ? 'L’envoi d’e-mails n’est pas encore activé sur EDUFUN. Essayez « Continuer avec Google ».' : /rate|seconds/i.test(error.message) ? 'Trop de tentatives. Patientez quelques minutes.' : /password/i.test(error.message) ? 'Mot de passe trop faible : 8 caractères minimum.' : 'Inscription impossible pour le moment. Réessayez.' } }
+      if (error) { wantParent.current = false; return { ok: false, error: /fetch|network/i.test(error.message) ? NOT_CONFIGURED : /registered|exists/i.test(error.message) ? 'Un compte existe déjà avec cet e-mail.' : /not authorized/i.test(error.message) ? 'L’envoi d’e-mails n’est pas encore activé sur Shukudai. Essayez « Continuer avec Google ».' : /rate|seconds/i.test(error.message) ? 'Trop de tentatives. Patientez quelques minutes.' : /password/i.test(error.message) ? 'Mot de passe trop faible : 8 caractères minimum.' : 'Inscription impossible pour le moment. Réessayez.' } }
       if (!data.session) { wantParent.current = false; return { ok: true, pending: true } }
       return { ok: true }
     },

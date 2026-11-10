@@ -1,4 +1,4 @@
-// Contenus originaux EDUFUN écrits sur le modèle des évaluations nationales « Repères » (DEPP) :
+// Contenus originaux Shukudai écrits sur le modèle des évaluations nationales « Repères » (DEPP) :
 // mêmes compétences et mêmes formats d'exercices, mais aucune question recopiée des livrets officiels.
 
 export interface TextQ { q: string; options: string[]; answer: number }

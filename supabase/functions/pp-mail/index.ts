@@ -1,11 +1,11 @@
-// EDUFUN : e-mails aux parents (bilan du dimanche, révision proposée par l'enseignant), envoyés via Brevo.
+// Shukudai : e-mails aux parents (bilan du dimanche, révision proposée par l'enseignant), envoyés via Brevo.
 // Appelée par pg_cron (bilan) et par un déclencheur SQL (révision). Chaque envoi n'a lieu qu'une fois.
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
-const SITE = 'https://edufun-app.vercel.app'
+const SITE = 'https://www.shukudai.fr'
 const sb = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } })
 const BREVO = Deno.env.get('BREVO_API_KEY') ?? ''
-const FROM = { email: Deno.env.get('SENDER_EMAIL') ?? 'edgard.reux@gmail.com', name: 'EDUFUN' }
+const FROM = { email: Deno.env.get('SENDER_EMAIL') ?? 'edgard.reux@gmail.com', name: 'Shukudai' }
 
 const esc = (s: string) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
 const kidWord = (g?: string) => g === 'f' ? 'votre fille' : g === 'm' ? 'votre fils' : 'votre enfant'
@@ -25,11 +25,11 @@ function layout(title: string, body: string) {
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#FFF8EF;font-family:Arial,Helvetica,sans-serif;color:#22324A">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
   <table role="presentation" width="100%" style="max-width:560px;background:#fff;border-radius:16px;border:1px solid #EFE6D8" cellpadding="0" cellspacing="0">
-  <tr><td style="padding:22px 24px 6px"><img src="${SITE}/logo.png" width="40" height="40" alt="" style="vertical-align:middle"> <b style="font-size:20px;vertical-align:middle"><span style="color:#17766E">EDU</span><span style="color:#E07A4B">FUN</span></b></td></tr>
+  <tr><td style="padding:22px 24px 6px"><img src="${SITE}/logo.png" width="40" height="40" alt="" style="vertical-align:middle"> <b style="font-size:20px;vertical-align:middle"><span style="color:#17766E">Shuku</span><span style="color:#E07A4B">dai</span></b></td></tr>
   <tr><td style="padding:6px 24px 4px"><h1 style="font-size:20px;margin:0">${title}</h1></td></tr>
   <tr><td style="padding:8px 24px 22px;font-size:15px;line-height:1.5">${body}
   <p style="margin:22px 0 0"><a href="${SITE}/#/parent" style="background:#17766E;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;font-weight:bold;display:inline-block">Ouvrir mon espace parent</a></p></td></tr>
-  <tr><td style="padding:14px 24px;border-top:1px solid #EFE6D8;font-size:12px;color:#6B7280">Vous recevez cet e-mail car vous avez un compte parent EDUFUN. Vous pouvez désactiver ces e-mails dans votre espace parent, rubrique « E-mails ».</td></tr>
+  <tr><td style="padding:14px 24px;border-top:1px solid #EFE6D8;font-size:12px;color:#6B7280">Vous recevez cet e-mail car vous avez un compte parent Shukudai. Vous pouvez désactiver ces e-mails dans votre espace parent, rubrique « E-mails ».</td></tr>
   </table></td></tr></table></body></html>`
 }
 
@@ -66,7 +66,7 @@ async function taskMail(id: string) {
     const body = `<p><b>${esc(teacher)}</b> invite ${names} à réviser la notion suivante : <b>${title}</b>${t.subject ? ` (${esc(t.subject)})` : ''}.</p>
       ${due ? `<p>À faire pour <b>${esc(due)}</b>.</p>` : ''}
       ${t.message ? `<p style="background:#F7F2EA;border-radius:10px;padding:10px 14px;margin:12px 0">« ${esc(t.message)} »</p>` : ''}
-      <p>La révision apparaît en tête de son espace EDUFUN : quelques minutes suffisent.</p>`
+      <p>La révision apparaît en tête de son espace Shukudai : quelques minutes suffisent.</p>`
     try { await send(to, `${teacher} propose une révision à ${ks.map(k => k.data?.nickname).join(' et ')}`, layout('Une révision proposée par l’école', body)); sent++ } catch (e) { console.error(e) }
   }
   return { sent }
@@ -104,10 +104,10 @@ async function weeklyMail() {
           : '<span style="color:#6B7280">Pas de leçon cette semaine. Une petite séance de 5 minutes suffit pour reprendre le rythme.</span>'}</td></tr>`)
     }
     const to = await emailOf(p.user_id); if (!to) continue
-    const body = `<p>Bonjour${p.name ? ' ' + esc(p.name) : ''},</p><p>Voici la semaine de vos enfants sur EDUFUN :</p>
+    const body = `<p>Bonjour${p.name ? ' ' + esc(p.name) : ''},</p><p>Voici la semaine de vos enfants sur Shukudai :</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rows.join('')}</table>
       <p style="margin-top:14px">${any ? 'Bravo à eux ! Le détail (notions à consolider, progression par matière) vous attend dans votre espace.' : 'Une nouvelle semaine commence : c’est le bon moment pour une première leçon ensemble.'}</p>`
-    try { await send(to, 'La semaine de vos enfants sur EDUFUN', layout('Le bilan de la semaine', body)); sent++ } catch (e) { console.error(e) }
+    try { await send(to, 'La semaine de vos enfants sur Shukudai', layout('Le bilan de la semaine', body)); sent++ } catch (e) { console.error(e) }
   }
   return { sent }
 }

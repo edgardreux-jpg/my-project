@@ -1,5 +1,5 @@
 /**
- * Textes de Foxy, le renard qui guide les visiteurs.
+ * Textes de Shuku, le renard qui guide les visiteurs.
  * Chaque page a ses bulles : la première s'affiche toute seule à la première visite,
  * les suivantes avec « Et ensuite ? ».
  * Côté enfant : tutoiement et phrases courtes. Côté adultes : vouvoiement.
@@ -10,7 +10,7 @@ const P = (title: string, text: string): Tip => ({ title, text })
 
 export function tipsFor(path: string, hasKids: boolean): Tip[] {
   if (path === '/') return [
-    P('Bonjour, je suis Foxy !', 'Bienvenue sur EDUFUN, le site où les enfants du CE1 au CM2 apprennent en jouant. Je vous accompagne sur chaque page : cliquez sur moi quand vous avez une question.'),
+    P('Bonjour, je suis Shuku !', 'Bienvenue sur Shukudai, le site où les enfants du CE1 au CM2 apprennent en jouant. Je vous accompagne sur chaque page : cliquez sur moi quand vous avez une question.'),
     P('Pour les parents', 'Créez un compte parent gratuit, puis un profil pour chaque enfant. Vous suivrez ensuite ses progrès semaine après semaine.'),
     P('Pour essayer sans compte', 'Le bouton « Voir une démonstration » ouvre une famille fictive : vous pouvez tout explorer, rien n’est enregistré.'),
     P('Pour les enseignants', 'Dans la rubrique « Enseignants », créez une classe et donnez son code aux familles pour suivre vos élèves.'),
@@ -60,7 +60,7 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Réglages', 'Les habitudes (objectif, pauses), les matières visibles, et la rubrique « Classe » pour entrer le code donné par l’enseignant.'),
   ]
   if (path === '/enfant') return [
-    P('Salut, c’est Foxy !', 'Ici, c’est ton espace. Appuie sur le gros bouton « Jouer » pour continuer ton aventure.'),
+    P('Salut, c’est Shuku !', 'Ici, c’est ton espace. Appuie sur le gros bouton « Jouer » pour continuer ton aventure.'),
     P('En haut', 'La flamme compte tes jours de suite, l’étoile tes étoiles gagnées. Le cadeau qui bouge ? Un coffre t’attend !'),
     P('Ta série', 'Les flammes comptent les jours où tu as appris. Un joker te protège si tu oublies un jour.'),
     P('Tes mondes', 'Plus bas, choisis un monde pour voir ton chemin de leçons.'),
@@ -94,10 +94,10 @@ export function tipsFor(path: string, hasKids: boolean): Tip[] {
     P('Mes réglages', 'Ouvre « Mes réglages » pour choisir la voix, couper les sons ou agrandir le texte.'),
   ]
   if (path === '/confidentialite') return [
-    P('Vos données', 'Cette page explique quelles données EDUFUN garde, qui peut les voir et comment les supprimer.'),
+    P('Vos données', 'Cette page explique quelles données Shukudai garde, qui peut les voir et comment les supprimer.'),
   ]
-  return [P('Besoin d’aide ?', 'Je suis Foxy. Cliquez sur moi sur chaque page pour savoir à quoi elle sert.')]
+  return [P('Besoin d’aide ?', 'Je suis Shuku. Cliquez sur moi sur chaque page pour savoir à quoi elle sert.')]
 }
 
-/** Pages où Foxy se fait discret (pendant une leçon, il ne doit pas distraire). */
+/** Pages où Shuku se fait discret (pendant une leçon, il ne doit pas distraire). */
 export const hiddenOn = (path: string) => path.startsWith('/enfant/lecon') || path.startsWith('/enfant/diagnostic') || path.startsWith('/enfant/jeux/') || path.startsWith('/enfant/reperes/')
