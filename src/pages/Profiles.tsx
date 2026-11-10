@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { Lock } from 'lucide-react'
+import { LayoutDashboard, Lock } from 'lucide-react'
+import { isAdmin } from '../lib/admin'
 import { useStore } from '../state/store'
 import { Avatar, Logo, Modal } from '../components/common'
 import { AddChildModal } from './parent/Dashboard'
@@ -38,8 +39,9 @@ export default function Profiles() {
           {mode === 'parent' && <button className="pick" onClick={() => setAdd(true)} style={{ borderStyle: 'dashed' }}><span style={{ fontSize: '2.4rem' }}>＋</span>Ajouter</button>}
         </div>
         {account.children.length === 0 && <p className="center muted">Aucun profil enfant pour l’instant. Connectez-vous à l’espace parent pour en créer un.</p>}
-        <div className="center row" style={{ justifyContent: 'center' }}>
+        <div className="center row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
           <button className="btn ghost" onClick={() => (mode === 'parent' ? nav('/parent') : setAsk(true))}><Lock size={16} /> Espace parent</button>
+          {mode === 'parent' && isAdmin(account) && <Link className="btn ghost adm-link" to="/admin"><LayoutDashboard size={16} aria-hidden="true" /> Tableau de bord</Link>}
           <button className="btn quiet" onClick={() => { logout(); nav('/') }}>Déconnexion</button>
         </div>
         <p className="center tiny"><Link to="/confidentialite">Confidentialité</Link></p>

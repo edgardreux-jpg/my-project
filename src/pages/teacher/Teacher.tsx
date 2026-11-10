@@ -1,8 +1,9 @@
 import { COMPS, compScores, hasReperes, masteryOf, reperesOf, type Phase } from '../../lib/reperes'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, Navigate, Outlet, useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronDown, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LogOut, MessageSquareText, FileSpreadsheet, Plus, Printer, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
+import { AlertCircle, ArrowDown, ArrowUp, BookOpenCheck, ChevronDown, ChevronLeft, ChevronRight, Clock, Copy, KeyRound, LayoutDashboard, LogOut, MessageSquareText, FileSpreadsheet, Plus, Printer, School, Send, Share2, Target, Trash2, UserCheck, UserMinus, Users } from 'lucide-react'
 import { useStore } from '../../state/store'
+import { isAdmin } from '../../lib/admin'
 import { Avatar, Logo, Modal } from '../../components/common'
 import { Ico } from '../../components/Icon'
 import { LESSONS, LEVELS, lessonById, meta } from '../../lib/curriculum'
@@ -31,6 +32,7 @@ export function TeacherShell() {
         <Logo />
         <span className="pill gold">Espace enseignant</span>
         <div className="grow" />
+        {isAdmin(account) && <Link className="btn ghost sm adm-link" to="/admin" aria-label="Tableau de bord"><LayoutDashboard size={16} aria-hidden="true" /><span className="lbl"> Tableau de bord</span></Link>}
         <button className="btn quiet sm" aria-label="Déconnexion" onClick={() => { logout(); nav('/') }}><LogOut size={16} /><span className="lbl"> Déconnexion</span></button>
       </div></header>
       <main className="pmain">

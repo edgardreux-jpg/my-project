@@ -1,5 +1,6 @@
 import { Link, Navigate, Outlet, useNavigate } from 'react-router-dom'
-import { LogOut, Users } from 'lucide-react'
+import { LayoutDashboard, LogOut, Users } from 'lucide-react'
+import { isAdmin } from '../../lib/admin'
 import { useStore } from '../../state/store'
 import { Logo, Modal } from '../../components/common'
 import { useState } from 'react'
@@ -34,6 +35,7 @@ export default function ParentShell() {
         <span className="pill teal">Espace parent</span>
         <div className="grow" />
         <span className="small muted" style={{ display: 'none' }}>{account.name}</span>
+        {isAdmin(account) && <Link className="btn ghost sm adm-link" to="/admin" aria-label="Tableau de bord"><LayoutDashboard size={16} aria-hidden="true" /><span className="lbl"> Tableau de bord</span></Link>}
         <Link className="btn ghost sm" to="/profils" aria-label="Profils enfants"><Users size={16} aria-hidden="true" /><span className="lbl"> Profils enfants</span></Link>
         <button className="btn quiet sm" aria-label="Déconnexion" onClick={() => { logout(); nav('/') }}><LogOut size={16} /><span className="lbl"> Déconnexion</span></button>
       </div></header>
