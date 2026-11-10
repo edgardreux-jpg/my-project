@@ -1860,3 +1860,29 @@ html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{bo
 .adm-link{border-color:var(--violet)!important;color:var(--violet-d)!important}
 @media (max-width:900px){.adm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.adm-two{grid-template-columns:1fr}}
 @media (max-width:420px){.adm-v{font-size:1.5rem}.adm-tr{grid-template-columns:1.2fr 1fr .6fr;font-size:.85rem}.adm-tr>span:last-child{display:none}}
+
+/* Accueil mobile : boutons visibles dès l'arrivée, moins d'éléments, plus d'air */
+.hero-short{display:none}
+@media (max-width:720px){
+  .hero{padding:24px 20px 40px}
+  .hero .in{gap:0}
+  .hero-copy{display:flex;flex-direction:column}
+  .hero-copy .eyebrow{order:0}
+  .hero-copy h1{order:1;font-size:2rem}
+  .hero-copy .hero-short{order:2;display:block!important;margin-top:12px}
+  .hero-copy .hero-long{display:none!important}
+  .hero-copy .hero-cta{order:3;margin-top:20px;flex-direction:column;gap:10px}
+  .hero-copy .hero-cta .btn{width:100%;justify-content:center}
+  .hero-copy .hero-teach{order:4;align-self:center;margin-top:14px}
+  .hero-copy .name-note{order:5;margin-top:28px;font-size:.88rem;border:0;background:none;padding:0}
+  .hero-copy .name-note .name-kanji{width:40px;height:40px;font-size:1rem}
+  .hero-art-wrap{display:none}
+  .trust{grid-template-columns:1fr;gap:12px;padding:20px 24px;font-size:.9rem}
+  .section{padding:56px 20px}
+  .section .eyebrow{display:block;margin-bottom:6px}
+  .section h2.h-lg{margin-bottom:20px}
+  .shot-note,.lvl-lead,.flip-tip{display:none!important}
+  #comment .grid3{gap:22px}
+  .top nav{display:none!important}
+  .trust span:nth-child(4){display:none}
+}

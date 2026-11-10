@@ -85,7 +85,7 @@ function ParentShots() {
         </button>
         <p className="shot-desc">{SHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{SHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des quatre encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
+        <p className="tiny muted center shot-note">Vraies captures de l’espace parent (famille de démonstration). <span className="only-desk">Survolez un des quatre encarts (ou touchez-le) pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
       </div>
     </>
   )
@@ -193,7 +193,7 @@ function KidShots() {
         </button>
         <p className="shot-desc">{KSHOTS[cur].text}</p>
         <div className="shot-dots" aria-hidden="true">{KSHOTS.map((s, i) => <i key={s.file} className={i === cur ? 'on' : ''} />)}</div>
-        <p className="tiny muted center">Vraies captures de l’espace enfant. <span className="only-desk">Touchez une pastille pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
+        <p className="tiny muted center shot-note">Vraies captures de l’espace enfant. <span className="only-desk">Touchez une pastille pour changer d’écran.</span><span className="only-mob">Touchez l’image pour changer d’écran.</span></p>
       </div>
     </div>
   )
@@ -249,21 +249,22 @@ export default function Landing() {
       </div></header>
 
       <section className="hero"><div className="in">
-        <div>
+        <div className="hero-copy">
           <span className="eyebrow">Du CE1 au CM2 · programmes officiels</span>
           <h1 className="h-xl">Apprendre en s’amusant, progresser en confiance.</h1>
           <p className="name-note"><span className="name-kanji" lang="ja" aria-hidden="true">宿題</span><span><b>Shukudai</b> signifie « devoirs à la maison » en japonais. Ici, les devoirs deviennent un jeu, avec Shuku le renard pour guide.</span></p>
-          <p className="lead mt16">Des leçons de quelques minutes, alignées sur les programmes de l’école. L’enfant joue et avance à son rythme ; ses parents, et son enseignant s’ils le souhaitent, suivent ses progrès.</p>
+          <p className="lead mt16 hero-short">Des leçons courtes, alignées sur les programmes. L’enfant joue, ses parents suivent ses progrès.</p>
+          <p className="lead mt16 hero-long">Des leçons de quelques minutes, alignées sur les programmes de l’école. L’enfant joue et avance à son rythme ; ses parents, et son enseignant s’ils le souhaitent, suivent ses progrès.</p>
           <ul className="who mt24">
             <li><span className="who-ic kid"><Sparkles size={20} /></span><div><b>Pour l’enfant</b><span>De petites aventures, des étoiles à gagner et un indice quand il se trompe. Jamais de punition.</span></div></li>
             <li><span className="who-ic par"><HeartHandshake size={20} /></span><div><b>Pour les parents</b><span>Un suivi clair chaque semaine : temps passé, réussite, notions à revoir.</span></div></li>
             <li><span className="who-ic tea"><School size={20} /></span><div><b>Pour l’enseignant</b><span>Un code de classe pour suivre les élèves dont la famille a donné son accord.</span></div></li>
           </ul>
-          <div className="wrap mt24">
+          <div className="wrap mt24 hero-cta">
             <Link className="btn lg" to={cta}>Créer un compte parent</Link>
             <button className="btn lg ghost" onClick={async () => { await loginDemo(); nav('/parent') }}>Voir une démonstration</button>
           </div>
-          <Link to="/enseignant/inscription" className="small mt16" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Vous êtes enseignant ? Créer votre classe <ArrowRight size={16} /></Link>
+          <Link to="/enseignant/inscription" className="small mt16 hero-teach" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>Vous êtes enseignant ? Créer votre classe <ArrowRight size={16} /></Link>
         </div>
 
         <div className="hero-art-wrap">
@@ -359,7 +360,7 @@ export default function Landing() {
       <section className="section alt" id="niveaux"><div className="in">
         <span className="eyebrow">Programme</span>
         <h2 className="h-lg mb8">Du CE1 au CM2</h2>
-        <p className="lead mb16">Les quatre niveaux sont complets, avec une leçon pour chaque thème du programme officiel : {ce1.lessons} leçons en CE1, {ce2.lessons} en CE2, {cm1.lessons} en CM1 et {cm2.lessons} en CM2.</p>
+        <p className="lead mb16 lvl-lead">Les quatre niveaux sont complets, avec une leçon pour chaque thème du programme officiel : {ce1.lessons} leçons en CE1, {ce2.lessons} en CE2, {cm1.lessons} en CM1 et {cm2.lessons} en CM2.</p>
         <div className="lvl-grid">
           {LEVELS.map(l => <LevelFlip key={l.id} id={l.id} />)}
         </div>
