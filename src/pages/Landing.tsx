@@ -243,7 +243,7 @@ export default function Landing() {
       <button className={`totop ${showTop ? 'on' : ''}`} aria-label="Revenir en haut de la page" tabIndex={showTop ? 0 : -1} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><ArrowUp size={22} /></button>
       <header className="top"><div className="in">
         <Logo />
-        <nav aria-label="Sections"><a href="#parents" onClick={go("parents")}>Parents</a><a href="#enfants" onClick={go("enfants")}>Enfants</a><a href="#niveaux" onClick={go("niveaux")}>Niveaux</a><a href="#enseignants" onClick={go("enseignants")}>Enseignants</a><a href="#faq" onClick={go("faq")}><span className="only-desk">Questions</span><span className="only-mob">FAQ</span></a></nav>
+        <nav aria-label="Sections"><a href="#parents" onClick={go("parents")}>Parents</a><a href="#enfants" onClick={go("enfants")}>Enfants</a><a href="#enseignants" onClick={go("enseignants")}>Enseignants</a><a href="#niveaux" onClick={go("niveaux")}>Niveaux</a><a href="#faq" onClick={go("faq")}><span className="only-desk">Questions</span><span className="only-mob">FAQ</span></a></nav>
         <div className="grow" />
         {account ? <Link className="btn sm" to={cta}>Mon espace</Link> : <><Link className="btn quiet sm" to="/connexion">Connexion</Link><Link className="btn sm hdr-cta" to="/inscription">Créer un compte</Link></>}
       </div></header>
