@@ -1,0 +1,124 @@
+{
+  "redirects": [
+    {
+      "source": "/ce1/mathematiques/",
+      "destination": "/exercices-ce1/maths/",
+      "permanent": true
+    },
+    {
+      "source": "/ce1/enseignement-moral-et-civique/",
+      "destination": "/exercices-ce1/emc/",
+      "permanent": true
+    },
+    {
+      "source": "/ce1/education-a-la-vie-affective/",
+      "destination": "/exercices-ce1/vie-affective/",
+      "permanent": true
+    },
+    {
+      "source": "/ce1/:sub/",
+      "destination": "/exercices-ce1/:sub/",
+      "permanent": true
+    },
+    {
+      "source": "/ce1",
+      "destination": "/exercices-ce1/",
+      "permanent": true
+    },
+    {
+      "source": "/ce1/",
+      "destination": "/exercices-ce1/",
+      "permanent": true
+    },
+    {
+      "source": "/ce2/mathematiques/",
+      "destination": "/exercices-ce2/maths/",
+      "permanent": true
+    },
+    {
+      "source": "/ce2/enseignement-moral-et-civique/",
+      "destination": "/exercices-ce2/emc/",
+      "permanent": true
+    },
+    {
+      "source": "/ce2/education-a-la-vie-affective/",
+      "destination": "/exercices-ce2/vie-affective/",
+      "permanent": true
+    },
+    {
+      "source": "/ce2/:sub/",
+      "destination": "/exercices-ce2/:sub/",
+      "permanent": true
+    },
+    {
+      "source": "/ce2",
+      "destination": "/exercices-ce2/",
+      "permanent": true
+    },
+    {
+      "source": "/ce2/",
+      "destination": "/exercices-ce2/",
+      "permanent": true
+    },
+    {
+      "source": "/cm1/mathematiques/",
+      "destination": "/exercices-cm1/maths/",
+      "permanent": true
+    },
+    {
+      "source": "/cm1/enseignement-moral-et-civique/",
+      "destination": "/exercices-cm1/emc/",
+      "permanent": true
+    },
+    {
+      "source": "/cm1/education-a-la-vie-affective/",
+      "destination": "/exercices-cm1/vie-affective/",
+      "permanent": true
+    },
+    {
+      "source": "/cm1/:sub/",
+      "destination": "/exercices-cm1/:sub/",
+      "permanent": true
+    },
+    {
+      "source": "/cm1",
+      "destination": "/exercices-cm1/",
+      "permanent": true
+    },
+    {
+      "source": "/cm1/",
+      "destination": "/exercices-cm1/",
+      "permanent": true
+    },
+    {
+      "source": "/cm2/mathematiques/",
+      "destination": "/exercices-cm2/maths/",
+      "permanent": true
+    },
+    {
+      "source": "/cm2/enseignement-moral-et-civique/",
+      "destination": "/exercices-cm2/emc/",
+      "permanent": true
+    },
+    {
+      "source": "/cm2/education-a-la-vie-affective/",
+      "destination": "/exercices-cm2/vie-affective/",
+      "permanent": true
+    },
+    {
+      "source": "/cm2/:sub/",
+      "destination": "/exercices-cm2/:sub/",
+      "permanent": true
+    },
+    {
+      "source": "/cm2",
+      "destination": "/exercices-cm2/",
+      "permanent": true
+    },
+    {
+      "source": "/cm2/",
+      "destination": "/exercices-cm2/",
+      "permanent": true
+    }
+  ]
+}

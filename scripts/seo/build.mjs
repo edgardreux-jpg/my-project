@@ -20,26 +20,34 @@ const LV = {
   cm2: { name: 'CM2', ages: '10 ans', cycle: 'cycle 3' },
 }
 const SUB = {
-  fr: { slug: 'francais', name: 'Français', kw: 'lecture, orthographe, grammaire, conjugaison et vocabulaire' },
-  ma: { slug: 'mathematiques', name: 'Mathématiques', kw: 'calcul, numération, problèmes, géométrie et mesures' },
-  qlm: { slug: 'questionner-le-monde', name: 'Questionner le monde', kw: 'le vivant, la matière, l’espace et le temps' },
-  st: { slug: 'sciences', name: 'Sciences et technologie', kw: 'le vivant, la matière, l’énergie et les objets techniques' },
-  hi: { slug: 'histoire', name: 'Histoire', kw: 'les grandes périodes et les repères chronologiques' },
-  ge: { slug: 'geographie', name: 'Géographie', kw: 'se repérer, habiter et lire des cartes' },
-  en: { slug: 'anglais', name: 'Anglais', kw: 'vocabulaire, compréhension orale et premières phrases' },
-  emc: { slug: 'enseignement-moral-et-civique', name: 'Enseignement moral et civique', kw: 'respect, règles, droits et entraide' },
-  ap: { slug: 'arts-plastiques', name: 'Arts plastiques', kw: 'observer, créer et parler des œuvres' },
-  mu: { slug: 'musique', name: 'Éducation musicale', kw: 'écouter, chanter et reconnaître les instruments' },
-  eps: { slug: 'eps', name: 'Éducation physique et sportive', kw: 'bouger, coopérer et pratiquer en sécurité' },
-  evar: { slug: 'education-a-la-vie-affective', name: 'Éducation à la vie affective et relationnelle', kw: 'se connaître et respecter chacun' },
+  fr: { label: 'Français', slug: 'francais', short: 'français', name: 'Français', kw: 'lecture, orthographe, grammaire, conjugaison et vocabulaire' },
+  ma: { label: 'Maths', slug: 'maths', short: 'maths', name: 'Mathématiques', kw: 'calcul, numération, problèmes, géométrie et mesures' },
+  qlm: { label: 'Questionner le monde', slug: 'questionner-le-monde', short: 'questionner le monde', name: 'Questionner le monde', kw: 'le vivant, la matière, l’espace et le temps' },
+  st: { label: 'Sciences', slug: 'sciences', short: 'sciences', name: 'Sciences et technologie', kw: 'le vivant, la matière, l’énergie et les objets techniques' },
+  hi: { label: 'Histoire', slug: 'histoire', short: 'histoire', name: 'Histoire', kw: 'les grandes périodes et les repères chronologiques' },
+  ge: { label: 'Géographie', slug: 'geographie', short: 'géographie', name: 'Géographie', kw: 'se repérer, habiter et lire des cartes' },
+  en: { label: 'Anglais', slug: 'anglais', short: 'anglais', name: 'Anglais', kw: 'vocabulaire, compréhension orale et premières phrases' },
+  emc: { label: 'EMC', slug: 'emc', short: 'EMC', name: 'Enseignement moral et civique', kw: 'respect, règles, droits et entraide' },
+  ap: { label: 'Arts plastiques', slug: 'arts-plastiques', short: 'arts plastiques', name: 'Arts plastiques', kw: 'observer, créer et parler des œuvres' },
+  mu: { label: 'Musique', slug: 'musique', short: 'musique', name: 'Éducation musicale', kw: 'écouter, chanter et reconnaître les instruments' },
+  eps: { label: 'EPS', slug: 'eps', short: 'EPS', name: 'Éducation physique et sportive', kw: 'bouger, coopérer et pratiquer en sécurité' },
+  evar: { label: 'Vie affective', slug: 'vie-affective', short: 'vie affective', name: 'Éducation à la vie affective et relationnelle', kw: 'se connaître et respecter chacun' },
 }
 const CORE = ['fr', 'ma', 'qlm', 'st', 'hi', 'ge', 'en']
+// Slug des pages niveau : /exercices-ce1/ (mot clé principal dans l'adresse)
+// Titre <= 60 caractères, description <= 158 : on retire la marque ou on coupe proprement si besoin
+const fitTitle = (a, b) => (`${a} | Shukudai`.length <= 60 ? `${a} | Shukudai` : (`${b} | Shukudai`.length <= 60 ? `${b} | Shukudai` : b))
+const fitDesc = parts => { let out = ''; for (const p of parts) { const n = out ? `${out} ${p}` : p; if (n.length <= 158) out = n } return out }
+const seoLog = []
+const de = w => (/^[aeiouyéèêàâîôûhAEIOUÉ]/.test(w) ? `d’${w}` : `de ${w}`)
+const lvs = id => `exercices-${id}`
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const urls = [{ loc: `${SITE}/`, pri: '1.0' }]
 
 function page({ path, title, desc, h1, lead, body, crumbs = [], jsonld = [] }) {
   const url = `${SITE}${path}`
+  seoLog.push([path, title.length, desc.length])
   urls.push({ loc: url, pri: path.split('/').filter(Boolean).length === 1 ? '0.9' : '0.7' })
   const bc = [{ name: 'Accueil', url: `${SITE}/` }, ...crumbs]
   const ld = [{
@@ -70,7 +78,7 @@ ${ld.map(o => `<script type="application/ld+json">${JSON.stringify(o)}</script>`
 <body>
 <header class="top"><div class="in">
 <a class="logo" href="/"><img src="/logo.png" alt="" width="36" height="36" /><span><b>Shuku</b><i>dai</i></span></a>
-<nav aria-label="Niveaux">${Object.entries(LV).map(([id, l]) => `<a href="/${id}/">${l.name}</a>`).join('')}<a href="/jeux-educatifs/">Jeux</a></nav>
+<nav aria-label="Niveaux">${Object.entries(LV).map(([id, l]) => `<a href="/${lvs(id)}/">${l.name}</a>`).join('')}<a href="/jeux-educatifs/">Jeux</a></nav>
 <a class="btn sm" href="/#/inscription">Créer un compte</a>
 </div></header>
 <main class="in">
@@ -91,7 +99,7 @@ ${body}
 </main>
 <footer><div class="in">
 <p><b>Shukudai</b> : « devoirs à la maison » en japonais. Leçons, exercices et jeux éducatifs du CE1 au CM2, conformes aux programmes officiels.</p>
-<p class="links">${Object.entries(LV).map(([id, l]) => `<a href="/${id}/">Exercices ${l.name}</a>`).join('')}<a href="/jeux-educatifs/">Jeux éducatifs</a><a href="/enseignants/">Enseignants</a><a href="/#/confidentialite">Confidentialité</a></p>
+<p class="links">${Object.entries(LV).map(([id, l]) => `<a href="/${lvs(id)}/">Exercices ${l.name}</a>`).join('')}<a href="/jeux-educatifs/">Jeux éducatifs</a><a href="/enseignants/">Enseignants</a><a href="/#/confidentialite">Confidentialité</a></p>
 </div></footer>
 </body>
 </html>
@@ -102,7 +110,7 @@ ${body}
 }
 
 // Nettoyage des pages générées précédemment
-for (const d of [...Object.keys(LV), 'jeux-educatifs', 'enseignants']) {
+for (const d of [...Object.keys(LV), ...Object.keys(LV).map(lvs), 'jeux-educatifs', 'enseignants']) {
   const p = join(pub, d)
   if (existsSync(p)) rmSync(p, { recursive: true })
 }
@@ -120,17 +128,17 @@ for (const [lid, L] of Object.entries(LV)) {
   const cards = subs.map(s => {
     const n = lessonsBy(lid, s.id).length
     const themes = s.domains.flatMap(d => d.themes).slice(0, 5).map(t => esc(t.title)).join(' · ')
-    return `<a class="card" href="/${lid}/${SUB[s.id].slug}/"><h3>${SUB[s.id].name} ${L.name}</h3><p>${n} leçons : ${esc(SUB[s.id].kw)}.</p><p class="small">${themes}…</p></a>`
+    return `<a class="card" href="/${lvs(lid)}/${SUB[s.id].slug}/"><h3>${SUB[s.id].name} ${L.name}</h3><p>${n} leçons : ${esc(SUB[s.id].kw)}.</p><p class="small">${themes}…</p></a>`
   }).join('\n')
 
   page({
-    path: `/${lid}/`,
-    title: `Exercices et leçons de ${L.name} en ligne | Shukudai`,
-    desc: `Exercices de ${L.name} en ligne, conformes au programme officiel : ${total} leçons en français, maths, anglais et ${L.cycle === 'cycle 2' ? 'questionner le monde' : 'sciences, histoire, géographie'}. Suivi des progrès pour les parents.`,
-    h1: `Exercices et leçons de ${L.name} en ligne`,
+    path: `/${lvs(lid)}/`,
+    title: fitTitle(`Exercices ${L.name} en ligne : français, maths, anglais`, `Exercices ${L.name} en ligne`),
+    desc: fitDesc([`Exercices de ${L.name} en ligne conformes au programme : ${total} leçons en français, maths, anglais, ${L.cycle === 'cycle 2' ? 'questionner le monde' : 'sciences, histoire'}…`, 'Indices, étoiles et suivi des progrès.', 'Pour les 7-11 ans.']),
+    h1: `Exercices de ${L.name} en ligne, conformes au programme`,
     lead: `${total} leçons interactives pour les élèves de ${L.name} (${L.ages}, ${L.cycle}), une pour chaque thème du programme officiel. L’enfant révise en quelques minutes par jour, reçoit un indice quand il se trompe, et ses parents suivent ses progrès.`,
     body: `<h2>Les matières de ${L.name}</h2>\n<div class="grid">${cards}</div>`,
-    crumbs: [{ name: L.name, url: `${SITE}/${lid}/` }],
+    crumbs: [{ name: L.name, url: `${SITE}/${lvs(lid)}/` }],
     jsonld: [{
       '@context': 'https://schema.org', '@type': 'Course', name: `Leçons et exercices de ${L.name}`,
       description: `${total} leçons interactives conformes au programme de ${L.name}.`, inLanguage: 'fr',
@@ -153,19 +161,19 @@ for (const [lid, L] of Object.entries(LV)) {
     }).join('\n')
     const discHtml = disc.length ? `<section><h3>Pour commencer</h3><ul class="lessons">${disc.map(l => `<li><h4>${esc(l.title)}</h4><p>${esc(l.intro)}</p></li>`).join('')}</ul></section>` : ''
     const src = (s.sources || []).map(id => sources[id]).filter(Boolean)
-    const others = subs.filter(o => o.id !== s.id).map(o => `<a href="/${lid}/${SUB[o.id].slug}/">${SUB[o.id].name}</a>`).join(' · ')
-    const sameSub = Object.keys(LV).filter(o => o !== lid && lessonsBy(o, s.id).length).map(o => `<a href="/${o}/${S.slug}/">${S.name} ${LV[o].name}</a>`).join(' · ')
+    const others = subs.filter(o => o.id !== s.id).map(o => `<a href="/${lvs(lid)}/${SUB[o.id].slug}/">${SUB[o.id].name}</a>`).join(' · ')
+    const sameSub = Object.keys(LV).filter(o => o !== lid && lessonsBy(o, s.id).length).map(o => `<a href="/${lvs(o)}/${S.slug}/">${S.name} ${LV[o].name}</a>`).join(' · ')
     const nEx = ls.reduce((n, l) => n + l.ex.length, 0)
     page({
-      path: `/${lid}/${S.slug}/`,
-      title: `${S.name} ${L.name} : leçons et exercices en ligne | Shukudai`,
-      desc: `${ls.length} leçons et ${nEx} exercices de ${S.name.toLowerCase()} pour le ${L.name} : ${S.kw}. Conformes au programme officiel, avec indices et suivi parent.`,
-      h1: `${S.name} ${L.name} : leçons et exercices`,
+      path: `/${lvs(lid)}/${S.slug}/`,
+      title: fitTitle(`${S.label} ${L.name} : leçons et exercices en ligne`, `${S.label} ${L.name} : leçons et exercices`),
+      desc: fitDesc([`Exercices ${de(S.short)} ${L.name} en ligne : ${ls.length} leçons et ${nEx} exercices (${S.kw}).`, 'Conformes au programme, avec indices et suivi des progrès.', 'Conformes au programme, avec suivi parent.', `Pour les élèves de ${L.ages}.`]),
+      h1: `${S.label} ${L.name} : leçons et exercices en ligne`,
       lead: `${ls.length} leçons et ${nEx} exercices interactifs de ${S.name.toLowerCase()} pour le ${L.name} (${L.ages}) : ${esc(S.kw)}. Chaque leçon suit un thème du programme officiel et se termine par un bilan.`,
       body: `<h2>Le programme de ${S.name.toLowerCase()} en ${L.name}</h2>\n${discHtml}\n${doms}
 ${src.length ? `<p class="small">Sources : ${src.map(x => `<a href="${esc(x.url)}" rel="noopener">${esc(x.title)}</a>`).join(' · ')}</p>` : ''}
 <section class="box"><h2>Aller plus loin</h2><p>Autres matières de ${L.name} : ${others}</p>${sameSub ? `<p>${S.name} dans les autres classes : ${sameSub}</p>` : ''}</section>`,
-      crumbs: [{ name: L.name, url: `${SITE}/${lid}/` }, { name: S.name, url: `${SITE}/${lid}/${S.slug}/` }],
+      crumbs: [{ name: L.name, url: `${SITE}/${lvs(lid)}/` }, { name: S.name, url: `${SITE}/${lvs(lid)}/${S.slug}/` }],
       jsonld: [{
         '@context': 'https://schema.org', '@type': 'Course', name: `${S.name} ${L.name}`,
         description: `${ls.length} leçons de ${S.name.toLowerCase()} conformes au programme de ${L.name}.`, inLanguage: 'fr',
@@ -188,8 +196,8 @@ const GAMES = [
 ]
 page({
   path: '/jeux-educatifs/',
-  title: 'Jeux éducatifs en ligne du CE1 au CM2 : tables, calcul, capitales | Shukudai',
-  desc: 'Jeux éducatifs pour enfants du CE1 au CM2 : tables de multiplication, calcul mental, division, pays et capitales, mers et océans. Trois niveaux de difficulté par classe.',
+  title: 'Jeux éducatifs CE1 au CM2 : tables, capitales | Shukudai',
+  desc: 'Jeux éducatifs en ligne du CE1 au CM2 : tables de multiplication, calcul mental, division, pays et capitales, mers et océans. 3 niveaux par classe.',
   h1: 'Jeux éducatifs du CE1 au CM2',
   lead: 'Sept jeux pour réviser en s’amusant, adaptés à chaque classe du CE1 au CM2 avec trois niveaux de difficulté : facile, moyen et difficile.',
   body: `<div class="grid">${GAMES.map(([t, k, d]) => `<div class="card"><h3>${esc(t)}</h3><p class="tag">${esc(k)}</p><p>${esc(d)}</p></div>`).join('')}</div>`,
@@ -203,8 +211,8 @@ page({
 // Enseignants
 page({
   path: '/enseignants/',
-  title: 'Outil de suivi de classe pour enseignants du CE1 au CM2 | Shukudai',
-  desc: 'Enseignants de primaire : créez votre classe, suivez les progrès de vos élèves du CE1 au CM2, repérez les notions à retravailler et proposez des révisions.',
+  title: 'Suivi de classe en ligne pour enseignants CE1-CM2 | Shukudai',
+  desc: 'Enseignants de primaire : créez votre classe, suivez les progrès de vos élèves du CE1 au CM2, repérez les notions à retravailler et donnez des révisions.',
   h1: 'Suivez les progrès de votre classe',
   lead: 'Shukudai aide les enseignants du CE1 au CM2 à prolonger le travail de la classe à la maison, avec l’accord des familles.',
   body: `<div class="grid">
@@ -227,4 +235,5 @@ Allow: /
 
 Sitemap: ${SITE}/sitemap.xml
 `)
-console.log(`SEO : ${urls.length} URL générées`)
+const bad = seoLog.filter(([, t, d]) => t > 60 || d > 160 || d < 110)
+console.log(`SEO : ${urls.length} URL générées${bad.length ? ', longueurs à revoir : ' + JSON.stringify(bad) : ''}`)

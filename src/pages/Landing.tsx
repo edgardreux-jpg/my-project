@@ -415,7 +415,7 @@ export default function Landing() {
         <div className="row wrap" style={{ alignItems: 'flex-start' }}>
           <div className="grow"><b style={{ color: '#fff', fontSize: '1.2rem' }}>Shukudai</b><p className="small mt8">Une plateforme éducative pour les enfants du CE1 au CM2.</p>
             <nav className="foot-seo small mt8" aria-label="Exercices par classe">
-              <a href="/ce1/">Exercices CE1</a><a href="/ce2/">Exercices CE2</a><a href="/cm1/">Exercices CM1</a><a href="/cm2/">Exercices CM2</a><a href="/jeux-educatifs/">Jeux éducatifs</a><a href="/enseignants/">Enseignants</a>
+              <a href="/exercices-ce1/">Exercices CE1</a><a href="/exercices-ce2/">Exercices CE2</a><a href="/exercices-cm1/">Exercices CM1</a><a href="/exercices-cm2/">Exercices CM2</a><a href="/jeux-educatifs/">Jeux éducatifs</a><a href="/enseignants/">Enseignants</a>
             </nav></div>
           <div style={{ maxWidth: 420 }}>
             <details className="srcs">
