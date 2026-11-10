@@ -1886,3 +1886,5 @@ html:is([data-theme=cm1],[data-theme=cm2],[data-theme=pro]) .player.play .opt{bo
   .top nav{display:none!important}
   .trust span:nth-child(4){display:none}
 }
+.foot-seo{display:flex;flex-wrap:wrap;gap:6px 16px}
+.foot-seo a{color:#fff;font-weight:700}

@@ -3,3 +3,13 @@ dist
 dist-single
 .env
 .ux/
+
+# Pages SEO générées au build
+/public/ce1/
+/public/ce2/
+/public/cm1/
+/public/cm2/
+/public/jeux-educatifs/
+/public/enseignants/
+/public/sitemap.xml
+/public/robots.txt
